@@ -84,7 +84,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.01}
-  m_LocalScale: {x: 1.6666667, y: 2.65, z: 1}
+  m_LocalScale: {x: 1.1767616, y: 1.0434783, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -404,8 +404,8 @@ MonoBehaviour:
   flipX: 0
   sliceOffsetX: 0
   sliceOffsetY: 0
-  sliceWidth: 800
-  sliceHeight: 53
+  sliceWidth: 784.9
+  sliceHeight: 29
   zPos: 0.01
   sliceMesh: {fileID: 150924}
   canvasMaterials:

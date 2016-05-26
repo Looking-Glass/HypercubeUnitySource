@@ -6,6 +6,15 @@ using System.Collections.Generic;
 //It's purpose is so that the hypercube can query if an appropriate canvas exists in the scene.
 //If it doesn't exist, it will create one.
 
+public enum canvasEditMode
+{
+    UL = 0,
+    UR,
+    LL,
+    LR,
+    M
+}
+
 [ExecuteInEditMode]
 public class hypercubeCanvas : MonoBehaviour 
 {
@@ -19,9 +28,56 @@ public class hypercubeCanvas : MonoBehaviour
     public float zPos = .01f;
     public GameObject sliceMesh;
 
-    public List<Material> canvasMaterials = new List<Material>(); 
+    public List<Material> canvasMaterials = new List<Material>();
 
+    //individual calibration offsets
+    Vector2[] ULOffsets = null;
+    Vector2[] UROffsets = null;
+    Vector2[] LLOffsets = null;
+    Vector2[] LROffsets = null;
+    Vector2[] MOffsets = null;
 
+  
+    //tweaks to the cube design to offset physical distortions
+    public void setCalibrationOffsets(dataFileAssoc d, int maxSlices)
+    {
+        ULOffsets = new Vector2[maxSlices]; //init our calibration vars
+        UROffsets = new Vector2[maxSlices];
+        LLOffsets = new Vector2[maxSlices];
+        LROffsets = new Vector2[maxSlices];
+        MOffsets = new Vector2[maxSlices];
+
+        for (int s = 0; s < maxSlices; s++)
+        {
+            ULOffsets[s].x = d.getValueAsFloat("s" + s + "_ULx", 0f);
+            ULOffsets[s].y = d.getValueAsFloat("s" + s + "_ULy", 0f);
+            UROffsets[s].x = d.getValueAsFloat("s" + s + "_URx", 0f);
+            UROffsets[s].y = d.getValueAsFloat("s" + s + "_URy", 0f);
+            LLOffsets[s].x = d.getValueAsFloat("s" + s + "_LLx", 0f);
+            LLOffsets[s].y = d.getValueAsFloat("s" + s + "_LLy", 0f);
+            LROffsets[s].x = d.getValueAsFloat("s" + s + "_LRx", 0f);
+            LROffsets[s].y = d.getValueAsFloat("s" + s + "_LRy", 0f);
+            MOffsets[s].x = d.getValueAsFloat("s" + s + "_Mx", 0f);
+            MOffsets[s].y = d.getValueAsFloat("s" + s + "_My", 0f);
+        }
+    }
+
+    public void saveCalibrationOffsets(dataFileAssoc d)
+    {
+        for (int s = 0; s < ULOffsets.Length; s++)
+        {
+            d.setValue("s" + s + "_ULx", ULOffsets[s].x.ToString(), true);
+            d.setValue("s" + s + "_ULy", ULOffsets[s].y.ToString(), true);
+            d.setValue("s" + s + "_URx", UROffsets[s].x.ToString(), true);
+            d.setValue("s" + s + "_URy", UROffsets[s].y.ToString(), true);
+            d.setValue("s" + s + "_LLx", LLOffsets[s].x.ToString(), true);
+            d.setValue("s" + s + "_LLy", LLOffsets[s].y.ToString(), true);
+            d.setValue("s" + s + "_LRx", LROffsets[s].x.ToString(), true);
+            d.setValue("s" + s + "_LRy", LROffsets[s].y.ToString(), true);
+            d.setValue("s" + s + "_Mx", MOffsets[s].x.ToString(), true);
+            d.setValue("s" + s + "_My", MOffsets[s].y.ToString(), true);
+        }
+    }
 
     void OnValidate()
     {
@@ -46,7 +102,58 @@ public class hypercubeCanvas : MonoBehaviour
         }
     }
 
- 
+    public int getSliceCount()
+    {
+        return sliceCount;
+    }
+
+    public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
+    {
+        if (slice < 1)
+            return false;
+        if (slice > ULOffsets.Length)
+            return false;
+
+        if (m == canvasEditMode.UL)
+        {
+            if (x)
+                ULOffsets[slice].x += amount;
+            else
+                ULOffsets[slice].y += amount;
+        }
+        else if (m == canvasEditMode.UR)
+        {
+            if (x)
+                UROffsets[slice].x += amount;
+            else
+                UROffsets[slice].y += amount;
+        }
+        else if (m == canvasEditMode.LL)
+        {
+            if (x)
+                LLOffsets[slice].x += amount;
+            else
+                LLOffsets[slice].y += amount;
+        }
+        else if (m == canvasEditMode.LR)
+        {
+            if (x)
+                LROffsets[slice].x += amount;
+            else
+                LROffsets[slice].y += amount;
+        }
+        else if (m == canvasEditMode.M)
+        {
+            if (x)
+                MOffsets[slice].x += amount;
+            else
+                MOffsets[slice].y += amount;
+        }
+
+        updateMesh(sliceCount);
+
+        return true;
+    }
     public void flip()
     {
         flipX = !flipX;
@@ -146,7 +253,29 @@ public class hypercubeCanvas : MonoBehaviour
     
     public void updateMesh(int _sliceCount)
     {
+        if (_sliceCount < 1)
+            return;
+
         sliceCount = _sliceCount;
+
+        if (ULOffsets == null || ULOffsets.Length < sliceCount) //if they don't exist yet, just use temporary values
+        {
+            ULOffsets = new Vector2[sliceCount];
+            UROffsets = new Vector2[sliceCount];
+            LLOffsets = new Vector2[sliceCount];
+            LROffsets = new Vector2[sliceCount];
+            MOffsets = new Vector2[sliceCount];
+            for (int s = 0; s < sliceCount; s++)
+            {
+                ULOffsets[s] = new Vector2(0f,0f);
+                UROffsets[s] = new Vector2(0f, 0f);
+                LLOffsets[s] = new Vector2(0f, 0f);
+                LROffsets[s] = new Vector2(0f, 0f);
+                MOffsets[s] = new Vector2(0f, 0f);
+            }
+        }
+
+        //each slice is constructed from 8 triangles radiating from a vert in the center of the slice.
         if (canvasMaterials.Count == 0)
         {
             Debug.LogError("Canvas materials have not been set!  Please define what materials you want to apply to each slice in the hypercubeCanvas component.");
@@ -176,56 +305,97 @@ public class hypercubeCanvas : MonoBehaviour
             return;
         }
 
-        Vector3[] verts = new Vector3[4 * sliceCount]; //4 verts in a quad * slices * dimensions  
-        Vector2[] uvs = new Vector2[4 * sliceCount];
-        Vector3[] normals = new Vector3[4 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
+        Vector3[] verts = new Vector3[9 * sliceCount]; //9 verts in each slice 
+        Vector2[] uvs = new Vector2[9 * sliceCount];
+        Vector3[] normals = new Vector3[9 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
         List<int[]> submeshes = new List<int[]>(); //the triangle list(s)
         Material[] faceMaterials = new Material[sliceCount];
 
         //create the mesh
         float size = 1f / (float)sliceCount;
-        for (int y = 0; y < sliceCount; y++)
+        for (int s = 0; s < sliceCount; s++)
         {
-            int v = y * 4;
-            float yPos =  (float)y * size;
+            int v = s * 9;
+            float yPos =  (float)s * size;
 
-            verts[v + 0] = new Vector3(-1f, yPos + size, 0f); //top left
-            verts[v + 1] = new Vector3(1f, yPos + size, 0f); //top right
-            verts[v + 2] = new Vector3(1f, yPos, 0f); //bottom right
-            verts[v + 3] = new Vector3(-1f, yPos, 0f); //bottom left
+            verts[v + 0] = new Vector3(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y, 0f); //top left          
+            verts[v + 1] = new Vector3(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x)), 0f); //top middle
+            verts[v + 2] = new Vector3(1f + UROffsets[s].x, yPos + size + UROffsets[s].y, 0f); //top right
+
+            verts[v + 3] = new Vector3(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y, 0f); //middle left
+            verts[v + 4] = new Vector3(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y, 0f); //center
+            verts[v + 5] = new Vector3(1f + +Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y, 0f); //middle right
+
+            verts[v + 6] = new Vector3(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y, 0f); //bottom left
+            verts[v + 7] = new Vector3(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x)), 0f); //bottom middle
+            verts[v + 8] = new Vector3(1f + LROffsets[s].x, yPos + LROffsets[s].y, 0f); //bottom right         
+
             normals[v + 0] = new Vector3(0, 0, 1);
             normals[v + 1] = new Vector3(0, 0, 1);     
             normals[v + 2] = new Vector3(0, 0, 1);
             normals[v + 3] = new Vector3(0, 0, 1);
+            normals[v + 4] = new Vector3(0, 0, 1);
+            normals[v + 5] = new Vector3(0, 0, 1);
+            normals[v + 6] = new Vector3(0, 0, 1);
+            normals[v + 7] = new Vector3(0, 0, 1);
+            normals[v + 8] = new Vector3(0, 0, 1);
 
             if (!flipX)
             {
-                uvs[v + 0] = new Vector2(1, 0);
-                uvs[v + 1] = new Vector2(0, 0);
-                uvs[v + 2] = new Vector2(0, 1);
-                uvs[v + 3] = new Vector2(1, 1);
+                uvs[v + 0] = new Vector2(0, 0);
+                uvs[v + 1] = new Vector2(.5f, 0);
+                uvs[v + 2] = new Vector2(1, 0);
+                uvs[v + 3] = new Vector2(0, .5f);
+                uvs[v + 4] = new Vector2(.5f, .5f);
+                uvs[v + 5] = new Vector2(1f, .5f);
+                uvs[v + 6] = new Vector2(0, 1);
+                uvs[v + 7] = new Vector2(.5f, 1);
+                uvs[v + 8] = new Vector2(1, 1);
             }
             else
             {
-                uvs[v + 0] = new Vector2(0, 0);
-                uvs[v + 1] = new Vector2(1, 0);
-                uvs[v + 2] = new Vector2(1, 1);
-                uvs[v + 3] = new Vector2(0, 1);
+                uvs[v + 0] = new Vector2(1, 0);
+                uvs[v + 1] = new Vector2(.5f, 0);
+                uvs[v + 2] = new Vector2(0, 0);
+                uvs[v + 3] = new Vector2(1, .5f);
+                uvs[v + 4] = new Vector2(.5f, .5f);
+                uvs[v + 5] = new Vector2(0f, .5f);
+                uvs[v + 6] = new Vector2(1, 1);
+                uvs[v + 7] = new Vector2(.5f, 1);
+                uvs[v + 8] = new Vector2(0, 1);
             }
 
 
 
-            int[] tris = new int[6];
+            int[] tris = new int[24];  //8 tris in a circle around the center
             tris[0] = v + 0; //1st tri starts at top left
             tris[1] = v + 1;
-            tris[2] = v + 2;
-            tris[3] = v + 2; //2nd triangle begins here
-            tris[4] = v + 3;
-            tris[5] = v + 0; //ends at bottom right       
+            tris[2] = v + 4;
+            tris[3] = v + 1; //2nd triangle begins here
+            tris[4] = v + 2;
+            tris[5] = v + 4;    
+            tris[6] = v + 2; //3rd triangle begins here
+            tris[7] = v + 5;
+            tris[8] = v + 4;
+            tris[9] = v + 5; //4th triangle begins here
+            tris[10] = v + 8;
+            tris[11] = v + 4;
+            tris[12] = v + 8; //5th triangle begins here
+            tris[13] = v + 7;
+            tris[14] = v + 4;
+            tris[15] = v + 7; //6th triangle begins here
+            tris[16] = v + 6;
+            tris[17] = v + 4;
+            tris[18] = v + 6; //7th triangle begins here
+            tris[19] = v + 3;
+            tris[20] = v + 4;
+            tris[21] = v + 3; //8th triangle begins here
+            tris[22] = v + 0;
+            tris[23] = v + 4; 
             submeshes.Add(tris);
 
             //every face has a separate material/texture     
-            faceMaterials[y] = canvasMaterials[y];
+            faceMaterials[s] = canvasMaterials[s];
         }
 
 

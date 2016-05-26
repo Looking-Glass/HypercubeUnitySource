@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [ExecuteInEditMode]
+[RequireComponent (typeof(dataFileAssoc))]
 public class hypercubeCamera : MonoBehaviour {
 
     public float overlap = .2f; 
@@ -23,6 +24,7 @@ public class hypercubeCamera : MonoBehaviour {
 
     void Start()
     {
+
         if (!localCanvas)
         {
             localCanvas = GameObject.FindObjectOfType<hypercubeCanvas>();
@@ -35,32 +37,12 @@ public class hypercubeCamera : MonoBehaviour {
                 localCanvas = Instantiate(canvasPrefab); //normal instantiation, lost the prefab connection
 #endif
             }
-        }
+        }       
 
-        //use our save values only in the player only to avoid confusing behaviors in the editor
-        //LOAD OUR PREFS
-        if (!Application.isEditor)
-        {
-            dataFileAssoc d = GetComponent<dataFileAssoc>();
-            if (d)
-            {
-                slices = d.getValueAsInt("sliceCount", 10);
-                localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
-                localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-                localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 800f);
-                localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 68f);
-                localCanvas.flipX = d.getValueAsBool("flipX", false);
-                overlap = d.getValueAsFloat("overlap", .15f);
-                useSoftSlices = d.getValueAsBool("useSoftSlices", true);
-            }
-        }
-
-        localCanvas.updateMesh(slices);
+        loadSettings();
         resetSettings();
-        updateOverlap();
     }
 
-    
 
     void Update()
     {
@@ -161,6 +143,28 @@ public class hypercubeCamera : MonoBehaviour {
         updateOverlap();
     }
 
+    public void loadSettings()
+    {
+        dataFileAssoc d = GetComponent<dataFileAssoc>();
+        d.load();
+        //use our save values only in the player only to avoid confusing behaviors in the editor
+        //LOAD OUR PREFS
+        if (!Application.isEditor)
+        {
+            slices = d.getValueAsInt("sliceCount", 10);
+            localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
+            localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
+            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 800f);
+            localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 68f);
+            localCanvas.flipX = d.getValueAsBool("flipX", false);
+            overlap = d.getValueAsFloat("overlap", .15f);
+            useSoftSlices = d.getValueAsBool("useSoftSlices", true);
+        }
+
+        localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
+        localCanvas.updateMesh(slices);
+    }
+
     void OnApplicationQuit()
     {
         //save our settings whether in editor mode or play mode.
@@ -175,6 +179,10 @@ public class hypercubeCamera : MonoBehaviour {
         d.setValue("flipX", localCanvas.flipX.ToString(), true);
         d.setValue("overlap", overlap.ToString(), true);
         d.setValue("useSoftSlices", useSoftSlices.ToString(), true);
+
+        if (localCanvas)
+            localCanvas.saveCalibrationOffsets(d);
+
         d.save();
     }
 }
