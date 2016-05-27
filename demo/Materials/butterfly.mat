@@ -90,7 +90,7 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: 0.869
+        second: 0.494
       data:
         first:
           name: _Parallax
@@ -130,7 +130,7 @@ Material:
       data:
         first:
           name: _Cull
-        second: 0
+        second: 2
       data:
         first:
           name: _Mod

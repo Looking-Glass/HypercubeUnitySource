@@ -2,6 +2,7 @@
 {
     Properties
     {
+		_Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
         _Mod ("Brightness Mod", Range (0, 100)) = 1
         [MaterialEnum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 2
@@ -9,7 +10,7 @@
     SubShader
     {
         Tags { "RenderType"="Opaque"  }
-        Cull Off
+        Cull [_Cull]
         ZWrite On
  
         Pass
@@ -34,6 +35,7 @@
  
             sampler2D _MainTex;
             float4 _MainTex_ST;
+			fixed4 _Color;
             float _Mod;
          
             v2f vert (appdata v)
@@ -46,10 +48,7 @@
          
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                col *= _Mod;        
- 
-                return col;
+                return tex2D(_MainTex, i.uv) * _Color * _Mod;
             }
             ENDCG
         }

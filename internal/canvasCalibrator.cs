@@ -31,6 +31,8 @@ public class canvasCalibrator : MonoBehaviour {
     public KeyCode down;
     public KeyCode left;
     public KeyCode right;
+    public Texture2D calibrationCorner;
+    public Texture2D calibrationCenter;
 
     public bool forceLoadFromFile = false;
 
@@ -71,7 +73,7 @@ public class canvasCalibrator : MonoBehaviour {
         }
         else if (Input.GetKeyDown(highlightLL))
         {
-            m = canvasEditMode.LL;
+            m = canvasEditMode.LL; 
             updateSelection();
         }
         else if (Input.GetKeyDown(highlightLR))
@@ -124,6 +126,25 @@ public class canvasCalibrator : MonoBehaviour {
 
         //set to slice:
         float sliceSize = 1f / (float)cam.slices;
-        transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .5f); //the -.5f is an offset because 0 is the center of the cube
+        transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .5f + (sliceSize/2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
+
+        Material mat = GetComponent<MeshRenderer>().sharedMaterial;
+        if (m == canvasEditMode.M)
+        {
+            mat.SetTexture("_MainTex", calibrationCenter);
+            mat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+        }
+        else
+        {
+            mat.SetTexture("_MainTex", calibrationCorner);
+            if (m == canvasEditMode.UL)
+                mat.SetTextureScale("_MainTex", new Vector2(1f, -1f));
+            else if (m == canvasEditMode.UR)
+                mat.SetTextureScale("_MainTex", new Vector2(-1f, -1f));
+            else if (m == canvasEditMode.LL)
+                mat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+            else if (m == canvasEditMode.LR)
+                mat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
+        }
     }
 }
