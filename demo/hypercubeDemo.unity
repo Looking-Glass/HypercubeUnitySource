@@ -2722,15 +2722,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 1.1767616
+      value: 1.2231032
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 3.088456
-      objectReference: {fileID: 0}
-    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: sliceHeight
-      value: 51.5
+      value: 4.3488107
       objectReference: {fileID: 0}
     - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_Materials.Array.data[12]
@@ -2764,62 +2760,6 @@ Prefab:
       propertyPath: m_Materials.Array.data[19]
       value: 
       objectReference: {fileID: 2100000, guid: a5e48b8b404d33449b256e5d656539eb, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[20]
-      value: 
-      objectReference: {fileID: 2100000, guid: e4f5cbe2cf39f264fa175bd456fd53a7, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[21]
-      value: 
-      objectReference: {fileID: 2100000, guid: 4e74dd274168cf74c8a1dc898456eb7e, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[22]
-      value: 
-      objectReference: {fileID: 2100000, guid: 8de6560853a25f549bfee7e7a3bf99f6, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[23]
-      value: 
-      objectReference: {fileID: 2100000, guid: 4dceac47b21606149bf6ba6c81967b6f, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[24]
-      value: 
-      objectReference: {fileID: 2100000, guid: 71783ee390ad72c4aaa2f2a0d01dd556, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[25]
-      value: 
-      objectReference: {fileID: 2100000, guid: 121e1a55a7a6ac94fbb6f0e8dd07e333, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[26]
-      value: 
-      objectReference: {fileID: 2100000, guid: 524dbc6999f6aec43acf76c63cf96b58, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[27]
-      value: 
-      objectReference: {fileID: 2100000, guid: d068ab99d67dc1147bb64bb172f2b890, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[28]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0183823436f9bfc4c879c835b8d71fcd, type: 2}
-    - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Materials.Array.data[29]
-      value: 
-      objectReference: {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
-    - target: {fileID: 148522, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2009672, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: far clip plane
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: flipX
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
   m_IsPrefabParent: 0
@@ -4721,38 +4661,6 @@ Prefab:
       propertyPath: preview
       value: 
       objectReference: {fileID: 2071974336}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: near clip plane
-      value: 5.936592
-      objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: far clip plane
-      value: 6.578386
-      objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: orthographic size
-      value: 1.5981877
-      objectReference: {fileID: 0}
-    - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 3.1963754
-      objectReference: {fileID: 0}
-    - target: {fileID: 11413466, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: useSoftSlices
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: slices
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 8400000, guid: 75ee2d819c1dec24f8723fec6b9f1cd4, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
   m_IsPrefabParent: 0

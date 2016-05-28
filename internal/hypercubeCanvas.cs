@@ -221,7 +221,7 @@ public class hypercubeCanvas : MonoBehaviour
         float yPixel = 1f / (float)Screen.height;
         sliceMesh.transform.localScale = new Vector3(sliceWidth * xPixel * aspectRatio, (float)sliceCount * sliceHeight * 2f * yPixel, 1f); //the *2 is because the view is 2 units tall
 
-        sliceMesh.transform.localPosition = new Vector3(xPixel * sliceOffsetX, (yPixel * sliceOffsetY * 2f) - 1f, zPos); //the 1f is the center vertical on the screen, the *2 is because the view is 2 units tall
+        sliceMesh.transform.localPosition = new Vector3(xPixel * sliceOffsetX, (yPixel * sliceOffsetY * 2f) - 1f, zPos); //the -1f is the center vertical on the screen, the *2 is because the view is 2 units tall
 
     }
 

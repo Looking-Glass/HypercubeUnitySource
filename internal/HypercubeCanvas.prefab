@@ -84,7 +84,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.01}
-  m_LocalScale: {x: 1.1767616, y: 1.0434783, z: 1}
+  m_LocalScale: {x: 1.2231032, y: 2.6092865, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -144,7 +144,7 @@ MeshRenderer:
   m_GameObject: {fileID: 150924}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_Materials:
   - {fileID: 2100000, guid: ffc2c9266484f0141a16b1c50cd0fa0f, type: 2}
   - {fileID: 2100000, guid: 7b77f33d1f886b646b3b6cc5c26c147b, type: 2}
@@ -404,8 +404,8 @@ MonoBehaviour:
   flipX: 0
   sliceOffsetX: 0
   sliceOffsetY: 0
-  sliceWidth: 784.9
-  sliceHeight: 29
+  sliceWidth: 1080
+  sliceHeight: 96
   zPos: 0.01
   sliceMesh: {fileID: 150924}
   canvasMaterials:

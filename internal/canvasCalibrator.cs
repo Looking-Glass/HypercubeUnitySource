@@ -88,22 +88,22 @@ public class canvasCalibrator : MonoBehaviour {
         }
         else if (Input.GetKeyDown(left))
         {
-            float xPixel = 1f / cam.localCanvas.sliceWidth; //the xpixel makes the movement distance between x/y (instead of just a local transform)
+            float xPixel = 2f / cam.localCanvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
             cam.localCanvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
         }
         else if (Input.GetKeyDown(right))
         {
-            float xPixel = 1f / cam.localCanvas.sliceWidth;
+            float xPixel = 2f / cam.localCanvas.sliceWidth; //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
             cam.localCanvas.makeAdjustment(currentSlice, m, true, interval * xPixel);
         }
         else if (Input.GetKeyDown(down))
         {
-            float yPixel = 1f / (float)Screen.height;
+            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices); 
             cam.localCanvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
         }
         else if (Input.GetKeyDown(up))
         {
-            float yPixel = 1f / (float)Screen.height;
+            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices);
             cam.localCanvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
         }
 

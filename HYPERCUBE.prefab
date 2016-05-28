@@ -101,9 +101,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0.14791045, y: 0, z: 0, w: 0.98900074}
-  m_LocalPosition: {x: 6.451, y: -3.1, z: -1.92}
-  m_LocalScale: {x: 6.417937, y: 4.576443, z: 6.417935}
+  m_LocalRotation: {x: 0.051596146, y: 0.97089386, z: -0.13784778, w: 0.18894716}
+  m_LocalPosition: {x: 10.06, y: 0.93, z: 5.26}
+  m_LocalScale: {x: 6.417937, y: 3.1963754, z: 6.417935}
   m_Children:
   - {fileID: 487256}
   - {fileID: 446836}
@@ -175,11 +175,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 5.93659
-  far clip plane: 6.578384
+  near clip plane: 5.936592
+  far clip plane: 6.578386
   field of view: 60
   orthographic: 1
-  orthographic size: 2.2882216
+  orthographic size: 1.5981877
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -203,7 +203,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: fa3bb1881a52d2c44b662f306b41b182, type: 2}
+  - {fileID: 2100000, guid: 9acaab100a7dbe4499c10ee94adb6098, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -255,7 +255,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: fa3bb1881a52d2c44b662f306b41b182, type: 2}
+  - {fileID: 2100000, guid: 9acaab100a7dbe4499c10ee94adb6098, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -281,7 +281,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -403,9 +403,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d517016184638f4396a5a0f6d06e333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: 8
+  key: 61
   toggle: {fileID: 169792}
-  toggleUp: {fileID: 169792}
+  toggleUp: {fileID: 0}
 --- !u!114 &11438496
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -426,9 +426,9 @@ MonoBehaviour:
   - key: offsetY
     value: 0
   - key: sliceWidth
-    value: 784.9
+    value: 1080
   - key: pixelsPerSlice
-    value: 29
+    value: 96
   - key: flipX
     value: False
   - key: sliceCount
@@ -458,17 +458,17 @@ MonoBehaviour:
   - key: s0_My
     value: 0
   - key: s1_ULx
-    value: 0.001274048
+    value: 0.0002949038
   - key: s1_ULy
-    value: -0.00149925
+    value: -0.001499249
   - key: s1_URx
     value: 0
   - key: s1_URy
     value: 0
   - key: s1_LLx
-    value: -2.328306E-10
+    value: -4.656613E-10
   - key: s1_LLy
-    value: 0.002998502
+    value: 0.0001776274
   - key: s1_LRx
     value: 0
   - key: s1_LRy
@@ -488,7 +488,7 @@ MonoBehaviour:
   - key: s2_LLx
     value: 0
   - key: s2_LLy
-    value: 0
+    value: -0.001477105
   - key: s2_LRx
     value: 0
   - key: s2_LRy
@@ -518,9 +518,9 @@ MonoBehaviour:
   - key: s3_My
     value: 0
   - key: s4_ULx
-    value: 0
+    value: 0.05370369
   - key: s4_ULy
-    value: 0
+    value: 1.164153E-10
   - key: s4_URx
     value: 0
   - key: s4_URy
@@ -560,7 +560,7 @@ MonoBehaviour:
   - key: s6_ULx
     value: 0
   - key: s6_ULy
-    value: 0
+    value: 0.001041667
   - key: s6_URx
     value: 0
   - key: s6_URy
@@ -588,7 +588,7 @@ MonoBehaviour:
   - key: s7_LLx
     value: 0
   - key: s7_LLy
-    value: 0
+    value: -1.629815E-09
   - key: s7_LRx
     value: 0
   - key: s7_LRy
@@ -598,9 +598,9 @@ MonoBehaviour:
   - key: s7_My
     value: 0
   - key: s8_ULx
-    value: 0
+    value: 0.09444442
   - key: s8_ULy
-    value: 0
+    value: -1.164153E-10
   - key: s8_URx
     value: 0
   - key: s8_URy
