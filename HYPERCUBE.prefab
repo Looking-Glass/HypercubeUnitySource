@@ -74,7 +74,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &195280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,7 +1128,11 @@ MonoBehaviour:
   right: 100
   calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}
   calibrationCenter: {fileID: 2800000, guid: 13af63765e4e8744ea5303d7181eb438, type: 3}
-  forceLoadFromFile: 0
+  calibration: 0
+  highlightMat: {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}
+  calibrationMat: {fileID: 2100000, guid: 99b45b85227481b4c8b92e0cf48403e1, type: 2}
+  aQuad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  aWorkingMesh: {fileID: 4300000, guid: 2bb17db8449e0234f93c9acee15d7162, type: 3}
 --- !u!124 &12486252
 Behaviour:
   m_ObjectHideFlags: 1
