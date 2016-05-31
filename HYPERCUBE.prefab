@@ -345,7 +345,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
   m_Name: 
@@ -566,17 +566,17 @@ MonoBehaviour:
   - key: s6_URy
     value: 0
   - key: s6_LLx
-    value: 0
+    value: 0.009259259
   - key: s6_LLy
-    value: 0
+    value: 0.003645834
   - key: s6_LRx
     value: 0
   - key: s6_LRy
     value: 0
   - key: s6_Mx
-    value: 0
+    value: 0.001851852
   - key: s6_My
-    value: 0
+    value: -0.001041667
   - key: s7_ULx
     value: 0
   - key: s7_ULy
@@ -1122,8 +1122,8 @@ MonoBehaviour:
   highlightLL: 113
   highlightLR: 101
   highlightM: 115
-  up: 119
-  down: 120
+  up: 120
+  down: 119
   left: 97
   right: 100
   calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}

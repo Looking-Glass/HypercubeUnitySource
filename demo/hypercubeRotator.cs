@@ -63,6 +63,8 @@ public class hypercubeRotator : MonoBehaviour {
         //scale
         Vector3 temp = startScale;
         float mod = Mathf.Sin(timeDiff * scaleSpeed) * scaleMod;
+        if (mod < .01f)
+            mod = .01f;
         temp.x += mod;
         temp.y += mod;
         temp.z += mod;
