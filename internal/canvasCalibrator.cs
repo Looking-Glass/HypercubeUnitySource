@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 //this is a tool to set calibrations on individual corners of the hypercubeCanvas
 //TO USE:
@@ -13,7 +12,8 @@ using System.Collections.Generic;
 //use ENTER to load settings from the file
 
 [ExecuteInEditMode]
-public class canvasCalibrator : MonoBehaviour {
+public class canvasCalibrator : MonoBehaviour
+{
 
     public string current;
 
@@ -22,7 +22,6 @@ public class canvasCalibrator : MonoBehaviour {
     public float interval = .5f;
 
     public KeyCode nextSlice;
-    public KeyCode loadSettings;
     public KeyCode highlightUL;
     public KeyCode highlightUR;
     public KeyCode highlightLL;
@@ -32,35 +31,24 @@ public class canvasCalibrator : MonoBehaviour {
     public KeyCode down;
     public KeyCode left;
     public KeyCode right;
+    public KeyCode toggleCalibration;
     public Texture2D calibrationCorner;
     public Texture2D calibrationCenter;
 
     public bool calibration = false;
 
-    public GameObject selectedSlice;
-    public GameObject offSliceParent;
-    public GameObject calibrationSlicePrefab;
-    List<GameObject> calibrationSlices = new List<GameObject>(); //these must be separate objects, not a single mesh or the cameras have trouble differentiating the slices
-
-   // public bool forceLoadFromFile = false;
+  //  public bool forceLoadFromFile = false;
 
     canvasEditMode m;
     int currentSlice;
 
     void Start()
     {
-        //clean up, just in case
-        foreach (Transform s in offSliceParent.transform)
-        {
-            DestroyImmediate(s.gameObject);
-        }
-        calibrationSlices.Clear();
-
         updateSelection();
     }
-	
-	// Update is called once per frame
-	void Update () 
+
+    // Update is called once per frame
+    void Update()
     {
         if (!cam || !cam.localCanvas)
             return;
@@ -73,8 +61,10 @@ public class canvasCalibrator : MonoBehaviour {
 
             updateSelection();
         }
-        else if (Input.GetKeyDown(loadSettings))
+        else if (Input.GetKeyDown(toggleCalibration))
         {
+            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = !cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled;
+            calibration = cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled;
         }
         else if (Input.GetKeyDown(highlightUL))
         {
@@ -88,7 +78,7 @@ public class canvasCalibrator : MonoBehaviour {
         }
         else if (Input.GetKeyDown(highlightLL))
         {
-            m = canvasEditMode.LL; 
+            m = canvasEditMode.LL;
             updateSelection();
         }
         else if (Input.GetKeyDown(highlightLR))
@@ -113,7 +103,7 @@ public class canvasCalibrator : MonoBehaviour {
         }
         else if (Input.GetKeyDown(down))
         {
-            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices); 
+            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices);
             cam.localCanvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
         }
         else if (Input.GetKeyDown(up))
@@ -122,7 +112,7 @@ public class canvasCalibrator : MonoBehaviour {
             cam.localCanvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
         }
 
-	}
+    }
 
     void OnValidate()
     {
@@ -134,11 +124,10 @@ public class canvasCalibrator : MonoBehaviour {
         //}
 
         if (calibration)
-            offSliceParent.SetActive(true);
+            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = true;
         else
-            offSliceParent.SetActive(false);
+            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = false;
 
-        updateSelection();
     }
 
 
@@ -146,7 +135,11 @@ public class canvasCalibrator : MonoBehaviour {
     {
         current = "s" + currentSlice + "  " + m.ToString();
 
-        Material mat = selectedSlice.GetComponent<MeshRenderer>().sharedMaterial;
+        //set to slice:
+        float sliceSize = 1f / (float)cam.slices;
+        transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .5f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
+
+        Material mat = GetComponent<MeshRenderer>().sharedMaterial;
         if (m == canvasEditMode.M)
         {
             mat.SetTexture("_MainTex", calibrationCenter);
@@ -164,48 +157,5 @@ public class canvasCalibrator : MonoBehaviour {
             else if (m == canvasEditMode.LR)
                 mat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
         }
-
-        constructSlices();
-
-        float sliceSize = 1f / (float)cam.slices;
-        for (int s = 0; s < calibrationSlices.Count; s++)
-        {
-            if (s == currentSlice || s == currentSlice +1 || s == currentSlice -1) //hide the current slice
-            {
-                calibrationSlices[s].SetActive(false);
-            }
-            else
-            {
-                calibrationSlices[s].SetActive(true);
-                calibrationSlices[s].transform.localPosition = new Vector3(0f, 0f, (s * sliceSize) - .5f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slic            
-            }
-        }
-
-
-        //set the selection slice, which is the gameObject of this script
-        selectedSlice.transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .501f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
-        
     }
-
-
-    void constructSlices()
-    {
-        //add slices if necessary
-        while (calibrationSlices.Count < cam.slices)
-        {
-            GameObject s = Instantiate(calibrationSlicePrefab);
-            s.transform.parent = offSliceParent.transform;
-            calibrationSlices.Add(s);
-        }
-
-        //remove them if necessary.  The slices must be separate gameObjects or the cameras have trouble distinguishing their distances.
-        while (calibrationSlices.Count > cam.slices)
-        {
-            DestroyImmediate(calibrationSlices[calibrationSlices.Count - 1]);
-            calibrationSlices.RemoveAt(calibrationSlices.Count - 1);
-        }
-    }
-
-   
-
 }
