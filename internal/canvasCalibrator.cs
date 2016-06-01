@@ -37,10 +37,10 @@ public class canvasCalibrator : MonoBehaviour {
 
     public bool calibration = false;
 
-    public Material highlightMat;
-    public Material calibrationMat;
-    public Mesh aQuad;
-    public Mesh aWorkingMesh;
+    public GameObject selectedSlice;
+    public GameObject offSliceParent;
+    public GameObject calibrationSlicePrefab;
+    List<GameObject> calibrationSlices = new List<GameObject>(); //these must be separate objects, not a single mesh or the cameras have trouble differentiating the slices
 
    // public bool forceLoadFromFile = false;
 
@@ -49,6 +49,13 @@ public class canvasCalibrator : MonoBehaviour {
 
     void Start()
     {
+        //clean up, just in case
+        foreach (Transform s in offSliceParent.transform)
+        {
+            DestroyImmediate(s.gameObject);
+        }
+        calibrationSlices.Clear();
+
         updateSelection();
     }
 	
@@ -126,6 +133,11 @@ public class canvasCalibrator : MonoBehaviour {
         //    forceLoadFromFile = false;
         //}
 
+        if (calibration)
+            offSliceParent.SetActive(true);
+        else
+            offSliceParent.SetActive(false);
+
         updateSelection();
     }
 
@@ -134,7 +146,7 @@ public class canvasCalibrator : MonoBehaviour {
     {
         current = "s" + currentSlice + "  " + m.ToString();
 
-        Material mat = GetComponent<MeshRenderer>().sharedMaterial;
+        Material mat = selectedSlice.GetComponent<MeshRenderer>().sharedMaterial;
         if (m == canvasEditMode.M)
         {
             mat.SetTexture("_MainTex", calibrationCenter);
@@ -153,97 +165,47 @@ public class canvasCalibrator : MonoBehaviour {
                 mat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
         }
 
-        //handle geometry
-        if (calibration)
+        constructSlices();
+
+        float sliceSize = 1f / (float)cam.slices;
+        for (int s = 0; s < calibrationSlices.Count; s++)
         {
-            //construct the mesh from scratch
-            transform.localPosition = Vector3.zero;
-            GetComponent<MeshFilter>().mesh = aWorkingMesh;
-            updateMesh();
-        }
-        else
-        {
-            //set to slice:
-            float sliceSize = 1f / (float)cam.slices;
-            transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .5f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
-            GetComponent<MeshFilter>().mesh = aQuad;
-        }
-    }
-
-
-    public void updateMesh()
-    {      
-        if (cam.slices < 1)
-            return;  
-
-        
-        int sliceCount = cam.slices;         
-
-        Vector3[] verts = new Vector3[4 * sliceCount]; //4 verts in a quad * slices * dimensions  
-        Vector2[] uvs = new Vector2[4 * sliceCount];
-        Vector3[] normals = new Vector3[4 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
-        List<int> normalTris = new List<int>(); //the triangle list(s)
-        List<int> highlightTris = new List<int>(); 
-
-        float sliceSize = 1f / (float)sliceCount;
-
-        //create the mesh
-
-        for (int z = 0; z < sliceCount; z++)
-        {
-            int v = z * 4;
-            float zPos = ((float)z * sliceSize) - .5f + (sliceSize / 2); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
-
-            verts[v + 0] = new Vector3(-.5f, .5f, zPos); //top left
-            verts[v + 1] = new Vector3(.5f, .5f, zPos); //top right
-            verts[v + 2] = new Vector3(.5f, -.5f, zPos); //bottom right
-            verts[v + 3] = new Vector3(-.5f, -.5f, zPos); //bottom left
-            normals[v + 0] = new Vector3(0, 0, 1);
-            normals[v + 1] = new Vector3(0, 0, 1);
-            normals[v + 2] = new Vector3(0, 0, 1);
-            normals[v + 3] = new Vector3(0, 0, 1);
-
-            uvs[v + 0] = new Vector2(0, 1);
-            uvs[v + 1] = new Vector2(1, 1);
-            uvs[v + 2] = new Vector2(1, 0);
-            uvs[v + 3] = new Vector2(0, 0);
-
-
-            int[] tris = new int[6];
-            tris[0] = v + 0; //1st tri starts at top left
-            tris[1] = v + 1;
-            tris[2] = v + 2;
-            tris[3] = v + 2; //2nd triangle begins here
-            tris[4] = v + 3;
-            tris[5] = v + 0; //ends at bottom right     
-            if (z == currentSlice)
-                highlightTris.AddRange(tris);
+            if (s == currentSlice || s == currentSlice +1 || s == currentSlice -1) //hide the current slice
+            {
+                calibrationSlices[s].SetActive(false);
+            }
             else
-                normalTris.AddRange(tris);
+            {
+                calibrationSlices[s].SetActive(true);
+                calibrationSlices[s].transform.localPosition = new Vector3(0f, 0f, (s * sliceSize) - .5f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slic            
+            }
         }
 
 
-        MeshRenderer r = GetComponent<MeshRenderer>();
-        MeshFilter mf = GetComponent<MeshFilter>();
-
-        Mesh m = mf.sharedMesh;
-        if (!m)
-            m = new Mesh(); //probably some in-editor state where things aren't init.
-        m.Clear();
-        m.vertices = verts;
-        m.uv = uvs;
-        m.normals = normals;
-
-        m.subMeshCount = 2;
-        m.SetTriangles(highlightTris, 0); //selected material
-        m.SetTriangles(normalTris, 1); //unselected material
-
-        Material[] faceMaterials = new Material[2];
-        faceMaterials[0] = highlightMat;
-        faceMaterials[1] = calibrationMat;
-
-        r.sharedMaterials = faceMaterials;
-
-        m.RecalculateBounds();
+        //set the selection slice, which is the gameObject of this script
+        selectedSlice.transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .501f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
+        
     }
+
+
+    void constructSlices()
+    {
+        //add slices if necessary
+        while (calibrationSlices.Count < cam.slices)
+        {
+            GameObject s = Instantiate(calibrationSlicePrefab);
+            s.transform.parent = offSliceParent.transform;
+            calibrationSlices.Add(s);
+        }
+
+        //remove them if necessary.  The slices must be separate gameObjects or the cameras have trouble distinguishing their distances.
+        while (calibrationSlices.Count > cam.slices)
+        {
+            DestroyImmediate(calibrationSlices[calibrationSlices.Count - 1]);
+            calibrationSlices.RemoveAt(calibrationSlices.Count - 1);
+        }
+    }
+
+   
+
 }
