@@ -19,7 +19,7 @@ GameObject:
   - 114: {fileID: 11412860}
   - 114: {fileID: 11433310}
   - 114: {fileID: 11468286}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: adjustmentControls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   - 81: {fileID: 8195570}
   - 114: {fileID: 11467166}
   - 114: {fileID: 11493886}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HypercubeCanvas
   m_TagString: VISTEST
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.01}
-  m_LocalScale: {x: 1.2231032, y: 2.6092865, z: 1}
+  m_LocalScale: {x: 1.5254238, y: 3.2542372, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1

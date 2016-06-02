@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11463464}
   - 33: {fileID: 3346816}
   - 23: {fileID: 2354284}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PREVIEW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ GameObject:
   - 4: {fileID: 442250}
   - 33: {fileID: 3316816}
   - 23: {fileID: 2375538}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,16 +80,6 @@ MeshRenderer:
   - {fileID: 2100000, guid: 6f5f0be6f67e2474b9bf92fe383c8473, type: 2}
   - {fileID: 2100000, guid: ad562ff66a494924e823e295a8a5d0e5, type: 2}
   - {fileID: 2100000, guid: cddcca2c64382ac488a774c530629ecb, type: 2}
-  - {fileID: 2100000, guid: b4c557238f499304995684f221facadd, type: 2}
-  - {fileID: 2100000, guid: cac026a939c591f478c3a44034521d70, type: 2}
-  - {fileID: 2100000, guid: 537de907669071543a41c4c640c6c7e3, type: 2}
-  - {fileID: 2100000, guid: 44aca737d9e8abb46b68dc2e9d24e98f, type: 2}
-  - {fileID: 2100000, guid: 02ad2e834c16b7649a1c7130440deb5a, type: 2}
-  - {fileID: 2100000, guid: 2e1d40fa96bfdc746bbd60236da2bdcb, type: 2}
-  - {fileID: 2100000, guid: f9fc238cc0291d74d9abe4aea64d7c8e, type: 2}
-  - {fileID: 2100000, guid: 234ac8c2ba0394341b4c054750e7e075, type: 2}
-  - {fileID: 2100000, guid: 6fe63a75ab970e246a5ab24c452b728b, type: 2}
-  - {fileID: 2100000, guid: fffa0eca39deca144b5d6720298ead0a, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -156,8 +146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72bdc0de92d8d124fb9cb02ae63b367e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sliceCount: 20
-  sliceDistance: 0.05
+  sliceCount: 10
+  sliceDistance: 0.1
   previewMaterials:
   - {fileID: 2100000, guid: 5acc93dec39e2e2409496ea6ed4e0120, type: 2}
   - {fileID: 2100000, guid: 53ffe4e7f2464d041bdbd09f9802ec53, type: 2}
