@@ -63,8 +63,8 @@ public class canvasCalibrator : MonoBehaviour
         }
         else if (Input.GetKeyDown(toggleCalibration))
         {
-            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = !cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled;
-            calibration = cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled;
+            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = !cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled;
+            calibration = cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled;
         }
         else if (Input.GetKeyDown(highlightUL))
         {
@@ -124,9 +124,9 @@ public class canvasCalibrator : MonoBehaviour
         //}
 
         if (calibration)
-            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = true;
+            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = true;
         else
-            cam.renderCam.GetComponent<UnityStandardAssets.ImageEffects.ScreenOverlay>().enabled = false;
+            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = false;
 
     }
 
