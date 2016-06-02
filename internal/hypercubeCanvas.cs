@@ -109,9 +109,9 @@ public class hypercubeCanvas : MonoBehaviour
 
     public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
     {
-        if (slice < 1)
+        if (slice < 0)
             return false;
-        if (slice > ULOffsets.Length)
+        if (slice >= ULOffsets.Length)
             return false;
 
         if (m == canvasEditMode.UL)

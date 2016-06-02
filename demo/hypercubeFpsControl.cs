@@ -33,8 +33,8 @@ public class hypercubeFpsControl : MonoBehaviour {
     public KeyCode pauseKey;
     public bool paused = false;
 
-    Vector3 originalPosition;
-    Vector3 originalScale;
+   // Vector3 originalPosition;
+  //  Vector3 originalScale;
 
     public void pauseInput()
     {

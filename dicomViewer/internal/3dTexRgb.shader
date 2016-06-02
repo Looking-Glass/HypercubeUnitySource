@@ -1,4 +1,4 @@
-﻿Shader "Unlit/dicomShader3Dtex"
+﻿Shader "Hypercube/3D Texture/RGB Image"
 {
 	Properties
 	{
@@ -15,7 +15,8 @@
 		Tags { "RenderType"="Transparent" }
 		LOD 100
 		Cull Off
-		ZWrite Off
+		ZWrite On
+		ZTest Always
 		Blend One One
 
 		Pass
@@ -67,16 +68,6 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 col = tex3D(_MainTex, i.uv); //the data texture
-
-				float coloring = ((_Focus - col) * _Clamp) + .5  ; //the .5 centers the clamping onto the value range so that the * works across -.5 to .5, making the 'focus' matter
-				coloring = clamp(coloring, 0, 1);
-				col = tex2D(_LookupColor,float2(coloring,_Lookup)); //this is the lookup value
-
-				//fade the pixel if it is facing away from the camera (causes problems with the lower number cube cameras, so it's commented out)
-				//float facing = dot(i.normalViewSpace, i.viewVectorViewspace);		
-				//facing = abs(facing); //this makes it visible from the backface
-				//col *= facing * facing * facing;
-
 				col *= _Mod;
 				return col;
 			}

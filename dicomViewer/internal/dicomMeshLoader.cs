@@ -145,8 +145,8 @@ public class dicomMeshLoader: MonoBehaviour {
                 volumeMesh = gameObject;
 
             r = volumeMesh.AddComponent<MeshRenderer>();
-            r.material = m;
-            r.material.mainTexture = tex;
+            r.sharedMaterial = m;
+            r.sharedMaterial.mainTexture = tex;
         }
 
         createFrameMesh();

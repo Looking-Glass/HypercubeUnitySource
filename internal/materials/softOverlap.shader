@@ -1,5 +1,5 @@
 ﻿
-Shader "Test/softOverlap"
+Shader "Hidden/softOverlap"
 {
 	Properties
 	{

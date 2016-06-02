@@ -102,9 +102,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0.051596146, y: 0.97089386, z: -0.13784778, w: 0.18894716}
-  m_LocalPosition: {x: 10.27, y: 0.76, z: 4.73}
-  m_LocalScale: {x: 6.417937, y: 3.1963754, z: 6.417935}
+  m_LocalRotation: {x: 0.004138725, y: 0.9928037, z: -0.11968096, w: 0.0004987575}
+  m_LocalPosition: {x: 0.502, y: -0.309, z: 0.453}
+  m_LocalScale: {x: 1.9166822, y: 0.95458025, z: 1.9166816}
   m_Children:
   - {fileID: 447660}
   - {fileID: 446836}
@@ -176,11 +176,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 5.936592
-  far clip plane: 6.578386
+  near clip plane: 1.772931
+  far clip plane: 1.9645991
   field of view: 60
   orthographic: 1
-  orthographic size: 1.5981877
+  orthographic size: 0.47729012
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -346,7 +346,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
   m_Name: 
@@ -360,8 +360,8 @@ MonoBehaviour:
   sensitivityY: 30
   minimumX: -360
   maximumX: 360
-  minimumY: -360
-  maximumY: 360
+  minimumY: -180
+  maximumY: 180
   moveNode: {fileID: 0}
   pauseKey: 8
   paused: 0
@@ -455,9 +455,9 @@ MonoBehaviour:
   - key: offsetY
     value: 0
   - key: sliceWidth
-    value: 1080
+    value: 1920
   - key: pixelsPerSlice
-    value: 96
+    value: 120
   - key: flipX
     value: False
   - key: sliceCount
@@ -465,7 +465,7 @@ MonoBehaviour:
   - key: overlap
     value: 0.5
   - key: useSoftSlices
-    value: True
+    value: False
   - key: s0_ULx
     value: 0
   - key: s0_ULy
@@ -1107,7 +1107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   overlap: 0.5
   brightness: 1
-  slices: 20
+  slices: 10
   useSoftSlices: 1
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}

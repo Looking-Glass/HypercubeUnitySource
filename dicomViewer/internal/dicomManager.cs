@@ -22,6 +22,9 @@ public class dicomManager : MonoBehaviour {
 
     public dicomMeshLoader[] frames;
 
+    public UnityEngine.UI.Dropdown shaderDropDown;
+    public Shader[] shaderOptions;
+
     int currentFrame = 0;
     bool playing = false;
     public float playSpeed = .3f;
@@ -30,6 +33,15 @@ public class dicomManager : MonoBehaviour {
     void Start()
     {
         load();
+
+       shaderDropDown.ClearOptions();
+       List<string> names = new List<string>();
+        foreach(Shader s in shaderOptions)
+        {
+            names.Add(System.IO.Path.GetFileNameWithoutExtension(s.name)); //save the base name
+        }
+        shaderDropDown.AddOptions(names);
+        
     }
 
     public void updateSettings()
@@ -152,6 +164,14 @@ public class dicomManager : MonoBehaviour {
     public void pause()
     {
         playing = false;
+    }
+
+    public void onSetShader()
+    {
+        foreach (dicomMeshLoader m in frames)
+        {
+            m.gameObject.GetComponent<MeshRenderer>().sharedMaterial.shader = shaderOptions[shaderDropDown.value];
+        }
     }
 
     void Update()
