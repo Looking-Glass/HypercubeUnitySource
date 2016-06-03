@@ -30,12 +30,25 @@ public class hypercubeCanvas : MonoBehaviour
 
     public List<Material> canvasMaterials = new List<Material>();
 
+    [HideInInspector]
+    public bool usingCustomDimensions = false; //this is an override so that the canvas can be told to obey the dimensions of some particular output w/h screen
+
+    float customWidth;
+    float customHeight;
+
     //individual calibration offsets
     Vector2[] ULOffsets = null;
     Vector2[] UROffsets = null;
     Vector2[] LLOffsets = null;
     Vector2[] LROffsets = null;
     Vector2[] MOffsets = null;
+
+    public void setCustomWidthHeight(float w, float h)
+    {
+        usingCustomDimensions = true;
+        customWidth = w;
+        customHeight = h;
+    }
 
   
     //tweaks to the cube design to offset physical distortions
@@ -216,9 +229,26 @@ public class hypercubeCanvas : MonoBehaviour
         if (!sliceMesh)
             return;
 
+
         float aspectRatio = (float)Screen.width / (float)Screen.height;
         float xPixel = 1f / (float)Screen.width;
         float yPixel = 1f / (float)Screen.height;
+
+        if (usingCustomDimensions)
+        {
+            if (customWidth < 2 || customHeight < 2)
+            {
+                //Debug.LogWarning("Something went wrong with the custom dimensions override, the values are: w:" + customWidth + " h:" + customHeight);
+               // usingCustomDimensions = false;
+                return;
+            }
+
+            aspectRatio = customWidth / customHeight;
+            xPixel = 1f /customWidth;
+            yPixel = 1f / customHeight;
+        }
+
+
         sliceMesh.transform.localScale = new Vector3(sliceWidth * xPixel * aspectRatio, (float)sliceCount * sliceHeight * 2f * yPixel, 1f); //the *2 is because the view is 2 units tall
 
         sliceMesh.transform.localPosition = new Vector3(xPixel * sliceOffsetX, (yPixel * sliceOffsetY * 2f) - 1f, zPos); //the -1f is the center vertical on the screen, the *2 is because the view is 2 units tall

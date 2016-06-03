@@ -143,13 +143,16 @@ public class hypercubeCamera : MonoBehaviour {
         updateOverlap();
     }
 
-    public void loadSettings()
+    public void loadSettings(bool forceLoad = false)
     {
         dataFileAssoc d = GetComponent<dataFileAssoc>();
+
+        d.clear();
         d.load();
+
         //use our save values only in the player only to avoid confusing behaviors in the editor
         //LOAD OUR PREFS
-        if (!Application.isEditor)
+        if (!Application.isEditor || forceLoad)
         {
             slices = d.getValueAsInt("sliceCount", 10);
             localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
@@ -165,7 +168,7 @@ public class hypercubeCamera : MonoBehaviour {
         localCanvas.updateMesh(slices);
     }
 
-    void OnApplicationQuit()
+    public void saveSettings()
     {
         //save our settings whether in editor mode or play mode.
         dataFileAssoc d = GetComponent<dataFileAssoc>();
@@ -184,5 +187,10 @@ public class hypercubeCamera : MonoBehaviour {
             localCanvas.saveCalibrationOffsets(d);
 
         d.save();
+    }
+
+    void OnApplicationQuit()
+    {
+        saveSettings();
     }
 }

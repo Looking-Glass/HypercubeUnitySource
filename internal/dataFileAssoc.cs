@@ -25,6 +25,11 @@ public class dataFileAssoc : MonoBehaviour {
             load();
     }
 
+    public void clear()
+    {
+        keyPairs = new keyPair[0];
+    }
+
 
     public bool hasKey(string _key)
     {
