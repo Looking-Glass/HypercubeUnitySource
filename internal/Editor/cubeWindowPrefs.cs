@@ -11,14 +11,14 @@ public class cubeWindowPrefs : EditorWindow
     int height = EditorPrefs.GetInt("QB_windowHeight", Display.main.renderingHeight);
 
 
-    
-    [MenuItem("QB/Window Prefs")]
+
+    [MenuItem("Hypercube/Window Prefs")]
     public static void openCubeWindowPrefs()
     {
         EditorWindow.GetWindow(typeof(cubeWindowPrefs), false, "Hypercube Prefs");
     }
 
-    [MenuItem("QB/Save Cube Settings")]
+    [MenuItem("Hypercube/Cube: Save Settings")]
     public static void saveCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -26,7 +26,7 @@ public class cubeWindowPrefs : EditorWindow
             cam.saveSettings();
     }
 
-    [MenuItem("QB/Load Cube Settings")]
+    [MenuItem("Hypercube/Cube: Load Settings")]
     public static void loadCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -39,7 +39,7 @@ public class cubeWindowPrefs : EditorWindow
     {
 
         GUILayout.Label("Set Cube Window Preferences", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Use this to align the window position to the cube display monitor.\n\nREMEMBER: If it ever blocks important screen elements, the window can be closed with Ctrl + Q", MessageType.Info);
+        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIPS:\n1) If it ever blocks important screen elements, the window can be closed with Ctrl + Q\n\n2)On Windows, Unity prefers if the cube monitor is left of the main monitor (don't ask me why).\n\n3) If any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
         posX = EditorGUILayout.IntField("X Position:", posX);
         width = EditorGUILayout.IntField("Width:", width);

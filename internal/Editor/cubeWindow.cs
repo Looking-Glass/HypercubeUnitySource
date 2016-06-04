@@ -12,13 +12,8 @@ public class cubeWindow : EditorWindow
     RenderTexture renderTexture;
     Texture2D blackBG; //this keeps the rtt from blending with the grey color of the editorWindow itself
 
-    //    [MenuItem("QB/test")]
-    //public static void QB_test()
-    //{
 
-    //}
-
-    [MenuItem("QB/Open Window")]
+    [MenuItem("Hypercube/Open Window")]
     public static void QB_openWindow()
     {
         //allow only 1 window
@@ -37,7 +32,7 @@ public class cubeWindow : EditorWindow
         win.ShowPopup();
     }
 
-    [MenuItem("QB/Close Window _%q")] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+    [MenuItem("Hypercube/Close Window _%q")] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
     public static void QB_closeWindow()
     {
         EditorWindow.GetWindow(typeof(cubeWindow), true, "").Close();
