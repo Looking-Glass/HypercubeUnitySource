@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 
 //manages a full screen display of the render texture of the hypercube
-//Ctrl + Q closes it
+//Ctrl + W closes it
 
 
 public class cubeWindow : EditorWindow
@@ -32,10 +32,11 @@ public class cubeWindow : EditorWindow
         win.ShowPopup();
     }
 
-    [MenuItem("Hypercube/Close Window _%q")] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+    [MenuItem("Hypercube/Close Window _%w")] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
     public static void QB_closeWindow()
     {
         EditorWindow.GetWindow(typeof(cubeWindow), true, "").Close();
+
     }
 
 

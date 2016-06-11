@@ -39,7 +39,7 @@ public class cubeWindowPrefs : EditorWindow
     {
 
         GUILayout.Label("Set Cube Window Preferences", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIPS:\n1) If it ever blocks important screen elements, the window can be closed with Ctrl + Q\n\n2)On Windows, Unity prefers if the cube monitor is left of the main monitor (don't ask me why).\n\n3) If any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
+        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIPS:\n1) If it ever blocks important screen elements, the window can be closed with Ctrl + W\n\n2)On Windows, Unity prefers if the cube monitor is left of the main monitor (don't ask me why).\n\n3) If any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
         posX = EditorGUILayout.IntField("X Position:", posX);
         width = EditorGUILayout.IntField("Width:", width);

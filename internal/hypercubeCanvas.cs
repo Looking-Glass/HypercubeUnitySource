@@ -94,8 +94,6 @@ public class hypercubeCanvas : MonoBehaviour
 
     void OnValidate()
     {
-        if (Screen.width < 1 || Screen.height < 1)
-            return; //wtf.
 
         if (sliceCount < 1)
             sliceCount = 1;
@@ -229,6 +227,8 @@ public class hypercubeCanvas : MonoBehaviour
         if (!sliceMesh)
             return;
 
+        if (Screen.width < 1 || Screen.height < 1)
+            return; //wtf.
 
         float aspectRatio = (float)Screen.width / (float)Screen.height;
         float xPixel = 1f / (float)Screen.width;
