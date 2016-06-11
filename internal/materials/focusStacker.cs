@@ -9,6 +9,9 @@ using System;
 public class focusStacker : MonoBehaviour
 {
     public float sampleRange = .002f; //how far to sample for contrast from the current pixel in UV space
+    public float sampleDifferenceMod = .4f;
+    public float sampleOffset = 1.5f;
+    public float sampleContrast = 50f;
     
     public Shader focusStackShader;
     public RenderTexture target;
@@ -41,6 +44,9 @@ public class focusStacker : MonoBehaviour
                 m_Material = new Material(focusStackShader);
                 m_Material.hideFlags = HideFlags.HideAndDontSave;
                 m_Material.SetFloat("_SampleRange", sampleRange);
+                m_Material.SetFloat("_SampleContrastEffect", sampleDifferenceMod);
+                m_Material.SetFloat("_Brightness", sampleOffset);
+                m_Material.SetFloat("_Contrast", sampleContrast);
             }
             return m_Material;
         }
@@ -49,6 +55,9 @@ public class focusStacker : MonoBehaviour
     void OnValidate()
     {
         material.SetFloat("_SampleRange", sampleRange);
+        m_Material.SetFloat("_SampleContrastEffect", sampleDifferenceMod);
+        m_Material.SetFloat("_Brightness", sampleOffset);
+        m_Material.SetFloat("_Contrast", sampleContrast);
     }
 
 
