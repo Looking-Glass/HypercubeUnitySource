@@ -2,11 +2,12 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
-		_SampleRange ("Sample Range", Range (.0001, .05)) = .002
-		_SampleContrastEffect ("Range Contrast Mod", Range (0, 1)) = .4 
-		_Brightness ("Sample Offset", Range (-20, 20)) = 1.5
-		_Contrast ("Sample Contrast", Range (0, 500)) = 10
+		_MainTex ("RawMask", 2D) = "white" {}
+		_OriginalTex ("OriginalImage", 2D) = "white" {}
+	//	_SampleRange ("Sample Range", Range (.0001, .05)) = .002 //ideally this should be the pixel sizes
+		_ExpansionStrength ("Expansion", Range (0, 2)) = .7
+		_PixelSizeX ("Pixel Size X", Range (0, 1)) = .01
+		_PixelSizeY ("Pixel Size Y", Range (0, 1)) = .01
 	}
 	SubShader
 	{
@@ -21,6 +22,11 @@
 			
 			#include "UnityCG.cginc"
 
+			#pragma multi_compile ___  RANGE_SOFT
+			#pragma multi_compile ___  RANGE_2
+			#pragma multi_compile ___  RANGE_3
+			#pragma multi_compile ___SHOWMASK
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -30,104 +36,189 @@
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
-			//	float2 screenPos:TEXCOORD1;
 				float4 vertex : SV_POSITION;
 			};
 
 			sampler2D _MainTex;
-			sampler2D _diffTex;
+			sampler2D _OriginalTex;
 			float4 _MainTex_ST;
-			float _SampleRange;
-			float _SampleContrastEffect;
-			float _Brightness;
-			float _Contrast;
+			float _PixelSizeX;
+			float _PixelSizeY;
+			float _ExpansionStrength;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-			//	o.screenPos = ComputeScreenPos(o.vertex);
 				return o;
+			}
+
+
+			float4 PSHorizontalBlur(v2f In): COLOR
+			{
+				float4 sum = 0;
+				int weightSum = 0;
+
+				//the weights of the neighbouring pixels
+				int weights[15] = {1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1};
+
+				//we are taking 15 samples
+				for (int i = 0; i < 15; i++)
+				{
+					//7 to the left, self and 7 to the right
+					float2 cord = float2(In.uv.x + _PixelSizeX * (i-7), In.uv.y);
+
+					//the samples are weighed according to their relation to the current pixel
+					sum += tex2D(_MainTex, cord) * weights[i];
+
+					//while going through the loop we are summing up the weights
+					weightSum += weights[i];
+				}
+
+				sum /= weightSum;
+				return float4(sum.rgb, 1);
+			}
+			float4 PSVerticalalBlur(v2f In): COLOR
+			{
+				float4 sum = 0;
+				int weightSum = 0;
+
+				//the weights of the neighbouring pixels
+				int weights[15] = {1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1};
+
+				//we are taking 15 samples
+				for (int i = 0; i < 15; i++)
+				{
+					//7 upwards, self and 7 downwards
+					float2 cord = float2(In.uv.x, In.uv.y + _PixelSizeY * (i-7));
+
+					//the samples are weighed according to their relation to the current pixel
+					sum += tex2D(_MainTex, cord) * weights[i];
+
+					//while going through the loop we are summing up the weights
+					weightSum += weights[i];
+				}
+
+				sum /= weightSum;
+				return float4(sum.rgb, 1);
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				
-				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
-				float3 minimum = col.rgb;
-				float3 maximum = col.rgb;
 
-				//sample 8 values near the current pixel
-				i.uv -= _SampleRange;
-				float4 current = tex2D(_MainTex, i.uv); //upper left
-				float3 total = current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				col = PSHorizontalBlur(i) + PSVerticalalBlur(i);
 
-				i.uv[0] += _SampleRange;
-				current = tex2D(_MainTex, i.uv); //top middle
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				col.rgb = (col.r + col.g + col.b) * _ExpansionStrength;
+				return col * tex2D(_OriginalTex, i.uv);
 
-				i.uv[0] += _SampleRange;
-				current = tex2D(_MainTex, i.uv); //top right
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
 
-				i.uv[1] += _SampleRange;
-				current = tex2D(_MainTex, i.uv); //right middle
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				///////
 
-				i.uv[0] -= _SampleRange * 2;
-				current = tex2D(_MainTex, i.uv); //left middle
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				//sample 8 values adjacent to the current pixel
+				float rangeX = _PixelSizeX;
+				float rangeY = _PixelSizeY;
+				i.uv.x -= rangeX;
+				i.uv.y -= rangeY;
+				float3 neighbor = tex2D(_MainTex, i.uv).rgb; //upper left
 
-				i.uv[1] += _SampleRange;
-				current = tex2D(_MainTex, i.uv); //lower left
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top middle
 
-				i.uv[0] += _SampleRange;
-				current= tex2D(_MainTex, i.uv); //lower middle
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top right
 
-				i.uv[0] += _SampleRange;
-				current = tex2D(_MainTex, i.uv); //lower right
-				total += current.rgb;
-				minimum = min(current, minimum);
-				maximum = max(current, maximum);
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //right middle
 
-				float3 diff =  (total/8) - col.rgb; //the average - color
+				i.uv.x -= rangeX * 2;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //left middle
+
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower left
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower middle
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower right		
+
+				#ifdef  RANGE_2 
+				//2nd sample: sample farther out, and add this too.
+				rangeX += _PixelSizeX;
+				rangeY += _PixelSizeY;
+				i.uv.x -= rangeX;
+				i.uv.y -= rangeY;
+				neighbor = tex2D(_MainTex, i.uv).rgb; //upper left
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top middle
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top right
+
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //right middle
+
+				i.uv.x -= rangeX * 2;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //left middle
+
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower left
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower middle
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower right	
 				
 
-				//add the effect of high difference among the samples
-				diff *=  (maximum - minimum) * _SampleContrastEffect;
+				#ifdef  RANGE_3
+				//3rd sample: sample farther out, and add this too.
+				rangeX += _PixelSizeX;
+				rangeY += _PixelSizeY;
+				i.uv.x -= rangeX;
+				i.uv.y -= rangeY;
+				neighbor = tex2D(_MainTex, i.uv).rgb; //upper left
 
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top middle
 
-				//contrast + brightness
-				diff.rgb = ((diff.rgb - 0.5f) * max(_Contrast, 0)) + 0.5f;
-				diff.rgb += _Brightness;
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //top right
 
-				//uncomment to view raw mask
-				//float4 output = col;
-				//output.rgb = diff;
-				//return output;
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //right middle
 
-				col.rgb *= diff;
+				i.uv.x -= rangeX * 2;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //left middle
+
+				i.uv.y += rangeY;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower left
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower middle
+
+				i.uv.x += rangeX;
+				neighbor += tex2D(_MainTex, i.uv).rgb; //lower right				
+				#endif
+				#endif
+			
+				col.rgb += (neighbor.r + neighbor.g + neighbor.b) * _ExpansionStrength;
+
+				
+				#ifdef SHOWMASK
 				return col;
+				#endif
 
+				return col;
 			}
+
+
+
+
+
 			ENDCG
 		}
 	}
