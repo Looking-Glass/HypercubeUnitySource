@@ -3,10 +3,11 @@ using System.Collections;
 
 
 [ExecuteInEditMode]
-public class focusStackerTest : MonoBehaviour {
+public class focusStackerTester : MonoBehaviour {
 
     public focusStacker fs;
     public RenderTexture source;
+    public RenderTexture target;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +17,6 @@ public class focusStackerTest : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        fs.processFrame(source);
+        fs.processFrame(source, target);
 	}
 }
