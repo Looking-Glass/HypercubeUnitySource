@@ -22,10 +22,7 @@
 			
 			#include "UnityCG.cginc"
 
-			#pragma multi_compile ___  RANGE_SOFT
-			#pragma multi_compile ___  RANGE_2
-			#pragma multi_compile ___  RANGE_3
-			#pragma multi_compile ___SHOWMASK
+			#pragma multi_compile ___ SHOWBLUR
 
 			struct appdata
 			{

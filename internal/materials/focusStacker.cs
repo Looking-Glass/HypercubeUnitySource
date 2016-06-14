@@ -5,10 +5,10 @@ using System;
 
 public enum maskBlurType
 {
-    RANGE1 = 0,
-    RANGE2,
-    RANGE3,
-    SOFT
+    OFF = 0,
+    MASK,
+    BLUR,
+    OUTPUT
 }
 
 
@@ -23,12 +23,10 @@ public class focusStacker : MonoBehaviour
     public float edgeSuppression = .97f;
     public float sampleBrightness = 1.5f;
     public float sampleContrast = 50f;
-    public bool viewMask;
 
     public float maskStrength = 1f;
-    public bool viewMaskProcessed;
 
-    public maskBlurType maskType = maskBlurType.RANGE3;
+    public maskBlurType maskType = maskBlurType.OUTPUT;
 
     public Shader focusStackMaskShader;
     public Shader focusStackShader;
@@ -63,39 +61,12 @@ public class focusStacker : MonoBehaviour
         stackMaterial.SetFloat("_PixelSizeX", sampleRange);
         stackMaterial.SetFloat("_PixelSizeY", sampleRange);
         stackMaterial.SetFloat("_ExpansionStrength", maskStrength);
-        if (viewMaskProcessed)
-            stackMaterial.EnableKeyword("SHOWMASK");
-        else
-            stackMaterial.DisableKeyword("SHOWMASK");
 
-        if (maskType == maskBlurType.RANGE1)
-        {
-            stackMaterial.EnableKeyword("RANGE_1");
-            stackMaterial.DisableKeyword("RANGE_2");
-            stackMaterial.DisableKeyword("RANGE_3");
-            stackMaterial.DisableKeyword("RANGE_SOFT");
-        }
-        else if (maskType == maskBlurType.RANGE2)
-        {
-            stackMaterial.EnableKeyword("RANGE_1");
-            stackMaterial.EnableKeyword("RANGE_2");
-            stackMaterial.DisableKeyword("RANGE_3");
-            stackMaterial.DisableKeyword("RANGE_SOFT");
-        }
-        else if (maskType == maskBlurType.RANGE3)
-        {
-            stackMaterial.EnableKeyword("RANGE_1");
-            stackMaterial.EnableKeyword("RANGE_2");
-            stackMaterial.EnableKeyword("RANGE_3");
-            stackMaterial.DisableKeyword("RANGE_SOFT");
-        }
-        else if (maskType == maskBlurType.SOFT)
-        {
-            stackMaterial.DisableKeyword("RANGE_1");
-            stackMaterial.DisableKeyword("RANGE_2");
-            stackMaterial.DisableKeyword("RANGE_3");
-            stackMaterial.EnableKeyword("RANGE_SOFT");
-        }
+        if (maskType == maskBlurType.OFF)
+            maskMaterial.EnableKeyword("DISABLE");
+        else
+            maskMaterial.DisableKeyword("DISABLE");
+
 
 
     }
@@ -146,14 +117,15 @@ public class focusStacker : MonoBehaviour
     {
         if (!outTarget)
             return;
-     
-        if (viewMask)
+
+        if (maskType == maskBlurType.OFF || maskType == maskBlurType.MASK)
         {
             Graphics.Blit(source, outTarget, maskMaterial);
         }
-        else
+        else if (maskType == maskBlurType.BLUR || maskType == maskBlurType.OUTPUT)
         {
             stackMaterial.SetTexture("_OriginalTex",source);
+
             Graphics.Blit(source, maskTarget, maskMaterial);
             Graphics.Blit(maskTarget, outTarget, stackMaterial);
         }

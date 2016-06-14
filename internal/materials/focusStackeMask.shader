@@ -26,6 +26,8 @@ Shader "Unlit/focusStackMask"
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+
+			#pragma multi_compile ___  DISABLE
 		
 			struct appdata
 			{
@@ -60,8 +62,14 @@ Shader "Unlit/focusStackMask"
 			
 			fixed4 frag (v2f i) : SV_Target
 			{				
+
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
+
+				#ifdef DISABLE
+				return col;
+				#endif
+
 				float3 minimum = col.rgb;
 				float3 maximum = col.rgb;
 
