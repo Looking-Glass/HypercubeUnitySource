@@ -5,7 +5,7 @@ using System.Collections;
 [ExecuteInEditMode]
 public class focusStackerTester : MonoBehaviour {
 
-    public focusStacker fs;
+    public focusStackedEffect fs;
     public RenderTexture source;
     public RenderTexture target;
 

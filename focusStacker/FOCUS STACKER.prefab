@@ -40,8 +40,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1e67474f9c0e2448a15c2ca789d0972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectResolutionX: 1024
-  effectResolutionY: 1024
   sampleRange: 1.97
   edgeSuppression: 9.85
   sampleBrightness: 1
@@ -52,15 +50,13 @@ MonoBehaviour:
     type: 3}
   HBlurShader: {fileID: 4800000, guid: fd3d1b0eb71509a48b85896f088234d9, type: 3}
   VBlurShader: {fileID: 4800000, guid: 3355ef2e2ea13994b85939b077a91747, type: 3}
-  maskTarget: {fileID: 8400000, guid: 097140572932386478b3752887063cb4, type: 2}
-  blurTarget: {fileID: 8400000, guid: 9ba473a78cc70834a8bdc325b0c0fc70, type: 2}
 --- !u!114 &11493236
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197016}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0857dd63d0e2a3f418648135ba78c182, type: 3}
   m_Name: 

@@ -14,6 +14,15 @@ public class hypercubePreview : MonoBehaviour {
     public Material[] previewMaterials;
 
 
+    void Start()
+    {
+
+        //try in a lazy way to connect ourselves
+        hypercubeCamera cam  = GameObject.FindObjectOfType<hypercubeCamera>();
+        if (cam && !cam.preview)
+            cam.preview = this;
+    }
+
     void OnValidate()
     {
         if (sliceCount < 1)

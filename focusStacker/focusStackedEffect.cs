@@ -16,20 +16,19 @@ public enum maskBlurType
 [ExecuteInEditMode]
 //[RequireComponent(typeof(Camera))]
 [AddComponentMenu("")]
-public class focusStacker : MonoBehaviour
+public class focusStackedEffect : MonoBehaviour
 {
-    public int effectResolutionX = 1024;
-    public int effectResolutionY = 1024;
 
-    public float sampleRange = .002f; //how far to sample for contrast from the current pixel in UV space
-   // public float sampleDifferenceMod = .4f;
+    public float sampleRange = 2f; //how far to sample for contrast from the current pixel in UV space
     public float edgeSuppression = 9.7f;
-    public float sampleBrightness = 1.5f;
+    public float sampleBrightness = 1f;
     public float sampleContrast = 3f;
 
-    public float maskStrength = 3.5f;
+    public float maskStrength = 1.92f;
 
     public maskBlurType maskType = maskBlurType.OUTPUT;
+
+    public float outputMod = 1f;
 
     public Shader focusStackMaskShader;
     public Shader HBlurShader;
@@ -73,10 +72,9 @@ public class focusStacker : MonoBehaviour
         maskMaterial.SetFloat("_Contrast", sampleContrast);
         maskMaterial.SetFloat("_EdgeSuppression", 1 - (edgeSuppression * .1f)); //nice edge suppression values are between .98 and .99, so this helps them appear slightly saner
 
-        HBlurMaterial.SetFloat("_PixelSizeX", 1f / (float)effectResolutionX);
-        VBlurMaterial.SetFloat("_PixelSizeY", 1f / (float)effectResolutionY);
         HBlurMaterial.SetFloat("_ExpansionStrength", maskStrength * 100);
         VBlurMaterial.SetFloat("_ExpansionStrength", maskStrength * 100);
+        VBlurMaterial.SetFloat("_OutMod", outputMod);
 
         if (maskType == maskBlurType.OFF)
             maskMaterial.EnableKeyword("DISABLE");
@@ -157,6 +155,8 @@ public class focusStacker : MonoBehaviour
         {
             blurTarget = new RenderTexture(source.width, source.height, 32, RenderTextureFormat.ARGB32);
             maskTarget = new RenderTexture(source.width, source.height, 32, RenderTextureFormat.ARGB32);
+            HBlurMaterial.SetFloat("_PixelSizeX", 1f / (float)source.width);
+            VBlurMaterial.SetFloat("_PixelSizeY", 1f / (float)source.height);
         }
 
 
@@ -171,6 +171,9 @@ public class focusStacker : MonoBehaviour
             Graphics.Blit(source, maskTarget, maskMaterial); //pass 1: edge detection to determine in-focus areas
             Graphics.Blit(maskTarget, blurTarget, HBlurMaterial);  //pass 2: blur the edges horizontally
             Graphics.Blit(blurTarget, outTarget, VBlurMaterial); //pass 3: blur the edges vertically and composite it with the original.
+
+            //Graphics.Blit(source, maskTarget, maskMaterial); //pass 1: edge detection to determine in-focus areas
+            //Graphics.Blit(maskTarget, outTarget, HBlurMaterial);  
         }
     }
 }

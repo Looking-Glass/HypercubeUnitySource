@@ -10,6 +10,7 @@ Shader "Hidden/focusStackBlur_V"
 		_OriginalTex ("OriginalImage", 2D) = "white" {}
 		_ExpansionStrength ("Expansion", Range (0, 2)) = .7
 		_PixelSizeY ("Pixel Size Y", Range (0, 1)) = .01
+		_OutMod ("Output Modifier", Range (0, 1)) = 1
 	}
 	SubShader
 	{
@@ -17,7 +18,7 @@ Shader "Hidden/focusStackBlur_V"
 		LOD 100
 
 		Pass
-		{
+		{ 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -43,6 +44,7 @@ Shader "Hidden/focusStackBlur_V"
 			float4 _MainTex_ST;
 			float _PixelSizeY;
 			float _ExpansionStrength;
+			float _OutMod;
 			
 			v2f vert (appdata v)
 			{
@@ -90,7 +92,7 @@ Shader "Hidden/focusStackBlur_V"
 
 				col.a = col.r; //allow a useful alpha, if desired
 
-				return col * tex2D(_OriginalTex, i.uv);
+				return col * tex2D(_OriginalTex, i.uv) * _OutMod;
 			}
 
 

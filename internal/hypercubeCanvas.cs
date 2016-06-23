@@ -31,7 +31,7 @@ public class hypercubeCanvas : MonoBehaviour
     public List<Material> canvasMaterials = new List<Material>();
 
     [HideInInspector]
-    public bool usingCustomDimensions = false; //this is an override so that the canvas can be told to obey the dimensions of some particular output w/h screen
+    public bool usingCustomDimensions = false; //this is an override so that the canvas can be told to obey the dimensions of some particular output w/h screen other than the game window
 
     float customWidth;
     float customHeight;
@@ -45,6 +45,9 @@ public class hypercubeCanvas : MonoBehaviour
 
     public void setCustomWidthHeight(float w, float h)
     {
+        if (w == 0 || h == 0) //bogus values. Possible, if the window is still setting up.
+            return;
+
         usingCustomDimensions = true;
         customWidth = w;
         customHeight = h;
@@ -234,15 +237,8 @@ public class hypercubeCanvas : MonoBehaviour
         float xPixel = 1f / (float)Screen.width;
         float yPixel = 1f / (float)Screen.height;
 
-        if (usingCustomDimensions)
+        if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
         {
-            if (customWidth < 2 || customHeight < 2)
-            {
-                //Debug.LogWarning("Something went wrong with the custom dimensions override, the values are: w:" + customWidth + " h:" + customHeight);
-               // usingCustomDimensions = false;
-                return;
-            }
-
             aspectRatio = customWidth / customHeight;
             xPixel = 1f /customWidth;
             yPixel = 1f / customHeight;
@@ -360,15 +356,15 @@ public class hypercubeCanvas : MonoBehaviour
             verts[v + 7] = new Vector3(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x)), 0f); //bottom middle
             verts[v + 8] = new Vector3(1f + LROffsets[s].x, yPos + LROffsets[s].y, 0f); //bottom right         
 
-            normals[v + 0] = new Vector3(0, 0, 1);
-            normals[v + 1] = new Vector3(0, 0, 1);     
-            normals[v + 2] = new Vector3(0, 0, 1);
-            normals[v + 3] = new Vector3(0, 0, 1);
-            normals[v + 4] = new Vector3(0, 0, 1);
-            normals[v + 5] = new Vector3(0, 0, 1);
-            normals[v + 6] = new Vector3(0, 0, 1);
-            normals[v + 7] = new Vector3(0, 0, 1);
-            normals[v + 8] = new Vector3(0, 0, 1);
+            normals[v + 0] = Vector3.forward;
+            normals[v + 1] = Vector3.forward;
+            normals[v + 2] = Vector3.forward;
+            normals[v + 3] = Vector3.forward;
+            normals[v + 4] = Vector3.forward;
+            normals[v + 5] = Vector3.forward;
+            normals[v + 6] = Vector3.forward;
+            normals[v + 7] = Vector3.forward;
+            normals[v + 8] = Vector3.forward;
 
             if (!flipX)
             {

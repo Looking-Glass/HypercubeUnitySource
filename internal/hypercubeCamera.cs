@@ -37,7 +37,11 @@ public class hypercubeCamera : MonoBehaviour {
                 localCanvas = Instantiate(canvasPrefab); //normal instantiation, lost the prefab connection
 #endif
             }
-        }       
+        }
+
+        if (!preview)
+            preview = GameObject.FindObjectOfType<hypercubePreview>();
+
 
         loadSettings();
         resetSettings();

@@ -34,7 +34,7 @@ Shader "Hidden/focusStackBlur_H"
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
-
+			 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float _PixelSizeX;
