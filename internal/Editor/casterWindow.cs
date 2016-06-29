@@ -2,30 +2,49 @@
 using UnityEditor;
 using System.Collections;
 
-//manages a full screen display of the render texture of the hypercube
-//Ctrl + Q closes it
+//manages a full screen display of the render texture of the Volume
+
+//due to differences in the way the windows function on different OS
+//on OSX the caster must be launched with the mouse over the desired display, so there is no 'toggle window' menuItem (there is only a 'close window')  and the ⌘w hotkey to toggle it.
+
+//on Windows 
+//Ctrl + W can toggle the window, and also you have a toggle option in the menu.
 
 
-public class cubeWindow : EditorWindow
+public class casterWindow : EditorWindow
 {
     Camera canvasCam;
     hypercubeCanvas canvas;
     RenderTexture renderTexture;
     Texture2D blackBG; //this keeps the rtt from blending with the grey color of the editorWindow itself
 
+    static casterWindow caster;
 
-    [MenuItem("Volume/Open Window _%e", false, 10)]
+
+    [MenuItem("VOLUME/Toggle Caster Window _%w", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+    public static void V_toggleWindow()
+    {
+      //  EditorWindow window = EditorWindow.GetWindow(typeof(casterWindow));
+        if (caster)
+            V_closeWindow();
+        else
+            V_openWindow();
+    }
+
+#if UNITY_STANDALONE_OSX   //osx you open the window with option + w, not with the menu.. but you still need the menu virtually for the hotkey
+    [MenuItem("VOLUME/Toggle Caster Window _%w", true)]
+    static bool hideOSXMenu()
+    {
+        return false;
+    }
+#endif
+
     public static void V_openWindow()
     {
         //allow only 1 window
-        EditorWindow window = EditorWindow.GetWindow(typeof(cubeWindow), true, "");
-		if (window) 
-		{
-			window.Close ();
-			//window.position = new Rect(posX, posY, w, h);
-			//window.ShowPopup ();
-			//return;
-		}
+       // EditorWindow window = EditorWindow.GetWindow(typeof(casterWindow));
+        if (caster)
+            caster.Close();
 	
 
         int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
@@ -35,24 +54,30 @@ public class cubeWindow : EditorWindow
 
 
         //create a new window
-        cubeWindow win = ScriptableObject.CreateInstance<cubeWindow>();
-        win.position = new Rect(posX, posY, w, h);
-        win.autoRepaintOnSceneChange = true;  //this lets it update any changes.  see also: http://docs.unity3d.com/ScriptReference/EditorWindow-autoRepaintOnSceneChange.html
-        win.ShowPopup();
+        caster = ScriptableObject.CreateInstance<casterWindow>();
+        caster.position = new Rect(posX, posY, w, h);
+        caster.autoRepaintOnSceneChange = true;  //this lets it update any changes.  see also: http://docs.unity3d.com/ScriptReference/EditorWindow-autoRepaintOnSceneChange.html
+        caster.ShowPopup();
     }
 
-    [MenuItem("Volume/Close Window _%w", false, 11)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+
+
+
+#if UNITY_STANDALONE_OSX   //osx you open the window with option + e, not with the menu.. but you still need the menu virtually for the hotkey
+    [MenuItem("VOLUME/Close Caster Window", false, 11)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+#endif
     public static void V_closeWindow()
     {
-        EditorWindow w = EditorWindow.GetWindow(typeof(cubeWindow), true, "");
-		w.Focus ();
-		w.Close ();
+        //EditorWindow w = EditorWindow.GetWindow(typeof(casterWindow), true, "");
+        caster.Focus();
+        caster.Close();
 
         //stop deforming the output view
         hypercubeCanvas canvas = GameObject.FindObjectOfType<hypercubeCanvas>();
         if (canvas)
             canvas.usingCustomDimensions = false;
 
+        caster = null;
     }
 
 

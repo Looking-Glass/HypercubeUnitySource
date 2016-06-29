@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
-public class cubeWindowPrefs : EditorWindow
+public class casterWindowPrefs : EditorWindow
 {
 
     int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
@@ -12,13 +12,13 @@ public class cubeWindowPrefs : EditorWindow
     int height = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight);
 
 
-	[MenuItem("V⏻lume/Window Prefs _%t", false, -100)]  //1 is prio
+    [MenuItem("VOLUME/Caster Window Prefs", false, 1)]  //1 is prio
     public static void openCubeWindowPrefs()
     {
-        EditorWindow.GetWindow(typeof(cubeWindowPrefs), false, "Hypercube Prefs");
+        EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Hypercube Prefs");
     }
 
-	[MenuItem("V⏻lume/Save Settings", false, 51)]
+	[MenuItem("VOLUME/Save Settings", false, 51)]
     public static void saveCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -26,7 +26,7 @@ public class cubeWindowPrefs : EditorWindow
             cam.saveSettings();
     }
 
-	[MenuItem("V⏻lume/Load Settings", false, 52)]
+	[MenuItem("VOLUME/Load Settings", false, 52)]
     public static void loadCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -61,35 +61,27 @@ public class cubeWindowPrefs : EditorWindow
         }
 
 
-
         GUILayout.FlexibleSpace();
 
 
-		#if UNITY_EDITOR_WIN
-		EditorGUILayout.HelpBox("WINDOWS TIPS:\nUnity prefers if the cube monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
-        if (GUILayout.Button("Preview it!"))
+		#if UNITY_EDITOR_WIN
+		EditorGUILayout.HelpBox("TIPS:\nUnity prefers if the cube monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
+
+		#elif UNITY_STANDALONE_OSX
+
+		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then ⌘ E", MessageType.Info);
+#endif
+
+        if (GUILayout.Button("- SAVE -"))
         {
             EditorPrefs.SetInt("V_windowOffsetX", posX);
             EditorPrefs.SetInt("V_windowOffsetY", posY);
             EditorPrefs.SetInt("V_windowWidth", width);
             EditorPrefs.SetInt("V_windowHeight", height);
 
-			cubeWindow.V_openWindow();		
+            casterWindow.V_closeWindow();
         }
-		#elif UNITY_STANDALONE_OSX
-
-		if (GUILayout.Button("- SAVE -"))
-		{
-			EditorPrefs.SetInt("V_windowOffsetX", posX);
-			EditorPrefs.SetInt("V_windowOffsetY", posY);
-			EditorPrefs.SetInt("V_windowWidth", width);
-			EditorPrefs.SetInt("V_windowHeight", height);
-
-			cubeWindow.V_closeWindow();	
-		}
-		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then COMMAND E", MessageType.Info);
-		#endif
     }
 
 
