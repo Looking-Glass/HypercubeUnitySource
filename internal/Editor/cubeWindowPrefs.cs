@@ -12,14 +12,13 @@ public class cubeWindowPrefs : EditorWindow
     int height = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight);
 
 
-
-    [MenuItem("Volume/Window Prefs", false, -100)]  //1 is prio
+	[MenuItem("V⏻lume/Window Prefs _%t", false, -100)]  //1 is prio
     public static void openCubeWindowPrefs()
     {
         EditorWindow.GetWindow(typeof(cubeWindowPrefs), false, "Hypercube Prefs");
     }
 
-    [MenuItem("Volume/Save Settings", false, 51)]
+	[MenuItem("V⏻lume/Save Settings", false, 51)]
     public static void saveCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -27,7 +26,7 @@ public class cubeWindowPrefs : EditorWindow
             cam.saveSettings();
     }
 
-    [MenuItem("Volume/Load Settings", false, 52)]
+	[MenuItem("V⏻lume/Load Settings", false, 52)]
     public static void loadCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -36,11 +35,12 @@ public class cubeWindowPrefs : EditorWindow
     }
 
 
+
     void OnGUI()
     {
 
         GUILayout.Label("Set Cube Window Preferences", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIPS:\n1) If it ever blocks important screen elements, the window can be closed with Ctrl + W\n\n2)On Windows, Unity prefers if the cube monitor is left of the main monitor (don't ask me why).\n\n3) If any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
+        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIP:\nIf it ever blocks important screen elements, the window can be closed with Ctrl + W", MessageType.Info);
 
         posX = EditorGUILayout.IntField("X Position:", posX);
         posY = EditorGUILayout.IntField("Y Position:", posY);
@@ -51,6 +51,7 @@ public class cubeWindowPrefs : EditorWindow
         if (GUILayout.Button("Move Right +" + Screen.currentResolution.width))
             posX += Screen.currentResolution.width;
 
+
         if (GUILayout.Button("Set to current: " + Screen.currentResolution.width + " x " + Screen.currentResolution.height))
         {
             posX = 0;
@@ -59,16 +60,37 @@ public class cubeWindowPrefs : EditorWindow
             height = Screen.currentResolution.height;
         }
 
+
+
         GUILayout.FlexibleSpace();
+
+
+		#if UNITY_EDITOR_WIN
+		EditorGUILayout.HelpBox("WINDOWS TIPS:\nUnity prefers if the cube monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
         if (GUILayout.Button("Preview it!"))
         {
             EditorPrefs.SetInt("V_windowOffsetX", posX);
             EditorPrefs.SetInt("V_windowOffsetY", posY);
             EditorPrefs.SetInt("V_windowWidth", width);
-            EditorPrefs.SetInt("V_windowHeight", height); 
-            cubeWindow.V_openWindow();
-        }
+            EditorPrefs.SetInt("V_windowHeight", height);
 
+			cubeWindow.V_openWindow();		
+        }
+		#elif UNITY_STANDALONE_OSX
+
+		if (GUILayout.Button("- SAVE -"))
+		{
+			EditorPrefs.SetInt("V_windowOffsetX", posX);
+			EditorPrefs.SetInt("V_windowOffsetY", posY);
+			EditorPrefs.SetInt("V_windowWidth", width);
+			EditorPrefs.SetInt("V_windowHeight", height);
+
+			cubeWindow.V_closeWindow();	
+		}
+		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then COMMAND E", MessageType.Info);
+		#endif
     }
+
+
 }

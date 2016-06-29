@@ -24,11 +24,11 @@ Shader "Unlit/focusStackMask"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			
+
 			#include "UnityCG.cginc"
 
 			#pragma multi_compile ___  DISABLE
-		
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -50,7 +50,7 @@ Shader "Unlit/focusStackMask"
 			float _EdgeSuppression;
 			float _Brightness;
 			float _Contrast;
-			
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -59,9 +59,9 @@ Shader "Unlit/focusStackMask"
 			//	o.screenPos = ComputeScreenPos(o.vertex);
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i) : SV_Target
-			{				
+			{
 
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
@@ -123,8 +123,8 @@ Shader "Unlit/focusStackMask"
 				maximum = max(current, maximum);
 
 				float3 diff =  (total/8) - col.rgb; //the average - color
-				
-			
+
+
 				//add the effect of high difference among the samples
 				//float3  sampleDifferenceMod =  (maximum - minimum) * _SampleContrastEffect;
 				//sampleDifferenceMod =  clamp(sampleDifferenceMod, 0, _EdgeSuppression);

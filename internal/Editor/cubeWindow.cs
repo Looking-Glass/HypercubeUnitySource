@@ -14,18 +14,25 @@ public class cubeWindow : EditorWindow
     Texture2D blackBG; //this keeps the rtt from blending with the grey color of the editorWindow itself
 
 
-    [MenuItem("Volume/Open Window", false, 10)]
+    [MenuItem("Volume/Open Window _%e", false, 10)]
     public static void V_openWindow()
     {
         //allow only 1 window
         EditorWindow window = EditorWindow.GetWindow(typeof(cubeWindow), true, "");
-        if (window)
-            window.Close();
+		if (window) 
+		{
+			window.Close ();
+			//window.position = new Rect(posX, posY, w, h);
+			//window.ShowPopup ();
+			//return;
+		}
+	
 
         int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
         int posY = EditorPrefs.GetInt("V_windowOffsetY", 0);
         int w = EditorPrefs.GetInt("V_windowWidth", Display.main.renderingWidth);
         int h = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight); 
+
 
         //create a new window
         cubeWindow win = ScriptableObject.CreateInstance<cubeWindow>();
@@ -37,7 +44,9 @@ public class cubeWindow : EditorWindow
     [MenuItem("Volume/Close Window _%w", false, 11)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
     public static void V_closeWindow()
     {
-        EditorWindow.GetWindow(typeof(cubeWindow), true, "").Close();
+        EditorWindow w = EditorWindow.GetWindow(typeof(cubeWindow), true, "");
+		w.Focus ();
+		w.Close ();
 
         //stop deforming the output view
         hypercubeCanvas canvas = GameObject.FindObjectOfType<hypercubeCanvas>();
@@ -58,7 +67,7 @@ public class cubeWindow : EditorWindow
         //        w.Close();
         //}
 
-        //force things to reset
+        //force things to reset. set it all up in update so that it will be dynamic
         canvas = null;
         canvasCam = null; 
 
@@ -85,7 +94,7 @@ public class cubeWindow : EditorWindow
 
         if (canvasCam != null)
         {
-            canvasCam.targetTexture = renderTexture;
+			canvasCam.targetTexture = renderTexture;
             canvasCam.Render();
             canvasCam.targetTexture = null;
         }
