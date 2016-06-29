@@ -15,7 +15,7 @@ public class casterWindowPrefs : EditorWindow
     [MenuItem("VOLUME/Caster Window Prefs", false, 1)]  //1 is prio
     public static void openCubeWindowPrefs()
     {
-        EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Hypercube Prefs");
+        EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Volume Prefs");
     }
 
 	[MenuItem("VOLUME/Save Settings", false, 51)]
@@ -39,7 +39,7 @@ public class casterWindowPrefs : EditorWindow
     void OnGUI()
     {
 
-        GUILayout.Label("Volume Prefs", EditorStyles.boldLabel);
+        GUILayout.Label("Caster Window Prefs", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox("Use this tool to align a Volume Caster Window to the Volume display.\n\n" +
         	
 		#if UNITY_STANDALONE_OSX 

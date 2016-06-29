@@ -8,7 +8,7 @@ using System.Collections;
 //on OSX the caster must be launched with the mouse over the desired display, so there is no 'toggle window' menuItem (there is only a 'close window')  and the ⌘w hotkey to toggle it.
 
 //on Windows 
-//Ctrl + W can toggle the window, and also you have a toggle option in the menu.
+//Ctrl + E can toggle the window, and also you have a toggle option in the menu.
 
 
 public class casterWindow : EditorWindow
@@ -27,19 +27,15 @@ public class casterWindow : EditorWindow
 	#endif
     public static void V_toggleWindow()
     {
-      //  EditorWindow window = EditorWindow.GetWindow(typeof(casterWindow));
         if (caster)
             V_closeWindow();
         else
             V_openWindow();
     }
 
-
-
     public static void V_openWindow()
     {
         //allow only 1 window
-       // EditorWindow window = EditorWindow.GetWindow(typeof(casterWindow));
         if (caster)
             caster.Close();
 	
@@ -48,7 +44,6 @@ public class casterWindow : EditorWindow
         int posY = EditorPrefs.GetInt("V_windowOffsetY", 0);
         int w = EditorPrefs.GetInt("V_windowWidth", Display.main.renderingWidth);
         int h = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight); 
-
 
         //create a new window
         caster = ScriptableObject.CreateInstance<casterWindow>();
@@ -61,7 +56,9 @@ public class casterWindow : EditorWindow
 
     public static void V_closeWindow()
     {
-        //EditorWindow w = EditorWindow.GetWindow(typeof(casterWindow), true, "");
+        if (!caster)
+            return;
+
         caster.Focus();
         caster.Close();
 
