@@ -39,8 +39,15 @@ public class casterWindowPrefs : EditorWindow
     void OnGUI()
     {
 
-        GUILayout.Label("Set Cube Window Preferences", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Use this tool to align a cube view window to the cube display monitor.\n\nTIP:\nIf it ever blocks important screen elements, the window can be closed with Ctrl + W", MessageType.Info);
+        GUILayout.Label("Volume Prefs", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox("Use this tool to align a Volume Caster Window to the Volume display.\n\n" +
+        	
+		#if UNITY_STANDALONE_OSX 
+		"TIP:\nIf it ever blocks important screen elements, the window can be closed with ⌘E", MessageType.Info);
+		#else
+		"TIP:\nIf it ever blocks important screen elements, the window can be closed with Ctrl+E", MessageType.Info);
+		#endif
+
 
         posX = EditorGUILayout.IntField("X Position:", posX);
         posY = EditorGUILayout.IntField("Y Position:", posY);
@@ -70,7 +77,7 @@ public class casterWindowPrefs : EditorWindow
 
 		#elif UNITY_STANDALONE_OSX
 
-		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then ⌘ E", MessageType.Info);
+		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then ⌘E", MessageType.Info);
 #endif
 
         if (GUILayout.Button("- SAVE -"))

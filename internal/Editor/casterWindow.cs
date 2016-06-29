@@ -20,8 +20,11 @@ public class casterWindow : EditorWindow
 
     static casterWindow caster;
 
-
-    [MenuItem("VOLUME/Toggle Caster Window _%w", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+	#if UNITY_STANDALONE_OSX 
+	[MenuItem("VOLUME/Toggle Hotkey: _%e", false, 10)] //emphasize the hotkey in osx, since that is the only way to get it to function properly
+	#else
+    [MenuItem("VOLUME/Toggle Caster Window _%e", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+	#endif
     public static void V_toggleWindow()
     {
       //  EditorWindow window = EditorWindow.GetWindow(typeof(casterWindow));
@@ -31,13 +34,7 @@ public class casterWindow : EditorWindow
             V_openWindow();
     }
 
-#if UNITY_STANDALONE_OSX   //osx you open the window with option + w, not with the menu.. but you still need the menu virtually for the hotkey
-    [MenuItem("VOLUME/Toggle Caster Window _%w", true)]
-    static bool hideOSXMenu()
-    {
-        return false;
-    }
-#endif
+
 
     public static void V_openWindow()
     {
@@ -62,10 +59,6 @@ public class casterWindow : EditorWindow
 
 
 
-
-#if UNITY_STANDALONE_OSX   //osx you open the window with option + e, not with the menu.. but you still need the menu virtually for the hotkey
-    [MenuItem("VOLUME/Close Caster Window", false, 11)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
-#endif
     public static void V_closeWindow()
     {
         //EditorWindow w = EditorWindow.GetWindow(typeof(casterWindow), true, "");
