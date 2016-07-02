@@ -7,7 +7,7 @@ namespace hypercube
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("Image Effects/Other/Screen Overlay")]
+	[AddComponentMenu("Hidden/Standard_BlendModesOverlay")]
     public class screenOverlay : postEffectsBase
     {
         public enum OverlayBlendMode

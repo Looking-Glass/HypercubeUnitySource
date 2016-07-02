@@ -150,6 +150,7 @@ public class focusStackedEffect : MonoBehaviour
         if (!source || !outTarget)
             return;
 
+
         //update the effect resolution to the source resolution if they don't match
         if (!blurTarget || blurTarget.width != source.width || blurTarget.height != blurTarget.height)
         {
