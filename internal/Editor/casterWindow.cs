@@ -56,11 +56,13 @@ public class casterWindow : EditorWindow
 
     public static void V_closeWindow()
     {
-        if (!caster)
-            return;
+        if (caster)
+            caster.Close();
 
-        caster.Focus();
-        caster.Close();
+        //it is possible to have stray windows if the user messes with the monitor setup in the OS while the caster window is open
+        casterWindow[] strayWindows = GameObject.FindObjectsOfType<casterWindow>();
+        foreach (casterWindow w in strayWindows)
+            w.Close();
 
         //stop deforming the output view
         hypercubeCanvas canvas = GameObject.FindObjectOfType<hypercubeCanvas>();
