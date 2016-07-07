@@ -20,6 +20,7 @@ public class hypercubeCanvas : MonoBehaviour
 {
 
     public bool flipX = false;
+    public bool flipY = false;
     public float sliceOffsetX = 0;
     public float sliceOffsetY = 0;
     int sliceCount = 12; //this is given by the attached hypercube
@@ -373,7 +374,32 @@ public class hypercubeCanvas : MonoBehaviour
             normals[v + 7] = Vector3.forward;
             normals[v + 8] = Vector3.forward;
 
-            if (!flipX)
+
+            if (!flipX && !flipY)
+            {
+                uvs[v + 0] = new Vector2(0, 1);
+                uvs[v + 1] = new Vector2(.5f, 1);
+                uvs[v + 2] = new Vector2(1, 1);
+                uvs[v + 3] = new Vector2(0, .5f);
+                uvs[v + 4] = new Vector2(.5f, .5f);
+                uvs[v + 5] = new Vector2(1f, .5f);
+                uvs[v + 6] = new Vector2(0, 0);
+                uvs[v + 7] = new Vector2(.5f, 0);
+                uvs[v + 8] = new Vector2(1, 0);
+            }
+            else if (flipX && !flipY)
+            {
+                uvs[v + 0] = new Vector2(1, 1);
+                uvs[v + 1] = new Vector2(.5f, 1);
+                uvs[v + 2] = new Vector2(0, 1);
+                uvs[v + 3] = new Vector2(1f, .5f);
+                uvs[v + 4] = new Vector2(.5f, .5f);
+                uvs[v + 5] = new Vector2(0, .5f);
+                uvs[v + 6] = new Vector2(1, 0);
+                uvs[v + 7] = new Vector2(.5f, 0);
+                uvs[v + 8] = new Vector2(0, 0);
+            }
+            else if (!flipX && flipY)
             {
                 uvs[v + 0] = new Vector2(0, 0);
                 uvs[v + 1] = new Vector2(.5f, 0);
@@ -385,7 +411,7 @@ public class hypercubeCanvas : MonoBehaviour
                 uvs[v + 7] = new Vector2(.5f, 1);
                 uvs[v + 8] = new Vector2(1, 1);
             }
-            else
+            else if (flipY && flipX)
             {
                 uvs[v + 0] = new Vector2(1, 0);
                 uvs[v + 1] = new Vector2(.5f, 0);

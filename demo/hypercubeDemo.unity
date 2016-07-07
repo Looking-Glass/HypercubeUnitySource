@@ -2652,11 +2652,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 2.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 7.791667
+      value: 3.4629629
       objectReference: {fileID: 0}
     - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_Materials.Array.data[12]
@@ -2704,15 +2704,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 1.3333334
+      value: 1.5555556
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: flipX
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: usingCustomDimensions
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: flipY
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}

@@ -402,6 +402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flipX: 0
+  flipY: 0
   sliceOffsetX: 0
   sliceOffsetY: 0
   sliceWidth: 1920
