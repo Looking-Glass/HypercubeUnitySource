@@ -23,8 +23,8 @@ public class hypercubeCanvas : MonoBehaviour
     public float sliceOffsetX = 0;
     public float sliceOffsetY = 0;
     int sliceCount = 12; //this is given by the attached hypercube
-    public float sliceWidth = 600;
-    public float sliceHeight = 53;
+    public float sliceWidth = 1920;
+    public float sliceHeight = 108;
     public float zPos = .01f;
     public GameObject sliceMesh;
 

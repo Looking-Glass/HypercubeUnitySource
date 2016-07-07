@@ -21,9 +21,9 @@ public class casterWindow : EditorWindow
     static casterWindow caster;
 
 	#if UNITY_STANDALONE_OSX 
-	[MenuItem("VOLUME/Toggle Hotkey: _%e", false, 10)] //emphasize the hotkey in osx, since that is the only way to get it to function properly
-	#else
-    [MenuItem("VOLUME/Toggle Caster Window _%e", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
+	[MenuItem("Hypercube/Toggle Hotkey: _%e", false, 10)] //emphasize the hotkey in osx, since that is the only way to get it to function properly
+#else
+    [MenuItem("Hypercube/Toggle Caster Window _%e", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
 	#endif
     public static void V_toggleWindow()
     {

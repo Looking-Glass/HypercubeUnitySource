@@ -12,13 +12,13 @@ public class casterWindowPrefs : EditorWindow
     int height = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight);
 
 
-    [MenuItem("VOLUME/Caster Window Prefs", false, 1)]  //1 is prio
+    [MenuItem("Hypercube/Caster Window Prefs", false, 1)]  //1 is prio
     public static void openCubeWindowPrefs()
     {
         EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Volume Prefs");
     }
 
-	[MenuItem("VOLUME/Save Settings", false, 51)]
+    [MenuItem("Hypercube/Save Settings", false, 51)]
     public static void saveCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
@@ -26,7 +26,7 @@ public class casterWindowPrefs : EditorWindow
             cam.saveSettings();
     }
 
-	[MenuItem("VOLUME/Load Settings", false, 52)]
+    [MenuItem("Hypercube/Load Settings", false, 52)]
     public static void loadCubeSettings()
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();

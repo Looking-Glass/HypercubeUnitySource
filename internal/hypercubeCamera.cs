@@ -171,8 +171,8 @@ public class hypercubeCamera : MonoBehaviour {
             slices = d.getValueAsInt("sliceCount", 10);
             localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
             localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 800f);
-            localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 68f);
+            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1920f);
+            localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
             localCanvas.flipX = d.getValueAsBool("flipX", false);
             overlap = d.getValueAsFloat("overlap", .15f);
             useSoftSlices = d.getValueAsBool("useSoftSlices", true);
