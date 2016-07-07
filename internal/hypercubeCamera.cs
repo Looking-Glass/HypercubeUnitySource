@@ -84,6 +84,9 @@ public class hypercubeCamera : MonoBehaviour {
     //let the slice image filter shader know how much 'softness' they should apply to the soft overlap
     void updateOverlap()
     {
+        if (overlap < 0)
+            overlap = 0;
+
         softOverlap o = renderCam.GetComponent<softOverlap>();
         if (useSoftSlices)
         {
