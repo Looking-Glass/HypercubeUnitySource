@@ -233,22 +233,29 @@ public class hypercubeCanvas : MonoBehaviour
         if (Screen.width < 1 || Screen.height < 1)
             return; //wtf.
 
+
         float aspectRatio = (float)Screen.width / (float)Screen.height;
         float xPixel = 1f / (float)Screen.width;
         float yPixel = 1f / (float)Screen.height;
+
+        float outWidth = (float)Screen.width; 
 
         if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
         {
             aspectRatio = customWidth / customHeight;
             xPixel = 1f /customWidth;
             yPixel = 1f / customHeight;
+
+            outWidth = customWidth;
         }
 
 
+
         sliceMesh.transform.localScale = new Vector3(sliceWidth * xPixel * aspectRatio, (float)sliceCount * sliceHeight * 2f * yPixel, 1f); //the *2 is because the view is 2 units tall
+      //  sliceMesh.transform.localPosition = new Vector3(xPixel * sliceOffsetX, (yPixel * sliceOffsetY * 2f) - 1f, zPos); //the -1f is the center vertical on the screen, the *2 is because the view is 2 units tall
 
-        sliceMesh.transform.localPosition = new Vector3(xPixel * sliceOffsetX, (yPixel * sliceOffsetY * 2f) - 1f, zPos); //the -1f is the center vertical on the screen, the *2 is because the view is 2 units tall
-
+        //horizontal slicer
+        sliceMesh.transform.localPosition = new Vector3((xPixel * aspectRatio * outWidth) + (xPixel * sliceOffsetY), (yPixel * sliceOffsetX * 2f), zPos); //this assumes the mesh is rotated 90 degrees to the left
     }
 
     //this is part of the code that tries to map the player to a particular screen (this appears to be very flaky in Unity)
