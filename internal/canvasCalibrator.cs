@@ -123,6 +123,11 @@ public class canvasCalibrator : MonoBehaviour
         //    forceLoadFromFile = false;
         //}
 
+        if (!cam)
+            Debug.LogError("The calibration tool is mis-configured!! Supply a hypercubeCamera to the cam slot!");
+        if (!cam.renderCam)
+            Debug.LogError("The hypercubeCamera is mis-configured!  It has no renderCam!");
+
         if (calibration)
             cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = true;
         else
