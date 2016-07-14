@@ -21,6 +21,7 @@ public class hypercubeCanvas : MonoBehaviour
 
     public bool flipX = false;
     public bool flipY = false;
+    public bool flipZ = false;
     public float sliceOffsetX = 0;
     public float sliceOffsetY = 0;
     int sliceCount = 12; //this is given by the attached hypercube
@@ -378,17 +379,52 @@ public class hypercubeCanvas : MonoBehaviour
             Vector2 lowM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
             Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right         
 
+            Vector2 UV_ul = new Vector2(0f, 0f);
+            Vector2 UV_mid = new Vector2(.5f, .5f);
+            Vector2 UV_br = new Vector2(1f, 1f);
+            Vector2 UV_left = new Vector2(0f, .5f);
+            Vector2 UV_bottom = new Vector2(.5f, 1f);
+            Vector2 UV_top = new Vector2(.5f, 0f);
+            Vector2 UV_right = new Vector2(1f, .5f);
+
+            if (flipX && !flipY)
+            {
+                UV_ul.Set(1f, 0f);
+                UV_br.Set(0f, 1f);
+                UV_left.Set(1f, .5f);
+                UV_right.Set(0f, .5f);
+            }
+            else if (!flipX && flipY)
+            {
+                UV_ul.Set(0f, 1f);
+                UV_br.Set(1f, 0f);
+                UV_bottom.Set(.5f, 0f);
+                UV_top.Set(.5f, 1f);
+            }
+            else if (flipX && flipY)
+            {
+                UV_ul.Set(1f, 1f);
+                UV_br.Set(0f, 0f);
+                UV_bottom.Set(.5f, 0f);
+                UV_top.Set(.5f, 1f);
+                UV_left.Set(1f, .5f);
+                UV_right.Set(0f, .5f);
+            }
+
             //we generate each slice mesh out of 4 interpolated parts.
             List<int> tris = new List<int>();
-            vertCount += generateSliceShard(topL, topM, midL, middle, new Vector2(0, 0), new Vector2(.5f, .5f), vertCount, ref verts, ref tris, ref uvs); //top left shard
-            vertCount += generateSliceShard(topM, topR, middle, midR, new Vector2(.5f, 0f), new Vector2(1f, .5f), vertCount, ref verts, ref tris, ref uvs); //top right shard
-            vertCount += generateSliceShard(midL, middle, lowL, lowM, new Vector2(0, .5f), new Vector2(.5f, 1f), vertCount, ref verts, ref tris, ref uvs); //bottom left shard
-            vertCount += generateSliceShard(middle, midR, lowM, lowR, new Vector2(.5f, .5f), new Vector2(1f, 1f), vertCount, ref verts, ref tris, ref uvs); //bottom right shard
+            vertCount += generateSliceShard(topL, topM, midL, middle, UV_ul, UV_mid, vertCount, ref verts, ref tris, ref uvs); //top left shard
+            vertCount += generateSliceShard(topM, topR, middle, midR, UV_top, UV_right, vertCount, ref verts, ref tris, ref uvs); //top right shard
+            vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
+            vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
             submeshes.Add(tris.ToArray()); 
 
     
-            //every face has a separate material/texture     
-            faceMaterials[s] = canvasMaterials[s];
+            //every face has a separate material/texture   
+            if (!flipZ)
+                faceMaterials[s] = canvasMaterials[s];
+            else
+                faceMaterials[s] = canvasMaterials[sliceCount - s -1];
         }
 
 
