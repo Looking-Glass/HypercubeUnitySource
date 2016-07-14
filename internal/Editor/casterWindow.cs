@@ -36,9 +36,7 @@ public class casterWindow : EditorWindow
     public static void V_openWindow()
     {
         //allow only 1 window
-        if (caster)
-            caster.Close();
-	
+        V_closeWindow();
 
         int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
         int posY = EditorPrefs.GetInt("V_windowOffsetY", 0);
@@ -56,14 +54,15 @@ public class casterWindow : EditorWindow
 
     public static void V_closeWindow()
     {
-        if (caster)
+        if (caster !=null)
             caster.Close();
 
-        //it is possible to have stray windows if the user messes with the monitor setup in the OS while the caster window is open
-        casterWindow[] strayWindows = GameObject.FindObjectsOfType<casterWindow>();
-        foreach (casterWindow w in strayWindows)
-            w.Close();
 
+        //it is possible to have stray windows if the user messes with the monitor setup in the OS while the caster window is open
+        casterWindow strayWindow = EditorWindow.GetWindow<casterWindow>();
+        if (strayWindow != null && strayWindow != caster ) //remember the caster is not really destroyed here... editorWindow does not destroyImmediate
+            strayWindow.Close();
+        
         //stop deforming the output view
         hypercubeCanvas canvas = GameObject.FindObjectOfType<hypercubeCanvas>();
         if (canvas)
@@ -86,7 +85,7 @@ public class casterWindow : EditorWindow
 
         //force things to reset. set it all up in update so that it will be dynamic
         canvas = null;
-        canvasCam = null; 
+        canvasCam = null;
 
         ensureTextureIntegrity();
     }
@@ -147,5 +146,6 @@ public class casterWindow : EditorWindow
         if (canvas)
             canvas.setCustomWidthHeight(position.width, position.height); //try to set it to proper dims
     }
+
 
 }
