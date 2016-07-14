@@ -408,6 +408,7 @@ MonoBehaviour:
   sliceWidth: 1920
   sliceHeight: 108
   zPos: 0.01
+  tesselation: 3
   sliceMesh: {fileID: 150924}
   canvasMaterials:
   - {fileID: 2100000, guid: ffc2c9266484f0141a16b1c50cd0fa0f, type: 2}

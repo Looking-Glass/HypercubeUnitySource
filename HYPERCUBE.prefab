@@ -369,7 +369,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee03170962f28b841b9ce187c63c7bf5, type: 3}
   m_Name: 
@@ -1074,11 +1074,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overlap: 0
+  overlap: 1
   brightness: 1.66
   slices: 10
   forcedPerspective: 0
-  useSoftSlices: 0
+  useSoftSlices: 1
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:

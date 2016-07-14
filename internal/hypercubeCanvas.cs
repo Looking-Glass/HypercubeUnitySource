@@ -27,8 +27,10 @@ public class hypercubeCanvas : MonoBehaviour
     public float sliceWidth = 1920;
     public float sliceHeight = 108;
     public float zPos = .01f;
+    public int tesselation = 3;
     public GameObject sliceMesh;
 
+    [Tooltip("The materials set here will be applied to the dynamic mesh")]
     public List<Material> canvasMaterials = new List<Material>();
 
     [HideInInspector]
@@ -239,7 +241,7 @@ public class hypercubeCanvas : MonoBehaviour
         float xPixel = 1f / (float)Screen.width;
         float yPixel = 1f / (float)Screen.height;
 
-        float outWidth = (float)Screen.width; 
+ //       float outWidth = (float)Screen.width;  //used in horizontal slicer
 
         if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
         {
@@ -247,7 +249,7 @@ public class hypercubeCanvas : MonoBehaviour
             xPixel = 1f /customWidth;
             yPixel = 1f / customHeight;
 
-            outWidth = customWidth;
+            //          outWidth = customWidth; //used in horizontal slicer
         }
 
 
@@ -311,7 +313,6 @@ public class hypercubeCanvas : MonoBehaviour
             }
         }
 
-        //each slice is constructed from 8 triangles radiating from a vert in the center of the slice.
         if (canvasMaterials.Count == 0)
         {
             Debug.LogError("Canvas materials have not been set!  Please define what materials you want to apply to each slice in the hypercubeCanvas component.");
@@ -334,6 +335,12 @@ public class hypercubeCanvas : MonoBehaviour
             return;
         }
 
+        if (tesselation < 1)
+        {
+            tesselation = 1;
+            return;
+        }
+
         if (sliceCount > canvasMaterials.Count)
         {
             Debug.LogWarning("Can't add more than " + canvasMaterials.Count + " slices, because only " + canvasMaterials.Count + " canvas materials are defined.");
@@ -341,120 +348,45 @@ public class hypercubeCanvas : MonoBehaviour
             return;
         }
 
-        Vector3[] verts = new Vector3[9 * sliceCount]; //9 verts in each slice 
-        Vector2[] uvs = new Vector2[9 * sliceCount];
-        Vector3[] normals = new Vector3[9 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
+        List<Vector3> verts = new List<Vector3>();
+        List<Vector2> uvs = new List<Vector2>();
+
+        //////////////////////////OLD
+      //  Vector3[] verts = new Vector3[9 * sliceCount]; //9 verts in each slice 
+      //  Vector2[] uvs = new Vector2[9 * sliceCount];
+      //  Vector3[] normals = new Vector3[9 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
         List<int[]> submeshes = new List<int[]>(); //the triangle list(s)
         Material[] faceMaterials = new Material[sliceCount];
 
         //create the mesh
         float size = 1f / (float)sliceCount;
+        int vertCount = 0;
         for (int s = 0; s < sliceCount; s++)
         {
-            int v = s * 9;
+      //      int v = s * 9;
             float yPos =  (float)s * size;
 
-            verts[v + 0] = new Vector3(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y, 0f); //top left          
-            verts[v + 1] = new Vector3(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x)), 0f); //top middle
-            verts[v + 2] = new Vector3(1f + UROffsets[s].x, yPos + size + UROffsets[s].y, 0f); //top right
+            Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y); //top left          
+            Vector2 topM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
+            Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos + size + UROffsets[s].y); //top right
 
-            verts[v + 3] = new Vector3(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y, 0f); //middle left
-            verts[v + 4] = new Vector3(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y, 0f); //center
-            verts[v + 5] = new Vector3(1f + +Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y, 0f); //middle right
+            Vector2 midL = new Vector2(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle left
+            Vector2 middle = new Vector2(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y); //center
+            Vector2 midR = new Vector2(1f + +Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle right
 
-            verts[v + 6] = new Vector3(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y, 0f); //bottom left
-            verts[v + 7] = new Vector3(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x)), 0f); //bottom middle
-            verts[v + 8] = new Vector3(1f + LROffsets[s].x, yPos + LROffsets[s].y, 0f); //bottom right         
+            Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y); //bottom left
+            Vector2 lowM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
+            Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right         
 
-            normals[v + 0] = Vector3.forward;
-            normals[v + 1] = Vector3.forward;
-            normals[v + 2] = Vector3.forward;
-            normals[v + 3] = Vector3.forward;
-            normals[v + 4] = Vector3.forward;
-            normals[v + 5] = Vector3.forward;
-            normals[v + 6] = Vector3.forward;
-            normals[v + 7] = Vector3.forward;
-            normals[v + 8] = Vector3.forward;
+            //we generate each slice mesh out of 4 interpolated parts.
+            List<int> tris = new List<int>();
+            vertCount += generateSliceShard(topL, topM, midL, middle, new Vector2(0, 0), new Vector2(.5f, .5f), vertCount, ref verts, ref tris, ref uvs); //top left shard
+            vertCount += generateSliceShard(topM, topR, middle, midR, new Vector2(.5f, 0f), new Vector2(1f, .5f), vertCount, ref verts, ref tris, ref uvs); //top right shard
+            vertCount += generateSliceShard(midL, middle, lowL, lowM, new Vector2(0, .5f), new Vector2(.5f, 1f), vertCount, ref verts, ref tris, ref uvs); //bottom left shard
+            vertCount += generateSliceShard(middle, midR, lowM, lowR, new Vector2(.5f, .5f), new Vector2(1f, 1f), vertCount, ref verts, ref tris, ref uvs); //bottom right shard
+            submeshes.Add(tris.ToArray()); 
 
-
-            if (!flipX && !flipY)
-            {
-                uvs[v + 0] = new Vector2(0, 1);
-                uvs[v + 1] = new Vector2(.5f, 1);
-                uvs[v + 2] = new Vector2(1, 1);
-                uvs[v + 3] = new Vector2(0, .5f);
-                uvs[v + 4] = new Vector2(.5f, .5f);
-                uvs[v + 5] = new Vector2(1f, .5f);
-                uvs[v + 6] = new Vector2(0, 0);
-                uvs[v + 7] = new Vector2(.5f, 0);
-                uvs[v + 8] = new Vector2(1, 0);
-            }
-            else if (flipX && !flipY)
-            {
-                uvs[v + 0] = new Vector2(1, 1);
-                uvs[v + 1] = new Vector2(.5f, 1);
-                uvs[v + 2] = new Vector2(0, 1);
-                uvs[v + 3] = new Vector2(1f, .5f);
-                uvs[v + 4] = new Vector2(.5f, .5f);
-                uvs[v + 5] = new Vector2(0, .5f);
-                uvs[v + 6] = new Vector2(1, 0);
-                uvs[v + 7] = new Vector2(.5f, 0);
-                uvs[v + 8] = new Vector2(0, 0);
-            }
-            else if (!flipX && flipY)
-            {
-                uvs[v + 0] = new Vector2(0, 0);
-                uvs[v + 1] = new Vector2(.5f, 0);
-                uvs[v + 2] = new Vector2(1, 0);
-                uvs[v + 3] = new Vector2(0, .5f);
-                uvs[v + 4] = new Vector2(.5f, .5f);
-                uvs[v + 5] = new Vector2(1f, .5f);
-                uvs[v + 6] = new Vector2(0, 1);
-                uvs[v + 7] = new Vector2(.5f, 1);
-                uvs[v + 8] = new Vector2(1, 1);
-            }
-            else if (flipY && flipX)
-            {
-                uvs[v + 0] = new Vector2(1, 0);
-                uvs[v + 1] = new Vector2(.5f, 0);
-                uvs[v + 2] = new Vector2(0, 0);
-                uvs[v + 3] = new Vector2(1, .5f);
-                uvs[v + 4] = new Vector2(.5f, .5f);
-                uvs[v + 5] = new Vector2(0f, .5f);
-                uvs[v + 6] = new Vector2(1, 1);
-                uvs[v + 7] = new Vector2(.5f, 1);
-                uvs[v + 8] = new Vector2(0, 1);
-            }
-
-
-
-            int[] tris = new int[24];  //8 tris in a circle around the center
-            tris[0] = v + 0; //1st tri starts at top left
-            tris[1] = v + 1;
-            tris[2] = v + 4;
-            tris[3] = v + 1; //2nd triangle begins here
-            tris[4] = v + 2;
-            tris[5] = v + 4;    
-            tris[6] = v + 2; //3rd triangle begins here
-            tris[7] = v + 5;
-            tris[8] = v + 4;
-            tris[9] = v + 5; //4th triangle begins here
-            tris[10] = v + 8;
-            tris[11] = v + 4;
-            tris[12] = v + 8; //5th triangle begins here
-            tris[13] = v + 7;
-            tris[14] = v + 4;
-            tris[15] = v + 7; //6th triangle begins here
-            tris[16] = v + 6;
-            tris[17] = v + 4;
-            tris[18] = v + 6; //7th triangle begins here
-            tris[19] = v + 3;
-            tris[20] = v + 4;
-            tris[21] = v + 3; //8th triangle begins here
-            tris[22] = v + 0;
-            tris[23] = v + 4; 
-            submeshes.Add(tris);
-
+    
             //every face has a separate material/texture     
             faceMaterials[s] = canvasMaterials[s];
         }
@@ -472,9 +404,12 @@ public class hypercubeCanvas : MonoBehaviour
         if (!m)
             return; //probably some in-editor state where things aren't init.
         m.Clear();
-        m.vertices = verts;
-        m.uv = uvs;
-        m.normals = normals;
+       // m.vertices = verts;
+        //m.uv = uvs.ToArray();
+       // m.normals = normals;
+
+        m.SetVertices(verts);
+        m.SetUVs(0, uvs);
 
         m.subMeshCount = sliceCount;
         for (int s = 0; s < sliceCount; s++)
@@ -482,9 +417,84 @@ public class hypercubeCanvas : MonoBehaviour
             m.SetTriangles(submeshes[s], s);
         }
 
+        //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
+        Vector3[] normals = new Vector3[verts.Count];
+        for (int n = 0; n < verts.Count; n++)
+            normals[n] = Vector3.forward;
+
+        m.normals = normals;
         r.materials = faceMaterials;
 
         m.RecalculateBounds();
     }
+
+
+    //this is used to generate each of 4 sections of every slice.
+    //therefore 1 central column and 1 central row of verts are overlapping per slice, but that is OK.  Keeping the interpolation isolated to this function helps readability a lot
+    //returns amount of verts created
+    int generateSliceShard(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector2 topLeftUV, Vector2 bottomRightUV, int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
+    {
+        int vertCount = 0;
+        for (var i = 0; i <= tesselation; i++)
+        {
+            //for every "i", or row, we are going to make a start and end point.
+            //lerp between the top left and bottom left, then lerp between the top right and bottom right, and save the vectors
+
+            float rowLerpValue = (float)i / (float)tesselation;
+
+            Vector2 newLeftEndpoint = Vector2.Lerp(topLeft, bottomLeft, rowLerpValue);
+            Vector2 newRightEndpoint = Vector2.Lerp(topRight, bottomRight, rowLerpValue);
+
+            for (var j = 0; j <= tesselation; j++)
+            {
+                //Now that we have our start and end coordinates for the row, iteratively lerp between them to get the "columns"
+                float columnLerpValue = (float)j / (float)tesselation;
+
+                //now get the final lerped vector
+                Vector2 lerpedVector = Vector2.Lerp(newLeftEndpoint, newRightEndpoint, columnLerpValue);
+
+                //add it
+                verts.Add(new Vector3(lerpedVector.x, lerpedVector.y, 0f));
+                vertCount++;
+            }
+        }
+
+        //triangles
+     //   int ti = 0;
+        //we only want < gridunits because the very last verts in bth directions don't need triangles drawn for them.
+        int currentTriangle = 0;
+        for (var i = 0; i < tesselation; i++)
+        {
+            for (int j = 0; j < tesselation; j++)
+            {
+                currentTriangle = startingVert + j;
+                triangles.Add(currentTriangle + i * (tesselation + 1)); //width in verts
+                triangles.Add((currentTriangle + 1) + i * (tesselation + 1));
+                triangles.Add(currentTriangle + (i + 1) * (tesselation + 1));
+
+                triangles.Add((currentTriangle + 1) + i * (tesselation + 1));
+                triangles.Add((currentTriangle + 1) + (i + 1) * (tesselation + 1));
+                triangles.Add(currentTriangle + (i + 1) * (tesselation + 1));
+            }
+        }
+
+        //uvs
+        for (var i = 0; i <= tesselation; i++)
+        {
+            for (var j = 0; j <= tesselation; j++)
+            {
+                Vector2 targetUV = new Vector2((float)j / (float)tesselation, (float)i / (float)tesselation);  //0-1 UV target
+
+                //add lerped uv
+                uvs.Add( new Vector2(
+                    Mathf.Lerp(topLeftUV.x, bottomRightUV.x, targetUV.x), 
+                    Mathf.Lerp(topLeftUV.y, bottomRightUV.y, targetUV.y)
+                    )); 
+            }
+        }
+
+        return vertCount;
+    }
+
 	
 }
