@@ -174,10 +174,12 @@ public class hypercubeCamera : MonoBehaviour {
             slices = d.getValueAsInt("sliceCount", 10);
             localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
             localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1920f);
+            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
             localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
             localCanvas.flipX = d.getValueAsBool("flipX", false);
-            overlap = d.getValueAsFloat("overlap", .15f);
+            localCanvas.flipY = d.getValueAsBool("flipY", false);
+            localCanvas.flipZ = d.getValueAsBool("flipZ", false);
+            overlap = d.getValueAsFloat("overlap", 1f);
             useSoftSlices = d.getValueAsBool("useSoftSlices", true);
         }
 
@@ -197,6 +199,8 @@ public class hypercubeCamera : MonoBehaviour {
         d.setValue("sliceWidth", localCanvas.sliceWidth.ToString(), true);
         d.setValue("pixelsPerSlice", localCanvas.sliceHeight.ToString(), true);
         d.setValue("flipX", localCanvas.flipX.ToString(), true);
+        d.setValue("flipY", localCanvas.flipY.ToString(), true);
+        d.setValue("flipZ", localCanvas.flipZ.ToString(), true);
         d.setValue("overlap", overlap.ToString(), true);
         d.setValue("useSoftSlices", useSoftSlices.ToString(), true);
 

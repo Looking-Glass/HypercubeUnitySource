@@ -27,6 +27,7 @@ public class hypercubeCanvas : MonoBehaviour
     int sliceCount = 12; //this is given by the attached hypercube
     public float sliceWidth = 1920;
     public float sliceHeight = 108;
+    public float sliceGap = 4f;
     public float zPos = .01f;
     public int tesselation = 3;
     public GameObject sliceMesh;
@@ -46,6 +47,9 @@ public class hypercubeCanvas : MonoBehaviour
     Vector2[] LLOffsets = null;
     Vector2[] LROffsets = null;
     Vector2[] MOffsets = null;
+
+
+    public canvasCalibrator calibrator = null;
 
     public void setCustomWidthHeight(float w, float h)
     {
@@ -109,7 +113,8 @@ public class hypercubeCanvas : MonoBehaviour
             return;
 
         updateMesh(sliceCount);
-        resetTransform();       
+        resetTransform();
+
     }
 
     void Update()
@@ -228,6 +233,13 @@ public class hypercubeCanvas : MonoBehaviour
         updateMesh(sliceCount);
     }
 
+    public float getAspectRatio()
+    {
+        if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
+           return customWidth / customHeight;
+        else
+            return (float)Screen.width / (float)Screen.height;
+    }
 
     void resetTransform() //size the mesh appropriately to the screen
     {
@@ -238,23 +250,18 @@ public class hypercubeCanvas : MonoBehaviour
             return; //wtf.
 
 
-        float aspectRatio = (float)Screen.width / (float)Screen.height;
         float xPixel = 1f / (float)Screen.width;
         float yPixel = 1f / (float)Screen.height;
 
  //       float outWidth = (float)Screen.width;  //used in horizontal slicer
-
         if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
         {
-            aspectRatio = customWidth / customHeight;
-            xPixel = 1f /customWidth;
+            xPixel = 1f / customWidth;
             yPixel = 1f / customHeight;
-
             //          outWidth = customWidth; //used in horizontal slicer
         }
 
-
-
+        float aspectRatio = getAspectRatio();
         sliceMesh.transform.localScale = new Vector3(sliceWidth * xPixel * aspectRatio, (float)sliceCount * sliceHeight * 2f * yPixel, 1f); //the *2 is because the view is 2 units tall
 
 
@@ -275,6 +282,7 @@ public class hypercubeCanvas : MonoBehaviour
     }
 
 
+
     public void setTone(float value)
     {   
         if (!sliceMesh)
@@ -289,7 +297,10 @@ public class hypercubeCanvas : MonoBehaviour
         }
     }
 
-    
+    public void updateMesh()
+    {
+        updateMesh(sliceCount);
+    }
     public void updateMesh(int _sliceCount)
     {
         if (_sliceCount < 1)
@@ -351,21 +362,16 @@ public class hypercubeCanvas : MonoBehaviour
 
         List<Vector3> verts = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
-
-        //////////////////////////OLD
-      //  Vector3[] verts = new Vector3[9 * sliceCount]; //9 verts in each slice 
-      //  Vector2[] uvs = new Vector2[9 * sliceCount];
-      //  Vector3[] normals = new Vector3[9 * sliceCount]; //normals are necessary for the transparency shader to work (since it uses it to calculate camera facing)
         List<int[]> submeshes = new List<int[]>(); //the triangle list(s)
         Material[] faceMaterials = new Material[sliceCount];
 
         //create the mesh
         float size = 1f / (float)sliceCount;
         int vertCount = 0;
+        float pixelSliceGap = (1f/sliceHeight) * sliceGap * size; 
         for (int s = 0; s < sliceCount; s++)
         {
-      //      int v = s * 9;
-            float yPos =  (float)s * size;
+            float yPos =  ((float)s * size) + (s * pixelSliceGap);
 
             Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y); //top left          
             Vector2 topM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
@@ -418,7 +424,6 @@ public class hypercubeCanvas : MonoBehaviour
             vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
             vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
             submeshes.Add(tris.ToArray()); 
-
     
             //every face has a separate material/texture   
             if (!flipZ)
@@ -440,9 +445,6 @@ public class hypercubeCanvas : MonoBehaviour
         if (!m)
             return; //probably some in-editor state where things aren't init.
         m.Clear();
-       // m.vertices = verts;
-        //m.uv = uvs.ToArray();
-       // m.normals = normals;
 
         m.SetVertices(verts);
         m.SetUVs(0, uvs);
@@ -459,9 +461,12 @@ public class hypercubeCanvas : MonoBehaviour
             normals[n] = Vector3.forward;
 
         m.normals = normals;
-        r.materials = faceMaterials;
+        if (calibrator &&  calibrator.enabled)
+            r.materials = calibrator.getMaterials();
+        else
+            r.materials = faceMaterials; //normal path
 
-        m.RecalculateBounds();
+        m.RecalculateBounds();      
     }
 
 
@@ -496,8 +501,7 @@ public class hypercubeCanvas : MonoBehaviour
         }
 
         //triangles
-     //   int ti = 0;
-        //we only want < gridunits because the very last verts in bth directions don't need triangles drawn for them.
+        //we only want < tesselation because the very last verts in both directions don't need triangles drawn for them.
         int currentTriangle = 0;
         for (var i = 0; i < tesselation; i++)
         {

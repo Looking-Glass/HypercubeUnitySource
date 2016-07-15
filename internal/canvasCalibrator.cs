@@ -11,17 +11,27 @@ using System.Collections;
 //use WADX to make adjustments
 //use ENTER to load settings from the file
 
-[ExecuteInEditMode]
+public enum distortionCompensationType
+{
+    PIXEL,
+    SPATIAL
+}
+
 public class canvasCalibrator : MonoBehaviour
 {
 
     public string current;
 
-    public hypercubeCamera cam;
-
+    public hypercubeCanvas canvas;
+    public float brightness = 3f;
+    
+    [Tooltip("How sensitive do you want your calibrations to be.")]
     public float interval = .5f;
+    [Tooltip("Pixel movement will cause the interval to cause interval * pixel movements. Spatial will feel more intuitive if you are working directly on the volume.")]
+    public distortionCompensationType relativeTo = distortionCompensationType.PIXEL;
 
     public KeyCode nextSlice;
+    public KeyCode prevSlice;
     public KeyCode highlightUL;
     public KeyCode highlightUR;
     public KeyCode highlightLL;
@@ -31,136 +41,142 @@ public class canvasCalibrator : MonoBehaviour
     public KeyCode down;
     public KeyCode left;
     public KeyCode right;
-    public KeyCode toggleCalibration;
     public Texture2D calibrationCorner;
     public Texture2D calibrationCenter;
 
-    public bool calibration = false;
+    public Material selectedMat;
+    public Material offMat;
 
   //  public bool forceLoadFromFile = false;
 
     canvasEditMode m;
     int currentSlice;
 
-    void Start()
+    void OnEnable()
     {
-        updateSelection();
+        canvas.updateMesh();
+    }
+    void OnDisable()
+    {
+        canvas.updateMesh();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!cam || !cam.localCanvas)
+        if (!canvas)
             return;
+
+        canvasEditMode oldMode = m;
+        int oldSelection = currentSlice;
 
         if (Input.GetKeyDown(nextSlice))
         {
             currentSlice++;
-            if (currentSlice >= cam.slices)
+            if (currentSlice >= canvas.getSliceCount())
                 currentSlice = 0;
-
-            updateSelection();
         }
-        else if (Input.GetKeyDown(toggleCalibration))
+        if (Input.GetKeyDown(prevSlice))
         {
-            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = !cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled;
-            calibration = cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled;
+            currentSlice--;
+            if (currentSlice < 0)
+                currentSlice = canvas.getSliceCount() -1;
         }
         else if (Input.GetKeyDown(highlightUL))
         {
             m = canvasEditMode.UL;
-            updateSelection();
         }
         else if (Input.GetKeyDown(highlightUR))
         {
             m = canvasEditMode.UR;
-            updateSelection();
         }
         else if (Input.GetKeyDown(highlightLL))
         {
             m = canvasEditMode.LL;
-            updateSelection();
         }
         else if (Input.GetKeyDown(highlightLR))
         {
             m = canvasEditMode.LR;
-            updateSelection();
         }
         else if (Input.GetKeyDown(highlightM))
         {
             m = canvasEditMode.M;
-            updateSelection();
         }
         else if (Input.GetKeyDown(left))
         {
-            float xPixel = 4f / cam.localCanvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
-            cam.localCanvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
+            float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *=  canvas.getSliceCount();
+            canvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
         }
         else if (Input.GetKeyDown(right))
         {
-            float xPixel = 4f / cam.localCanvas.sliceWidth; //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
-            cam.localCanvas.makeAdjustment(currentSlice, m, true, interval * xPixel);
+            float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *= canvas.getSliceCount();
+            canvas.makeAdjustment(currentSlice, m, true, interval * xPixel);
         }
         else if (Input.GetKeyDown(down))
         {
-            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices);
-            cam.localCanvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
         }
         else if (Input.GetKeyDown(up))
         {
-            float yPixel = 1f / ((float)cam.localCanvas.sliceHeight * cam.slices);
-            cam.localCanvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
         }
 
+        if (currentSlice != oldSelection || m != oldMode)
+        {
+            current = "s" + currentSlice + "  " + m.ToString();
+            canvas.updateMesh();
+        }    
     }
 
     void OnValidate()
     {
-        //if (forceLoadFromFile)
-        //{
-        //    if (cam)
-        //        cam.loadSettings();
-        //    forceLoadFromFile = false;
-        //}
 
-        if (!cam)
-            Debug.LogError("The calibration tool is mis-configured!! Supply a hypercubeCamera to the cam slot!");
-        if (!cam.renderCam)
-            Debug.LogError("The hypercubeCamera is mis-configured!  It has no renderCam!");
+        if (!canvas)
+            Debug.LogError("The calibration tool has no hypercubeCanvas to calibrate!");
 
-        if (calibration)
-            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = true;
-        else
-            cam.renderCam.GetComponent<hypercube.screenOverlay>().enabled = false;
+        selectedMat.SetFloat("_Mod", brightness);
+        offMat.SetFloat("_Mod", brightness);
+
+        canvas.updateMesh();
 
     }
 
 
-    void updateSelection()
+    public Material[] getMaterials()
     {
-        current = "s" + currentSlice + "  " + m.ToString();
 
-        //set to slice:
-        float sliceSize = 1f / (float)cam.slices;
-        transform.localPosition = new Vector3(0f, 0f, (currentSlice * sliceSize) - .5f + (sliceSize / 2)); //the -.5f is an offset because 0 is the center of the cube, sliceSize/2 puts it in the center of the slice
-
-        Material mat = GetComponent<MeshRenderer>().sharedMaterial;
         if (m == canvasEditMode.M)
         {
-            mat.SetTexture("_MainTex", calibrationCenter);
-            mat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+            selectedMat.SetTexture("_MainTex", calibrationCenter);
+            selectedMat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
         }
         else
         {
-            mat.SetTexture("_MainTex", calibrationCorner);
+            selectedMat.SetTexture("_MainTex", calibrationCorner);
             if (m == canvasEditMode.UL)
-                mat.SetTextureScale("_MainTex", new Vector2(1f, -1f));
+                selectedMat.SetTextureScale("_MainTex", new Vector2(1f, -1f));
             else if (m == canvasEditMode.UR)
-                mat.SetTextureScale("_MainTex", new Vector2(-1f, -1f));
+                selectedMat.SetTextureScale("_MainTex", new Vector2(-1f, -1f));
             else if (m == canvasEditMode.LL)
-                mat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+                selectedMat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
             else if (m == canvasEditMode.LR)
-                mat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
+                selectedMat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
         }
+
+        Material[] outMats = new Material[canvas.getSliceCount()];
+        for (int i = 0; i < canvas.getSliceCount(); i++)
+        {
+            if (i == currentSlice)
+                outMats[i] = selectedMat;
+            else
+                outMats[i] = offMat;
+        }
+        return outMats;
     }
 }

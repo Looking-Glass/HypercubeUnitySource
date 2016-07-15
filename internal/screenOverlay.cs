@@ -20,7 +20,7 @@ namespace hypercube
         }
 
         public OverlayBlendMode blendMode = OverlayBlendMode.Overlay;
-        public float intensity = 1.0f;
+        public float intensity = 3.0f;
         public Texture2D texture = null;
 
         public Shader overlayShader = null;
