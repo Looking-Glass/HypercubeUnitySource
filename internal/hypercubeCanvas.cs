@@ -47,6 +47,7 @@ public class hypercubeCanvas : MonoBehaviour
     Vector2[] LLOffsets = null;
     Vector2[] LROffsets = null;
     Vector2[] MOffsets = null;
+    Vector2[] skews = null;
 
 
     public canvasCalibrator calibrator = null;
@@ -61,6 +62,23 @@ public class hypercubeCanvas : MonoBehaviour
         customHeight = h;
     }
 
+    public void copyCurrentSliceCalibration(int fromSlice)
+    {
+        //note this should only work on other even/odds respectively since they need their own calibrations
+
+        for (int s = 0; s < sliceCount; s++)
+        {
+            if (s % 2 == fromSlice % 2) //evens only change evens, odds only change odds.
+            {
+                ULOffsets[s] = ULOffsets[fromSlice];
+                UROffsets[s] = UROffsets[fromSlice];
+                LLOffsets[s] = LLOffsets[fromSlice];
+                LROffsets[s] = LROffsets[fromSlice];
+                MOffsets[s] = MOffsets[fromSlice];
+                skews[s] = skews[fromSlice];
+            }
+        }
+    }
   
     //tweaks to the cube design to offset physical distortions
     public void setCalibrationOffsets(dataFileAssoc d, int maxSlices)
@@ -70,6 +88,7 @@ public class hypercubeCanvas : MonoBehaviour
         LLOffsets = new Vector2[maxSlices];
         LROffsets = new Vector2[maxSlices];
         MOffsets = new Vector2[maxSlices];
+		skews = new Vector2[maxSlices];
 
         for (int s = 0; s < maxSlices; s++)
         {
@@ -83,6 +102,8 @@ public class hypercubeCanvas : MonoBehaviour
             LROffsets[s].y = d.getValueAsFloat("s" + s + "_LRy", 0f);
             MOffsets[s].x = d.getValueAsFloat("s" + s + "_Mx", 0f);
             MOffsets[s].y = d.getValueAsFloat("s" + s + "_My", 0f);
+			skews[s].x = d.getValueAsFloat("s" + s + "_Sx", 0f);
+            skews[s].y = d.getValueAsFloat("s" + s + "_Sy", 0f);
         }
     }
 
@@ -100,6 +121,8 @@ public class hypercubeCanvas : MonoBehaviour
             d.setValue("s" + s + "_LRy", LROffsets[s].y.ToString(), true);
             d.setValue("s" + s + "_Mx", MOffsets[s].x.ToString(), true);
             d.setValue("s" + s + "_My", MOffsets[s].y.ToString(), true);
+			d.setValue("s" + s + "_Sx", skews[s].x.ToString(), true);
+            d.setValue("s" + s + "_Sy", skews[s].y.ToString(), true);
         }
     }
 
@@ -130,6 +153,20 @@ public class hypercubeCanvas : MonoBehaviour
         return sliceCount;
     }
 
+    public void makeSkewAdjustment(int slice, bool x, float amount)
+    {
+
+        
+
+        if (x)
+            skews[slice].x += amount;
+        else
+            skews[slice].y += amount;
+
+
+
+        updateMesh(sliceCount);
+    }
     public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
     {
         if (slice < 0)
@@ -308,13 +345,14 @@ public class hypercubeCanvas : MonoBehaviour
 
         sliceCount = _sliceCount;
 
-        if (ULOffsets == null || ULOffsets.Length < sliceCount) //if they don't exist yet, just use temporary values
+        if (skews == null || skews.Length < sliceCount) //if they don't exist yet, just use temporary values
         {
             ULOffsets = new Vector2[sliceCount];
             UROffsets = new Vector2[sliceCount];
             LLOffsets = new Vector2[sliceCount];
             LROffsets = new Vector2[sliceCount];
             MOffsets = new Vector2[sliceCount];
+			skews = new Vector2[sliceCount];
             for (int s = 0; s < sliceCount; s++)
             {
                 ULOffsets[s] = new Vector2(0f,0f);
@@ -322,6 +360,7 @@ public class hypercubeCanvas : MonoBehaviour
                 LLOffsets[s] = new Vector2(0f, 0f);
                 LROffsets[s] = new Vector2(0f, 0f);
                 MOffsets[s] = new Vector2(0f, 0f);
+				skews[s] = new Vector2(0f, 0f);
             }
         }
 
@@ -372,18 +411,30 @@ public class hypercubeCanvas : MonoBehaviour
         for (int s = 0; s < sliceCount; s++)
         {
             float yPos =  ((float)s * size) + (s * pixelSliceGap);
-
             Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y); //top left          
             Vector2 topM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
+
             Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos + size + UROffsets[s].y); //top right
 
-            Vector2 midL = new Vector2(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle left
-            Vector2 middle = new Vector2(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y); //center
-            Vector2 midR = new Vector2(1f + +Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle right
+            Vector2 midL = new Vector2(-1f  + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle left
+            Vector2 middle = new Vector2( MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y); //center
+            Vector2 midR = new Vector2(1f +  Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle right
 
             Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y); //bottom left
             Vector2 lowM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
-            Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right         
+            Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right      
+
+            //skews
+            topM.x += skews[s].x;
+            lowM.x -= skews[s].x;
+            midL.y += skews[s].y;
+            midR.y -= skews[s].y;
+
+            //interpolate the alternate axis on the skew so that edges will always be straight ( fix elbows caused when we skew)
+            topM.y = Mathf.Lerp(topL.y, topR.y, Mathf.InverseLerp(topL.x, topR.x, topM.x));
+            lowM.y = Mathf.Lerp(lowL.y, lowR.y, Mathf.InverseLerp(lowL.x, lowR.x, lowM.x));
+            midL.x = Mathf.Lerp(topL.x, lowL.x, Mathf.InverseLerp(topL.y, lowL.y, midL.y));
+            midR.x = Mathf.Lerp(topR.x, lowR.x, Mathf.InverseLerp(topR.y, lowR.y, midR.y));
 
             Vector2 UV_ul = new Vector2(0f, 0f);
             Vector2 UV_mid = new Vector2(.5f, .5f);

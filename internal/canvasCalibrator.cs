@@ -41,6 +41,10 @@ public class canvasCalibrator : MonoBehaviour
     public KeyCode down;
     public KeyCode left;
     public KeyCode right;
+    public KeyCode skewXUp;
+    public KeyCode skewXDn;
+    public KeyCode skewYUp;
+    public KeyCode skewYDn;
     public Texture2D calibrationCorner;
     public Texture2D calibrationCenter;
 
@@ -59,6 +63,12 @@ public class canvasCalibrator : MonoBehaviour
     void OnDisable()
     {
         canvas.updateMesh();
+    }
+
+
+    public void copyCurrentSliceCalibration()
+    {
+        canvas.copyCurrentSliceCalibration(currentSlice);
     }
 
     // Update is called once per frame
@@ -81,6 +91,30 @@ public class canvasCalibrator : MonoBehaviour
             currentSlice--;
             if (currentSlice < 0)
                 currentSlice = canvas.getSliceCount() -1;
+        }
+        else if (Input.GetKeyDown(skewXDn))
+        {
+            float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *= canvas.getSliceCount();
+            canvas.makeSkewAdjustment(currentSlice, true, interval * xPixel );
+        }
+        else if (Input.GetKeyDown(skewXUp))
+        {
+            float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *= canvas.getSliceCount();
+            canvas.makeSkewAdjustment(currentSlice, true, -interval * xPixel);
+        }
+        else if (Input.GetKeyDown(skewYUp))
+        {
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeSkewAdjustment(currentSlice, false, interval * yPixel);
+        }
+        else if (Input.GetKeyDown(skewYDn))
+        {
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeSkewAdjustment(currentSlice, false, -interval * yPixel);
         }
         else if (Input.GetKeyDown(highlightUL))
         {
@@ -106,7 +140,7 @@ public class canvasCalibrator : MonoBehaviour
         {
             float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
             if (relativeTo == distortionCompensationType.SPATIAL)
-                xPixel *=  canvas.getSliceCount();
+                xPixel *= canvas.getSliceCount();
             canvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
         }
         else if (Input.GetKeyDown(right))

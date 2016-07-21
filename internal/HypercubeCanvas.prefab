@@ -85,7 +85,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 1.341615, y: 3.2198758, z: 1}
+  m_LocalScale: {x: 4, y: 5.4, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 148522}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1000}
+  m_LocalPosition: {x: 50, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 451902}
@@ -403,11 +403,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flipX: 0
-  flipY: 0
+  flipY: 1
   flipZ: 0
   sliceOffsetX: 0
   sliceOffsetY: 0
-  sliceWidth: 1080
+  sliceWidth: 1920
   sliceHeight: 108
   sliceGap: 0
   zPos: 0.24
@@ -599,6 +599,10 @@ MonoBehaviour:
   down: 119
   left: 97
   right: 100
+  skewXUp: 276
+  skewXDn: 275
+  skewYUp: 273
+  skewYDn: 274
   calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}
   calibrationCenter: {fileID: 2800000, guid: 13af63765e4e8744ea5303d7181eb438, type: 3}
   selectedMat: {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}

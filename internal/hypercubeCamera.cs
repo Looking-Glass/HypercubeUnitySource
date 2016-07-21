@@ -6,7 +6,8 @@ using System.Collections.Generic;
 [RequireComponent (typeof(dataFileAssoc))]
 public class hypercubeCamera : MonoBehaviour {
 
-    public float overlap = .2f; 
+    public float overlap = 2f;
+    public float shaderOverlap = .5f;
     public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
     public int slices = 12;
 	public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
@@ -91,7 +92,7 @@ public class hypercubeCamera : MonoBehaviour {
         if (useSoftSlices)
         {
             o.enabled = true;
-            o.setOverlapPercentage(overlap);
+            o.setOverlapPercentage(shaderOverlap);
         }
         else
             o.enabled = false;
@@ -99,7 +100,7 @@ public class hypercubeCamera : MonoBehaviour {
 
     public void render()
     {
-        if (overlap > 0f && useSoftSlices)
+        //if (overlap > 0f && useSoftSlices)
             renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
 
 		float baseViewAngle = renderCam.fieldOfView;
@@ -116,7 +117,7 @@ public class hypercubeCamera : MonoBehaviour {
 
 		renderCam.fieldOfView = baseViewAngle;
 
-        if (overlap > 0f && useSoftSlices)
+        //if (overlap > 0f && useSoftSlices)
             renderCam.gameObject.SetActive(false);
 
 		//TEMP

@@ -33,7 +33,7 @@ GameObject:
   - 114: {fileID: 11438496}
   m_Layer: 0
   m_Name: HYPERCUBE
-  m_TagString: Untagged
+  m_TagString: VISTEST
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,6 +68,7 @@ GameObject:
   - 124: {fileID: 12486252}
   - 81: {fileID: 8171266}
   - 114: {fileID: 11413466}
+  - 114: {fileID: 11458940}
   m_Layer: 0
   m_Name: hypercube_RTT
   m_TagString: MainCamera
@@ -81,9 +82,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0, y: 0.9831699, z: 0, w: 0.1826938}
-  m_LocalPosition: {x: 10.37, y: 1.32, z: 3.54}
-  m_LocalScale: {x: 10.883552, y: 5.441779, z: 7.6184907}
+  m_LocalRotation: {x: 0.05166563, y: -0.97741926, z: 0.20431629, w: -0.015398584}
+  m_LocalPosition: {x: 9.16, y: 1.1, z: 6.72}
+  m_LocalScale: {x: 5.99356, y: 2.9850185, z: 4.570184}
   m_Children:
   - {fileID: 446836}
   - {fileID: 432058}
@@ -98,7 +99,7 @@ Transform:
   m_GameObject: {fileID: 195280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.5}
-  m_LocalScale: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 412356}
   m_RootOrder: 2
@@ -109,7 +110,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 169792}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 412356}
@@ -142,16 +143,16 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 6.856644
-  far clip plane: 7.6184936
+  near clip plane: 3.884657
+  far clip plane: 4.7986937
   field of view: 60
   orthographic: 1
-  orthographic size: 2.7208896
+  orthographic size: 1.4925091
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294964479
-  m_RenderingPath: 1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 8400000, guid: 23bf5d0442c3b48438e4040064a2bfec, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -170,7 +171,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9acaab100a7dbe4499c10ee94adb6098, type: 2}
+  - {fileID: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -222,7 +223,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9acaab100a7dbe4499c10ee94adb6098, type: 2}
+  - {fileID: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -279,7 +280,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
   m_Name: 
@@ -304,7 +305,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee03170962f28b841b9ce187c63c7bf5, type: 3}
   m_Name: 
@@ -342,79 +343,83 @@ MonoBehaviour:
   - key: offsetX
     value: 0
   - key: offsetY
-    value: 0
+    value: 12.1
   - key: sliceWidth
-    value: 1080
+    value: 1484
   - key: pixelsPerSlice
-    value: 108
+    value: 88
   - key: flipX
     value: False
   - key: sliceCount
     value: 10
   - key: overlap
-    value: 0
+    value: 1
   - key: useSoftSlices
+    value: True
+  - key: flipY
+    value: False
+  - key: flipZ
     value: False
   - key: s0_ULx
-    value: -0.2314815
-  - key: s0_ULy
-    value: -0.004629629
-  - key: s0_URx
-    value: 0.2296297
-  - key: s0_URy
-    value: -0.00462963
-  - key: s0_LLx
     value: 0
+  - key: s0_ULy
+    value: 0
+  - key: s0_URx
+    value: 0
+  - key: s0_URy
+    value: 0
+  - key: s0_LLx
+    value: 0.1752022
   - key: s0_LLy
-    value: 0.01666667
+    value: 0.01603535
   - key: s0_LRx
-    value: 0.01851852
+    value: -0.1027753
   - key: s0_LRy
-    value: 0.01481481
+    value: 0.01363636
   - key: s0_Mx
     value: 0
   - key: s0_My
-    value: 0.0009259263
-  - key: s1_ULx
-    value: -0.1620371
-  - key: s1_ULy
-    value: -0.006481482
-  - key: s1_URx
-    value: 0.05740738
-  - key: s1_URy
-    value: -0.007407408
-  - key: s1_LLx
     value: 0
+  - key: s1_ULx
+    value: 0
+  - key: s1_ULy
+    value: 0
+  - key: s1_URx
+    value: 0
+  - key: s1_URy
+    value: 0
+  - key: s1_LLx
+    value: 0.1752022
   - key: s1_LLy
-    value: 0.01574074
+    value: 0.01603535
   - key: s1_LRx
-    value: -0.09351853
+    value: -0.1027753
   - key: s1_LRy
-    value: 0.01203704
+    value: 0.01363636
   - key: s1_Mx
-    value: 0.005555556
+    value: 0
   - key: s1_My
-    value: -0.0009259258
+    value: -0.001136364
   - key: s2_ULx
     value: 0
   - key: s2_ULy
-    value: -0.002777777
+    value: 0
   - key: s2_URx
     value: 0
   - key: s2_URy
     value: 0
   - key: s2_LLx
-    value: 0
+    value: 0.1752022
   - key: s2_LLy
-    value: 0
+    value: 0.01603535
   - key: s2_LRx
-    value: -0.005555555
+    value: -0.1027753
   - key: s2_LRy
-    value: 0.02407407
+    value: 0.01363636
   - key: s2_Mx
     value: 0
   - key: s2_My
-    value: -0.003703703
+    value: 0
   - key: s3_ULx
     value: 0
   - key: s3_ULy
@@ -516,25 +521,25 @@ MonoBehaviour:
   - key: s7_My
     value: 0
   - key: s8_ULx
-    value: 0.1111111
+    value: 0
   - key: s8_ULy
-    value: 0.02746914
+    value: 0
   - key: s8_URx
-    value: -0.1222222
+    value: 0
   - key: s8_URy
-    value: 0.04320987
+    value: 0
   - key: s8_LLx
-    value: 0.02222222
+    value: 0
   - key: s8_LLy
-    value: 0.02674897
+    value: 0
   - key: s8_LRx
-    value: -0.04814811
+    value: 0
   - key: s8_LRy
-    value: -0.0009259242
+    value: 0
   - key: s8_Mx
     value: 0
   - key: s8_My
-    value: 0.01851852
+    value: 0
   - key: s9_ULx
     value: 0
   - key: s9_ULy
@@ -955,10 +960,21 @@ MonoBehaviour:
     value: 0
   - key: s29_My
     value: 0
-  - key: flipY
-    value: False
-  - key: flipZ
-    value: False
+--- !u!114 &11458940
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 195280}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f19108706fdce9469603d07980eb8ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blendMode: 0
+  intensity: 1
+  texture: {fileID: 2800000, guid: e8455d8af7a9e0a4dbf15c8448e437c4, type: 3}
+  overlayShader: {fileID: 4800000, guid: 8c81db0e527d24acc9bcec04e87781bd, type: 3}
 --- !u!114 &11483894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -970,11 +986,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overlap: 0
-  brightness: 2
+  overlap: 0.5
+  shaderOverlap: 0.5
+  brightness: 1
   slices: 10
-  forcedPerspective: 0
-  useSoftSlices: 0
+  forcedPerspective: 4.29
+  useSoftSlices: 1
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:
