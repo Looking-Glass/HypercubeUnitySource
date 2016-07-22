@@ -343,23 +343,23 @@ MonoBehaviour:
   - key: offsetX
     value: 0
   - key: offsetY
-    value: 12.1
+    value: 0
   - key: sliceWidth
-    value: 1484
+    value: 1920
   - key: pixelsPerSlice
-    value: 88
+    value: 108
   - key: flipX
     value: False
   - key: sliceCount
     value: 10
   - key: overlap
-    value: 1
+    value: 0.5
   - key: useSoftSlices
     value: True
   - key: flipY
-    value: False
+    value: True
   - key: flipZ
-    value: False
+    value: True
   - key: s0_ULx
     value: 0
   - key: s0_ULy
@@ -399,7 +399,7 @@ MonoBehaviour:
   - key: s1_Mx
     value: 0
   - key: s1_My
-    value: -0.001136364
+    value: 0
   - key: s2_ULx
     value: 0
   - key: s2_ULy
@@ -429,13 +429,13 @@ MonoBehaviour:
   - key: s3_URy
     value: 0
   - key: s3_LLx
-    value: 0
+    value: 0.1752022
   - key: s3_LLy
-    value: 0
+    value: 0.01603535
   - key: s3_LRx
-    value: 0
+    value: -0.1027753
   - key: s3_LRy
-    value: 0
+    value: 0.01363636
   - key: s3_Mx
     value: 0
   - key: s3_My
@@ -449,13 +449,13 @@ MonoBehaviour:
   - key: s4_URy
     value: 0
   - key: s4_LLx
-    value: 0
+    value: 0.1752022
   - key: s4_LLy
-    value: 0
+    value: 0.01603535
   - key: s4_LRx
-    value: 0
+    value: -0.1027753
   - key: s4_LRy
-    value: 0
+    value: 0.01363636
   - key: s4_Mx
     value: 0
   - key: s4_My
@@ -469,13 +469,13 @@ MonoBehaviour:
   - key: s5_URy
     value: 0
   - key: s5_LLx
-    value: 0
+    value: 0.1752022
   - key: s5_LLy
-    value: 0
+    value: 0.01603535
   - key: s5_LRx
-    value: 0
+    value: -0.1027753
   - key: s5_LRy
-    value: 0
+    value: 0.01363636
   - key: s5_Mx
     value: 0
   - key: s5_My
@@ -489,13 +489,13 @@ MonoBehaviour:
   - key: s6_URy
     value: 0
   - key: s6_LLx
-    value: 0
+    value: 0.1752022
   - key: s6_LLy
-    value: 0
+    value: 0.01603535
   - key: s6_LRx
-    value: 0
+    value: -0.1027753
   - key: s6_LRy
-    value: 0
+    value: 0.01363636
   - key: s6_Mx
     value: 0
   - key: s6_My
@@ -509,13 +509,13 @@ MonoBehaviour:
   - key: s7_URy
     value: 0
   - key: s7_LLx
-    value: 0
+    value: 0.1752022
   - key: s7_LLy
-    value: 0
+    value: 0.01603535
   - key: s7_LRx
-    value: 0
+    value: -0.1027753
   - key: s7_LRy
-    value: 0
+    value: 0.01363636
   - key: s7_Mx
     value: 0
   - key: s7_My
@@ -529,13 +529,13 @@ MonoBehaviour:
   - key: s8_URy
     value: 0
   - key: s8_LLx
-    value: 0
+    value: 0.1752022
   - key: s8_LLy
-    value: 0
+    value: 0.01603535
   - key: s8_LRx
-    value: 0
+    value: -0.1027753
   - key: s8_LRy
-    value: 0
+    value: 0.01363636
   - key: s8_Mx
     value: 0
   - key: s8_My
@@ -549,13 +549,13 @@ MonoBehaviour:
   - key: s9_URy
     value: 0
   - key: s9_LLx
-    value: 0
+    value: 0.1752022
   - key: s9_LLy
-    value: 0
+    value: 0.01603535
   - key: s9_LRx
-    value: 0
+    value: -0.1027753
   - key: s9_LRy
-    value: 0
+    value: 0.01363636
   - key: s9_Mx
     value: 0
   - key: s9_My
@@ -959,6 +959,126 @@ MonoBehaviour:
   - key: s29_Mx
     value: 0
   - key: s29_My
+    value: 0
+  - key: s0_Sx
+    value: 0
+  - key: s0_Sy
+    value: 0
+  - key: s1_Sx
+    value: 0
+  - key: s1_Sy
+    value: 0
+  - key: s2_Sx
+    value: 0
+  - key: s2_Sy
+    value: 0
+  - key: s3_Sx
+    value: 0
+  - key: s3_Sy
+    value: 0
+  - key: s4_Sx
+    value: 0
+  - key: s4_Sy
+    value: 0
+  - key: s5_Sx
+    value: 0
+  - key: s5_Sy
+    value: 0
+  - key: s6_Sx
+    value: 0
+  - key: s6_Sy
+    value: 0
+  - key: s7_Sx
+    value: 0
+  - key: s7_Sy
+    value: 0
+  - key: s8_Sx
+    value: 0
+  - key: s8_Sy
+    value: 0
+  - key: s9_Sx
+    value: 0
+  - key: s9_Sy
+    value: 0
+  - key: s10_Sx
+    value: 0
+  - key: s10_Sy
+    value: 0
+  - key: s11_Sx
+    value: 0
+  - key: s11_Sy
+    value: 0
+  - key: s12_Sx
+    value: 0
+  - key: s12_Sy
+    value: 0
+  - key: s13_Sx
+    value: 0
+  - key: s13_Sy
+    value: 0
+  - key: s14_Sx
+    value: 0
+  - key: s14_Sy
+    value: 0
+  - key: s15_Sx
+    value: 0
+  - key: s15_Sy
+    value: 0
+  - key: s16_Sx
+    value: 0
+  - key: s16_Sy
+    value: 0
+  - key: s17_Sx
+    value: 0
+  - key: s17_Sy
+    value: 0
+  - key: s18_Sx
+    value: 0
+  - key: s18_Sy
+    value: 0
+  - key: s19_Sx
+    value: 0
+  - key: s19_Sy
+    value: 0
+  - key: s20_Sx
+    value: 0
+  - key: s20_Sy
+    value: 0
+  - key: s21_Sx
+    value: 0
+  - key: s21_Sy
+    value: 0
+  - key: s22_Sx
+    value: 0
+  - key: s22_Sy
+    value: 0
+  - key: s23_Sx
+    value: 0
+  - key: s23_Sy
+    value: 0
+  - key: s24_Sx
+    value: 0
+  - key: s24_Sy
+    value: 0
+  - key: s25_Sx
+    value: 0
+  - key: s25_Sy
+    value: 0
+  - key: s26_Sx
+    value: 0
+  - key: s26_Sy
+    value: 0
+  - key: s27_Sx
+    value: 0
+  - key: s27_Sy
+    value: 0
+  - key: s28_Sx
+    value: 0
+  - key: s28_Sy
+    value: 0
+  - key: s29_Sx
+    value: 0
+  - key: s29_Sy
     value: 0
 --- !u!114 &11458940
 MonoBehaviour:

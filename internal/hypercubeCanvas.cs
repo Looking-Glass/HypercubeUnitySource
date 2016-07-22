@@ -22,12 +22,12 @@ public class hypercubeCanvas : MonoBehaviour
     public bool flipX = false;
     public bool flipY = false;
     public bool flipZ = false;
-    public float sliceOffsetX = 0;
-    public float sliceOffsetY = 0;
+    public float sliceOffsetX ;
+    public float sliceOffsetY ;
     int sliceCount = 12; //this is given by the attached hypercube
-    public float sliceWidth = 1920;
-    public float sliceHeight = 108;
-    public float sliceGap = 4f;
+    public float sliceWidth;
+    public float sliceHeight;
+    public float sliceGap ;
     public float zPos = .01f;
     public int tesselation = 3;
     public GameObject sliceMesh;
@@ -52,6 +52,7 @@ public class hypercubeCanvas : MonoBehaviour
 
     public canvasCalibrator calibrator = null;
 
+
     public void setCustomWidthHeight(float w, float h)
     {
         if (w == 0 || h == 0) //bogus values. Possible, if the window is still setting up.
@@ -68,16 +69,15 @@ public class hypercubeCanvas : MonoBehaviour
 
         for (int s = 0; s < sliceCount; s++)
         {
-            if (s % 2 == fromSlice % 2) //evens only change evens, odds only change odds.
-            {
                 ULOffsets[s] = ULOffsets[fromSlice];
                 UROffsets[s] = UROffsets[fromSlice];
                 LLOffsets[s] = LLOffsets[fromSlice];
                 LROffsets[s] = LROffsets[fromSlice];
                 MOffsets[s] = MOffsets[fromSlice];
                 skews[s] = skews[fromSlice];
-            }
         }
+
+        updateMesh();
     }
   
     //tweaks to the cube design to offset physical distortions
@@ -156,14 +156,10 @@ public class hypercubeCanvas : MonoBehaviour
     public void makeSkewAdjustment(int slice, bool x, float amount)
     {
 
-        
-
         if (x)
             skews[slice].x += amount;
         else
             skews[slice].y += amount;
-
-
 
         updateMesh(sliceCount);
     }
@@ -173,6 +169,35 @@ public class hypercubeCanvas : MonoBehaviour
             return false;
         if (slice >= ULOffsets.Length)
             return false;
+
+        //flip it to keep things intuitive
+        if (flipX)
+        {
+            if (x)
+                amount = -amount;
+            if (m == canvasEditMode.UL)
+                m = canvasEditMode.UR;
+            else if (m == canvasEditMode.UR)
+                m = canvasEditMode.UL;
+            else if (m == canvasEditMode.LL)
+                m = canvasEditMode.LR;
+            else if (m == canvasEditMode.LR)
+                m = canvasEditMode.LL;
+        }
+        if (flipY)
+        {
+            if (!x)
+                amount = -amount;
+            if (m == canvasEditMode.UL)
+                m = canvasEditMode.LL;
+            else if (m == canvasEditMode.UR)
+                m = canvasEditMode.LR;
+            else if (m == canvasEditMode.LL)
+                m = canvasEditMode.UL;
+            else if (m == canvasEditMode.LR)
+                m = canvasEditMode.UR;
+        }
+
 
         if (m == canvasEditMode.UL)
         {

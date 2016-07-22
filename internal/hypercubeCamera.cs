@@ -172,20 +172,26 @@ public class hypercubeCamera : MonoBehaviour {
         //LOAD OUR PREFS
         if (!Application.isEditor || forceLoad)
         {
+
+            UnityEditor.Undo.RecordObject(localCanvas, "Loaded saved settings from file."); //these force the editor to mark the canvas as dirty and save what is loaded.
+            UnityEditor.Undo.RecordObject(this, "Loaded saved settings from file.");
+
             slices = d.getValueAsInt("sliceCount", 10);
             localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
             localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
             localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
             localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
+            localCanvas.sliceGap = d.getValueAsFloat("sliceGap", 0f);
             localCanvas.flipX = d.getValueAsBool("flipX", false);
             localCanvas.flipY = d.getValueAsBool("flipY", false);
             localCanvas.flipZ = d.getValueAsBool("flipZ", false);
             overlap = d.getValueAsFloat("overlap", 1f);
+            shaderOverlap = d.getValueAsFloat("shaderOverlap", 1f);
             useSoftSlices = d.getValueAsBool("useSoftSlices", true);
         }
 
         localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
-        localCanvas.updateMesh(slices);
+        localCanvas.updateMesh(slices);       
     }
 
     public void saveSettings()
@@ -199,10 +205,12 @@ public class hypercubeCamera : MonoBehaviour {
         d.setValue("offsetY", localCanvas.sliceOffsetY.ToString(), true);
         d.setValue("sliceWidth", localCanvas.sliceWidth.ToString(), true);
         d.setValue("pixelsPerSlice", localCanvas.sliceHeight.ToString(), true);
+        d.setValue("sliceGap", localCanvas.sliceGap.ToString(), true);
         d.setValue("flipX", localCanvas.flipX.ToString(), true);
         d.setValue("flipY", localCanvas.flipY.ToString(), true);
         d.setValue("flipZ", localCanvas.flipZ.ToString(), true);
         d.setValue("overlap", overlap.ToString(), true);
+        d.setValue("shaderOverlap", shaderOverlap.ToString(), true);
         d.setValue("useSoftSlices", useSoftSlices.ToString(), true);
 
         if (localCanvas)
