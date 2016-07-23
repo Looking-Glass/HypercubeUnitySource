@@ -1,23 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 //this utilizes a text file to save/load data arranged as an associative array
 
-[System.Serializable]
-public class keyPair
-{
-    public keyPair(string _key, string _val) { key = _key; value = _val; }
-    public string key;
-    public string value;
-}
 
 public class dataFileAssoc : MonoBehaviour {
 
     public string fileName;
     public bool readOnly = false;
     public bool loadOnAwake = false;
-    public keyPair[] keyPairs = new keyPair[0];
+    public Dictionary<string,string> keyPairs = new Dictionary<string,string>();
 
     void Awake()
     {
@@ -27,33 +21,19 @@ public class dataFileAssoc : MonoBehaviour {
 
     public void clear()
     {
-        keyPairs = new keyPair[0];
+        keyPairs.Clear();
     }
 
 
     public bool hasKey(string _key)
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-                return true;
-        }
-        return false;
+        return keyPairs.ContainsKey(_key);
     }
 
     //do any of the keys contain the given value?
-    //returns the first array element number that does
-    //returns -1 if none do.
-    public int hasValue(string _val)
+    public bool hasValue(string _val)
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].value == _val)
-                return i;
-        }
-        return -1;
+        return keyPairs.ContainsValue(_val);
     }
 
     /// <summary>
@@ -94,22 +74,16 @@ public class dataFileAssoc : MonoBehaviour {
         if (hasKey(_key)) 
             return internalSetValue(_key, _val);
 
-        System.Array.Resize(ref keyPairs, keyPairs.Length + 1);
-        keyPairs[keyPairs.Length - 1] = new keyPair(_key, _val);
+        keyPairs.Add(_key, _val);
         return true;
     }
     protected bool internalSetValue(string _key, string _val) //internal version of setValue() ...so that we can still set the data file values from the file despite readOnly
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-            {
-                keyPairs[i].value = _val;
-                return true;
-            }
-        }
-        return false;  //if it fails we do not add an element, simply ignore and return false
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return false;
+
+        keyPairs[_key] = _val;
+        return true;
     }
 
 
@@ -120,78 +94,46 @@ public class dataFileAssoc : MonoBehaviour {
 
     public string getValue(string _key, string defaultValue)  //will return defaultValue if it can't match the _key
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-                return keyPairs[i].value;
-        }
-        return defaultValue;
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return defaultValue;
+
+        return keyPairs[_key];
     }
-
-
-    public string getValue(int index)   //returns an empty string if index is out of range
-    {
-        if (index >= keyPairs.Length)
-            return "";
-
-        return keyPairs[index].value;
-    }
-
 
     public int getValueAsInt(string _key, int defaultValue)  //will return defaultValue if it can't match the _key, or if the data can't be converted to an int
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-            {
-                return stringToInt(keyPairs[i].value, defaultValue);
-            }
-        }
-        return defaultValue;  //could not match key to any entry.
+
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return defaultValue;
+
+        return stringToInt(keyPairs[_key], defaultValue);
     }
 
 
     public long getValueAsLong(string _key, int defaultValue)  //will return defaultValue if it can't match the _key, or if the data can't be converted to an int
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-            {
-                return stringToLong(keyPairs[i].value, defaultValue);
-            }
-        }
-        return defaultValue;  //could not match key to any entry.
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return defaultValue;
+
+        return stringToLong(keyPairs[_key], defaultValue);
     }
 
 
     public float getValueAsFloat(string _key, float defaultValue)  //will return defaultValue if it can't match the _key
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-            {
-                return stringToFloat(keyPairs[i].value, defaultValue);
-            }
-        }
-        return defaultValue;  //could not match key to any entry.
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return defaultValue;
+
+        return stringToFloat(keyPairs[_key], defaultValue);
     }
 
 
     public bool getValueAsBool(string _key, bool defaultValue)
     {
-        int i;
-        for (i = 0; i < keyPairs.Length; i++)
-        {
-            if (keyPairs[i].key == _key)
-            {
-                return stringToBool(keyPairs[i].value, defaultValue);
-            }
-        }
-        return defaultValue;  //could not match key to any entry.
+        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+            return defaultValue;
+
+        return stringToBool(keyPairs[_key], defaultValue);
     }
 
 
@@ -236,8 +178,7 @@ public class dataFileAssoc : MonoBehaviour {
 
                             if (populate && !hasKey(kp[0])) //populate tells us to ADD non-existent keys, and this one doesn't exist so add it.
                             {
-                                System.Array.Resize(ref keyPairs, keyPairs.Length + 1);
-                                keyPairs[keyPairs.Length - 1] = new keyPair(kp[0], kp[1]);
+                                keyPairs.Add(kp[0], kp[1]);
                             }
                             else
                                 internalSetValue(kp[0], kp[1]);  //either we are ignoring non-existent keys (!populate) or we already know that the key exists (from hasKey()).
@@ -280,13 +221,12 @@ public class dataFileAssoc : MonoBehaviour {
 
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(@fileName))
         {
-            string lineText = "";
-            int i;
-            for (i = 0; i < keyPairs.Length; i++)
+            string a = "";
+            foreach (var pair in keyPairs)
             {
-                lineText = keyPairs[i].key + "=" + keyPairs[i].value;
-                file.WriteLine(lineText);                  
+                a += pair.Key + "=" + pair.Value + "\n";
             }
+            file.WriteLine(a);  
         }
     }
 
