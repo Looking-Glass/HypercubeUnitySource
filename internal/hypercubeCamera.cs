@@ -12,6 +12,8 @@ public class hypercubeCamera : MonoBehaviour {
     public int slices = 12;
 	public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
     public bool useSoftSlices = true;
+    [Tooltip ("This can be used to differentiate between negative space, and 'black'.  This Color will be added to everything except actual void.")]
+    public Color blackPoint; 
     public Shader softSliceShader;
     public Camera renderCam;
     public RenderTexture[] sliceTextures;
@@ -92,7 +94,7 @@ public class hypercubeCamera : MonoBehaviour {
         if (useSoftSlices)
         {
             o.enabled = true;
-            o.setOverlapPercentage(shaderOverlap);
+            o.setShaderProperties(shaderOverlap, blackPoint);
         }
         else
             o.enabled = false;

@@ -48,10 +48,11 @@ public class softOverlap : MonoBehaviour
 
     //used to set how much 'fade' should be applied to each end of the slice
     //for example a value of 5 will fade in 5 percent from the near and 5 from the far of the full slice leaving 90% as the unfaded 'base' of the slice
-    public void setOverlapPercentage(float p)
+    public void setShaderProperties(float p, Color blackPoint)
     {
         p = Mathf.Clamp(p, 0f, .5f);
         material.SetFloat("_softPercent", p);
+        material.SetColor("_blackPoint", blackPoint);
     }
 
     protected virtual void OnDestroy()

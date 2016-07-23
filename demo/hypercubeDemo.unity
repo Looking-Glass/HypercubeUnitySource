@@ -381,15 +381,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 9.71
+      value: 9.82
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.29
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 6.25
+      value: 6.17
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.x
@@ -433,7 +433,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: brightness
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: overlap
@@ -474,6 +474,18 @@ Prefab:
     - target: {fileID: 431666, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: blackPoint.r
+      value: 0.153
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: blackPoint.b
+      value: 0.172
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: blackPoint.g
+      value: 0.178
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}

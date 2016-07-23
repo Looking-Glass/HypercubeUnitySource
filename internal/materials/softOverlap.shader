@@ -4,6 +4,7 @@ Shader "Hidden/softOverlap"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_blackPoint("Black Point", Color) = (.05, .05, .05, 0)
 		_softPercent ("softPercent", Float) = 0 //what percentage of our z depth should be considered 'soft' on each side
 	}
 	SubShader
@@ -42,6 +43,7 @@ Shader "Hidden/softOverlap"
 			sampler2D _MainTex;
 			sampler2D _CameraDepthTexture;
 			float _softPercent;
+			fixed4 _blackPoint;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -61,7 +63,7 @@ Shader "Hidden/softOverlap"
 					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 
 
 					//return mask;
-				return col * mask;
+				return (col + _blackPoint) * mask;
 
 			}
 			ENDCG
