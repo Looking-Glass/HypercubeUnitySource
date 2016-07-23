@@ -170,7 +170,7 @@ Material:
       data:
         first:
           name: _Cull
-        second: 2
+        second: 0
       data:
         first:
           name: _Mod

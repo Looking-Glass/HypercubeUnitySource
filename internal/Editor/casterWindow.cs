@@ -5,7 +5,7 @@ using System.Collections;
 //manages a full screen display of the render texture of the Volume
 
 //due to differences in the way the windows function on different OS
-//on OSX the caster must be launched with the mouse over the desired display, so there is no 'toggle window' menuItem (there is only a 'close window')  and the ⌘w hotkey to toggle it.
+//on OSX the caster must be launched with the mouse over the desired display, so there is no 'toggle window' menuItem (there is only a 'close window')  and the ⌘e hotkey to toggle it.
 
 //on Windows 
 //Ctrl + E can toggle the window, and also you have a toggle option in the menu.
@@ -16,7 +16,6 @@ public class casterWindow : EditorWindow
     Camera canvasCam;
     hypercubeCanvas canvas;
     RenderTexture renderTexture;
-    Texture2D blackBG; //this keeps the rtt from blending with the grey color of the editorWindow itself
 
     static casterWindow caster;
 
@@ -108,24 +107,24 @@ public class casterWindow : EditorWindow
             }
         }
 
-        if (canvasCam != null)
-        {
-			canvasCam.targetTexture = renderTexture;
-            canvasCam.Render();
-            canvasCam.targetTexture = null;
-        }
-        else
-            return;
-
         ensureTextureIntegrity(); //this call is for during Editor
     }
 
     void OnGUI()
-    {
-        ensureTextureIntegrity();//this call is for during Play
+    {     
+        if (canvasCam != null && Application.isEditor) //calling this in OnGUI instead of update allows manual renaming changes during edit mode, but not during play mode
+        {
+            ensureTextureIntegrity();//this call is for during Play
 
-        GUI.DrawTexture(new Rect(0.0f, 0.0f, position.width, position.height), blackBG);
-        GUI.DrawTexture(new Rect(0.0f, 0.0f, position.width, position.height), renderTexture);
+            canvasCam.targetTexture = renderTexture;
+            canvasCam.Render();
+            canvasCam.targetTexture = null;
+
+
+            GUI.contentColor = Color.white; //ensure this isn't being messed with, or our caster will appear dark.
+            GUI.color = Color.white; 
+            EditorGUI.DrawPreviewTexture(new Rect(0.0f, 0.0f, position.width, position.height), renderTexture, canvas.casterMaterial, ScaleMode.StretchToFill);
+        }
     }
 
 
@@ -133,14 +132,7 @@ public class casterWindow : EditorWindow
     {
 
         if (!renderTexture || renderTexture.width != position.width || renderTexture.height != position.height)
-            renderTexture = new RenderTexture((int)position.width, (int)position.height, (int)RenderTextureFormat.ARGB32);
-
-        if (!blackBG)
-        {
-            blackBG = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-            blackBG.SetPixel(0, 0, new Color(0f, 0f, 0f));
-            blackBG.Apply();
-        }
+            renderTexture = new RenderTexture((int)position.width, (int)position.height, 0, RenderTextureFormat.ARGB32);
 
         //let the hypercube know that it is not using the gameWindow for rendering, and to rely only on the given settings.
         if (canvas)

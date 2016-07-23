@@ -54,12 +54,14 @@ Shader "Hidden/softOverlap"
 
 				//return 1-d; //uncomment this to show the raw depth
 
+				float mask = 1;
 				if (d < _softPercent)
-					col *= d / _softPercent; //this is the darkening of the slice near 0
+					mask *= d / _softPercent; //this is the darkening of the slice near 0
 				else if (d > 1 - _softPercent)
-					col *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 
+					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 
 
-				return col;
+					//return mask;
+				return col * mask;
 
 			}
 			ENDCG

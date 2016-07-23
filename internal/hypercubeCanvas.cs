@@ -52,6 +52,8 @@ public class hypercubeCanvas : MonoBehaviour
 
     public canvasCalibrator calibrator = null;
 
+    public Texture2D testTexture;
+    public Material casterMaterial;
 
     public void setCustomWidthHeight(float w, float h)
     {

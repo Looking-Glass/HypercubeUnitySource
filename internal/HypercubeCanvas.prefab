@@ -35,9 +35,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 466588}
   - 20: {fileID: 2009672}
-  - 124: {fileID: 12461732}
-  - 92: {fileID: 9204352}
-  - 81: {fileID: 8195570}
   - 114: {fileID: 11467166}
   - 114: {fileID: 11493886}
   - 114: {fileID: 11493960}
@@ -85,7 +82,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 3.1840796, y: 4.2985077, z: 1}
+  m_LocalScale: {x: 3.081862, y: 4.160514, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -181,20 +178,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_Mesh: {fileID: 4300002, guid: c8d501f98b45cbd41a06ea219da9acb6, type: 3}
---- !u!81 &8195570
-AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148522}
-  m_Enabled: 0
---- !u!92 &9204352
-Behaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148522}
-  m_Enabled: 0
 --- !u!114 &11400782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -446,6 +429,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
   calibrator: {fileID: 11493960}
+  testTexture: {fileID: 0}
+  casterMaterial: {fileID: 0}
 --- !u!114 &11468286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -607,13 +592,6 @@ MonoBehaviour:
   calibrationCenter: {fileID: 2800000, guid: 13af63765e4e8744ea5303d7181eb438, type: 3}
   selectedMat: {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}
   offMat: {fileID: 2100000, guid: 99b45b85227481b4c8b92e0cf48403e1, type: 2}
---- !u!124 &12461732
-Behaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148522}
-  m_Enabled: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
