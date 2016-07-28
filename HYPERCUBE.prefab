@@ -31,9 +31,9 @@ GameObject:
   - 114: {fileID: 11408168}
   - 114: {fileID: 11414210}
   - 114: {fileID: 11438496}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HYPERCUBE
-  m_TagString: VISTEST
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,10 +68,9 @@ GameObject:
   - 124: {fileID: 12486252}
   - 81: {fileID: 8171266}
   - 114: {fileID: 11413466}
-  - 114: {fileID: 11458940}
   m_Layer: 0
   m_Name: hypercube_RTT
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -82,9 +81,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0.05166563, y: -0.97741926, z: 0.20431629, w: -0.015398584}
-  m_LocalPosition: {x: 9.16, y: 1.1, z: 6.72}
-  m_LocalScale: {x: 5.99356, y: 2.9850185, z: 4.570184}
+  m_LocalRotation: {x: 0.11757722, y: 0.90576476, z: -0.25569335, w: 0.3168387}
+  m_LocalPosition: {x: 9.87, y: 0.24, z: 4.9}
+  m_LocalScale: {x: 7.5977993, y: 3.7839954, z: 5.7934504}
   m_Children:
   - {fileID: 446836}
   - {fileID: 432058}
@@ -98,7 +97,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0.21, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 412356}
@@ -143,11 +142,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 3.884657
-  far clip plane: 4.7986937
+  near clip plane: 4.924433
+  far clip plane: 6.0831237
   field of view: 60
   orthographic: 1
-  orthographic size: 1.4925091
+  orthographic size: 1.8919978
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -200,7 +199,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: fa3bb1881a52d2c44b662f306b41b182, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
+  m_UseLightProbes: 1
   m_ReflectionProbeUsage: 0
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
@@ -294,10 +293,10 @@ MonoBehaviour:
   sensitivityY: 30
   minimumX: -360
   maximumX: 360
-  minimumY: -180
-  maximumY: 180
+  minimumY: -60
+  maximumY: 60
   moveNode: {fileID: 0}
-  pauseKey: 8
+  pauseKey: 0
   paused: 0
 --- !u!114 &11413466
 MonoBehaviour:
@@ -322,8 +321,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d517016184638f4396a5a0f6d06e333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: 45
-  toggle: {fileID: 169792}
+  key: 0
+  toggle: {fileID: 0}
   toggleUp: {fileID: 0}
 --- !u!114 &11438496
 MonoBehaviour:
@@ -338,763 +337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileName: cubePrefs.txt
   readOnly: 0
-  loadOnAwake: 1
-  keyPairs:
-  - key: offsetX
-    value: 0
-  - key: offsetY
-    value: 0
-  - key: sliceWidth
-    value: 1920
-  - key: pixelsPerSlice
-    value: 108
-  - key: flipX
-    value: False
-  - key: sliceCount
-    value: 10
-  - key: overlap
-    value: 0.5
-  - key: useSoftSlices
-    value: True
-  - key: flipY
-    value: True
-  - key: flipZ
-    value: True
-  - key: s0_ULx
-    value: 0
-  - key: s0_ULy
-    value: 0
-  - key: s0_URx
-    value: 0
-  - key: s0_URy
-    value: 0
-  - key: s0_LLx
-    value: 0.1752022
-  - key: s0_LLy
-    value: 0.01603535
-  - key: s0_LRx
-    value: -0.1027753
-  - key: s0_LRy
-    value: 0.01363636
-  - key: s0_Mx
-    value: 0
-  - key: s0_My
-    value: 0
-  - key: s1_ULx
-    value: 0
-  - key: s1_ULy
-    value: 0
-  - key: s1_URx
-    value: 0
-  - key: s1_URy
-    value: 0
-  - key: s1_LLx
-    value: 0.1752022
-  - key: s1_LLy
-    value: 0.01603535
-  - key: s1_LRx
-    value: -0.1027753
-  - key: s1_LRy
-    value: 0.01363636
-  - key: s1_Mx
-    value: 0
-  - key: s1_My
-    value: 0
-  - key: s2_ULx
-    value: 0
-  - key: s2_ULy
-    value: 0
-  - key: s2_URx
-    value: 0
-  - key: s2_URy
-    value: 0
-  - key: s2_LLx
-    value: 0.1752022
-  - key: s2_LLy
-    value: 0.01603535
-  - key: s2_LRx
-    value: -0.1027753
-  - key: s2_LRy
-    value: 0.01363636
-  - key: s2_Mx
-    value: 0
-  - key: s2_My
-    value: 0
-  - key: s3_ULx
-    value: 0
-  - key: s3_ULy
-    value: 0
-  - key: s3_URx
-    value: 0
-  - key: s3_URy
-    value: 0
-  - key: s3_LLx
-    value: 0.1752022
-  - key: s3_LLy
-    value: 0.01603535
-  - key: s3_LRx
-    value: -0.1027753
-  - key: s3_LRy
-    value: 0.01363636
-  - key: s3_Mx
-    value: 0
-  - key: s3_My
-    value: 0
-  - key: s4_ULx
-    value: 0
-  - key: s4_ULy
-    value: 0
-  - key: s4_URx
-    value: 0
-  - key: s4_URy
-    value: 0
-  - key: s4_LLx
-    value: 0.1752022
-  - key: s4_LLy
-    value: 0.01603535
-  - key: s4_LRx
-    value: -0.1027753
-  - key: s4_LRy
-    value: 0.01363636
-  - key: s4_Mx
-    value: 0
-  - key: s4_My
-    value: 0
-  - key: s5_ULx
-    value: 0
-  - key: s5_ULy
-    value: 0
-  - key: s5_URx
-    value: 0
-  - key: s5_URy
-    value: 0
-  - key: s5_LLx
-    value: 0.1752022
-  - key: s5_LLy
-    value: 0.01603535
-  - key: s5_LRx
-    value: -0.1027753
-  - key: s5_LRy
-    value: 0.01363636
-  - key: s5_Mx
-    value: 0
-  - key: s5_My
-    value: 0
-  - key: s6_ULx
-    value: 0
-  - key: s6_ULy
-    value: 0
-  - key: s6_URx
-    value: 0
-  - key: s6_URy
-    value: 0
-  - key: s6_LLx
-    value: 0.1752022
-  - key: s6_LLy
-    value: 0.01603535
-  - key: s6_LRx
-    value: -0.1027753
-  - key: s6_LRy
-    value: 0.01363636
-  - key: s6_Mx
-    value: 0
-  - key: s6_My
-    value: 0
-  - key: s7_ULx
-    value: 0
-  - key: s7_ULy
-    value: 0
-  - key: s7_URx
-    value: 0
-  - key: s7_URy
-    value: 0
-  - key: s7_LLx
-    value: 0.1752022
-  - key: s7_LLy
-    value: 0.01603535
-  - key: s7_LRx
-    value: -0.1027753
-  - key: s7_LRy
-    value: 0.01363636
-  - key: s7_Mx
-    value: 0
-  - key: s7_My
-    value: 0
-  - key: s8_ULx
-    value: 0
-  - key: s8_ULy
-    value: 0
-  - key: s8_URx
-    value: 0
-  - key: s8_URy
-    value: 0
-  - key: s8_LLx
-    value: 0.1752022
-  - key: s8_LLy
-    value: 0.01603535
-  - key: s8_LRx
-    value: -0.1027753
-  - key: s8_LRy
-    value: 0.01363636
-  - key: s8_Mx
-    value: 0
-  - key: s8_My
-    value: 0
-  - key: s9_ULx
-    value: 0
-  - key: s9_ULy
-    value: 0
-  - key: s9_URx
-    value: 0
-  - key: s9_URy
-    value: 0
-  - key: s9_LLx
-    value: 0.1752022
-  - key: s9_LLy
-    value: 0.01603535
-  - key: s9_LRx
-    value: -0.1027753
-  - key: s9_LRy
-    value: 0.01363636
-  - key: s9_Mx
-    value: 0
-  - key: s9_My
-    value: 0
-  - key: s10_ULx
-    value: 0
-  - key: s10_ULy
-    value: 0
-  - key: s10_URx
-    value: 0
-  - key: s10_URy
-    value: 0
-  - key: s10_LLx
-    value: 0
-  - key: s10_LLy
-    value: 0
-  - key: s10_LRx
-    value: 0
-  - key: s10_LRy
-    value: 0
-  - key: s10_Mx
-    value: 0
-  - key: s10_My
-    value: 0
-  - key: s11_ULx
-    value: 0
-  - key: s11_ULy
-    value: 0
-  - key: s11_URx
-    value: 0
-  - key: s11_URy
-    value: 0
-  - key: s11_LLx
-    value: 0
-  - key: s11_LLy
-    value: 0
-  - key: s11_LRx
-    value: 0
-  - key: s11_LRy
-    value: 0
-  - key: s11_Mx
-    value: 0
-  - key: s11_My
-    value: 0
-  - key: s12_ULx
-    value: 0
-  - key: s12_ULy
-    value: 0
-  - key: s12_URx
-    value: 0
-  - key: s12_URy
-    value: 0
-  - key: s12_LLx
-    value: 0
-  - key: s12_LLy
-    value: 0
-  - key: s12_LRx
-    value: 0
-  - key: s12_LRy
-    value: 0
-  - key: s12_Mx
-    value: 0
-  - key: s12_My
-    value: 0
-  - key: s13_ULx
-    value: 0
-  - key: s13_ULy
-    value: 0
-  - key: s13_URx
-    value: 0
-  - key: s13_URy
-    value: 0
-  - key: s13_LLx
-    value: 0
-  - key: s13_LLy
-    value: 0
-  - key: s13_LRx
-    value: 0
-  - key: s13_LRy
-    value: 0
-  - key: s13_Mx
-    value: 0
-  - key: s13_My
-    value: 0
-  - key: s14_ULx
-    value: 0
-  - key: s14_ULy
-    value: 0
-  - key: s14_URx
-    value: 0
-  - key: s14_URy
-    value: 0
-  - key: s14_LLx
-    value: 0
-  - key: s14_LLy
-    value: 0
-  - key: s14_LRx
-    value: 0
-  - key: s14_LRy
-    value: 0
-  - key: s14_Mx
-    value: 0
-  - key: s14_My
-    value: 0
-  - key: s15_ULx
-    value: 0
-  - key: s15_ULy
-    value: 0
-  - key: s15_URx
-    value: 0
-  - key: s15_URy
-    value: 0
-  - key: s15_LLx
-    value: 0
-  - key: s15_LLy
-    value: 0
-  - key: s15_LRx
-    value: 0
-  - key: s15_LRy
-    value: 0
-  - key: s15_Mx
-    value: 0
-  - key: s15_My
-    value: 0
-  - key: s16_ULx
-    value: 0
-  - key: s16_ULy
-    value: 0
-  - key: s16_URx
-    value: 0
-  - key: s16_URy
-    value: 0
-  - key: s16_LLx
-    value: 0
-  - key: s16_LLy
-    value: 0
-  - key: s16_LRx
-    value: 0
-  - key: s16_LRy
-    value: 0
-  - key: s16_Mx
-    value: 0
-  - key: s16_My
-    value: 0
-  - key: s17_ULx
-    value: 0
-  - key: s17_ULy
-    value: 0
-  - key: s17_URx
-    value: 0
-  - key: s17_URy
-    value: 0
-  - key: s17_LLx
-    value: 0
-  - key: s17_LLy
-    value: 0
-  - key: s17_LRx
-    value: 0
-  - key: s17_LRy
-    value: 0
-  - key: s17_Mx
-    value: 0
-  - key: s17_My
-    value: 0
-  - key: s18_ULx
-    value: 0
-  - key: s18_ULy
-    value: 0
-  - key: s18_URx
-    value: 0
-  - key: s18_URy
-    value: 0
-  - key: s18_LLx
-    value: 0
-  - key: s18_LLy
-    value: 0
-  - key: s18_LRx
-    value: 0
-  - key: s18_LRy
-    value: 0
-  - key: s18_Mx
-    value: 0
-  - key: s18_My
-    value: 0
-  - key: s19_ULx
-    value: 0
-  - key: s19_ULy
-    value: 0
-  - key: s19_URx
-    value: 0
-  - key: s19_URy
-    value: 0
-  - key: s19_LLx
-    value: 0
-  - key: s19_LLy
-    value: 0
-  - key: s19_LRx
-    value: 0
-  - key: s19_LRy
-    value: 0
-  - key: s19_Mx
-    value: 0
-  - key: s19_My
-    value: 0
-  - key: s20_ULx
-    value: 0
-  - key: s20_ULy
-    value: 0
-  - key: s20_URx
-    value: 0
-  - key: s20_URy
-    value: 0
-  - key: s20_LLx
-    value: 0
-  - key: s20_LLy
-    value: 0
-  - key: s20_LRx
-    value: 0
-  - key: s20_LRy
-    value: 0
-  - key: s20_Mx
-    value: 0
-  - key: s20_My
-    value: 0
-  - key: s21_ULx
-    value: 0
-  - key: s21_ULy
-    value: 0
-  - key: s21_URx
-    value: 0
-  - key: s21_URy
-    value: 0
-  - key: s21_LLx
-    value: 0
-  - key: s21_LLy
-    value: 0
-  - key: s21_LRx
-    value: 0
-  - key: s21_LRy
-    value: 0
-  - key: s21_Mx
-    value: 0
-  - key: s21_My
-    value: 0
-  - key: s22_ULx
-    value: 0
-  - key: s22_ULy
-    value: 0
-  - key: s22_URx
-    value: 0
-  - key: s22_URy
-    value: 0
-  - key: s22_LLx
-    value: 0
-  - key: s22_LLy
-    value: 0
-  - key: s22_LRx
-    value: 0
-  - key: s22_LRy
-    value: 0
-  - key: s22_Mx
-    value: 0
-  - key: s22_My
-    value: 0
-  - key: s23_ULx
-    value: 0
-  - key: s23_ULy
-    value: 0
-  - key: s23_URx
-    value: 0
-  - key: s23_URy
-    value: 0
-  - key: s23_LLx
-    value: 0
-  - key: s23_LLy
-    value: 0
-  - key: s23_LRx
-    value: 0
-  - key: s23_LRy
-    value: 0
-  - key: s23_Mx
-    value: 0
-  - key: s23_My
-    value: 0
-  - key: s24_ULx
-    value: 0
-  - key: s24_ULy
-    value: 0
-  - key: s24_URx
-    value: 0
-  - key: s24_URy
-    value: 0
-  - key: s24_LLx
-    value: 0
-  - key: s24_LLy
-    value: 0
-  - key: s24_LRx
-    value: 0
-  - key: s24_LRy
-    value: 0
-  - key: s24_Mx
-    value: 0
-  - key: s24_My
-    value: 0
-  - key: s25_ULx
-    value: 0
-  - key: s25_ULy
-    value: 0
-  - key: s25_URx
-    value: 0
-  - key: s25_URy
-    value: 0
-  - key: s25_LLx
-    value: 0
-  - key: s25_LLy
-    value: 0
-  - key: s25_LRx
-    value: 0
-  - key: s25_LRy
-    value: 0
-  - key: s25_Mx
-    value: 0
-  - key: s25_My
-    value: 0
-  - key: s26_ULx
-    value: 0
-  - key: s26_ULy
-    value: 0
-  - key: s26_URx
-    value: 0
-  - key: s26_URy
-    value: 0
-  - key: s26_LLx
-    value: 0
-  - key: s26_LLy
-    value: 0
-  - key: s26_LRx
-    value: 0
-  - key: s26_LRy
-    value: 0
-  - key: s26_Mx
-    value: 0
-  - key: s26_My
-    value: 0
-  - key: s27_ULx
-    value: 0
-  - key: s27_ULy
-    value: 0
-  - key: s27_URx
-    value: 0
-  - key: s27_URy
-    value: 0
-  - key: s27_LLx
-    value: 0
-  - key: s27_LLy
-    value: 0
-  - key: s27_LRx
-    value: 0
-  - key: s27_LRy
-    value: 0
-  - key: s27_Mx
-    value: 0
-  - key: s27_My
-    value: 0
-  - key: s28_ULx
-    value: 0
-  - key: s28_ULy
-    value: 0
-  - key: s28_URx
-    value: 0
-  - key: s28_URy
-    value: 0
-  - key: s28_LLx
-    value: 0
-  - key: s28_LLy
-    value: 0
-  - key: s28_LRx
-    value: 0
-  - key: s28_LRy
-    value: 0
-  - key: s28_Mx
-    value: 0
-  - key: s28_My
-    value: 0
-  - key: s29_ULx
-    value: 0
-  - key: s29_ULy
-    value: 0
-  - key: s29_URx
-    value: 0
-  - key: s29_URy
-    value: 0
-  - key: s29_LLx
-    value: 0
-  - key: s29_LLy
-    value: 0
-  - key: s29_LRx
-    value: 0
-  - key: s29_LRy
-    value: 0
-  - key: s29_Mx
-    value: 0
-  - key: s29_My
-    value: 0
-  - key: s0_Sx
-    value: 0
-  - key: s0_Sy
-    value: 0
-  - key: s1_Sx
-    value: 0
-  - key: s1_Sy
-    value: 0
-  - key: s2_Sx
-    value: 0
-  - key: s2_Sy
-    value: 0
-  - key: s3_Sx
-    value: 0
-  - key: s3_Sy
-    value: 0
-  - key: s4_Sx
-    value: 0
-  - key: s4_Sy
-    value: 0
-  - key: s5_Sx
-    value: 0
-  - key: s5_Sy
-    value: 0
-  - key: s6_Sx
-    value: 0
-  - key: s6_Sy
-    value: 0
-  - key: s7_Sx
-    value: 0
-  - key: s7_Sy
-    value: 0
-  - key: s8_Sx
-    value: 0
-  - key: s8_Sy
-    value: 0
-  - key: s9_Sx
-    value: 0
-  - key: s9_Sy
-    value: 0
-  - key: s10_Sx
-    value: 0
-  - key: s10_Sy
-    value: 0
-  - key: s11_Sx
-    value: 0
-  - key: s11_Sy
-    value: 0
-  - key: s12_Sx
-    value: 0
-  - key: s12_Sy
-    value: 0
-  - key: s13_Sx
-    value: 0
-  - key: s13_Sy
-    value: 0
-  - key: s14_Sx
-    value: 0
-  - key: s14_Sy
-    value: 0
-  - key: s15_Sx
-    value: 0
-  - key: s15_Sy
-    value: 0
-  - key: s16_Sx
-    value: 0
-  - key: s16_Sy
-    value: 0
-  - key: s17_Sx
-    value: 0
-  - key: s17_Sy
-    value: 0
-  - key: s18_Sx
-    value: 0
-  - key: s18_Sy
-    value: 0
-  - key: s19_Sx
-    value: 0
-  - key: s19_Sy
-    value: 0
-  - key: s20_Sx
-    value: 0
-  - key: s20_Sy
-    value: 0
-  - key: s21_Sx
-    value: 0
-  - key: s21_Sy
-    value: 0
-  - key: s22_Sx
-    value: 0
-  - key: s22_Sy
-    value: 0
-  - key: s23_Sx
-    value: 0
-  - key: s23_Sy
-    value: 0
-  - key: s24_Sx
-    value: 0
-  - key: s24_Sy
-    value: 0
-  - key: s25_Sx
-    value: 0
-  - key: s25_Sy
-    value: 0
-  - key: s26_Sx
-    value: 0
-  - key: s26_Sy
-    value: 0
-  - key: s27_Sx
-    value: 0
-  - key: s27_Sy
-    value: 0
-  - key: s28_Sx
-    value: 0
-  - key: s28_Sy
-    value: 0
-  - key: s29_Sx
-    value: 0
-  - key: s29_Sy
-    value: 0
---- !u!114 &11458940
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195280}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f19108706fdce9469603d07980eb8ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blendMode: 0
-  intensity: 1
-  texture: {fileID: 2800000, guid: e8455d8af7a9e0a4dbf15c8448e437c4, type: 3}
-  overlayShader: {fileID: 4800000, guid: 8c81db0e527d24acc9bcec04e87781bd, type: 3}
+  loadOnAwake: 0
 --- !u!114 &11483894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1106,12 +349,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  softSlicing: 1
   overlap: 0.5
-  shaderOverlap: 0.5
+  shaderOverlap: 0.25
   brightness: 1
   slices: 10
-  forcedPerspective: 4.29
-  useSoftSlices: 1
+  forcedPerspective: 0
+  blackPoint: {r: 0.15686275, g: 0.12941177, b: 0.23137255, a: 0}
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:

@@ -8,8 +8,8 @@ public class casterWindowPrefs : EditorWindow
 
     int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
     int posY = EditorPrefs.GetInt("V_windowOffsetY", 0);
-    int width = EditorPrefs.GetInt("V_windowWidth", Display.main.renderingWidth); 
-    int height = EditorPrefs.GetInt("V_windowHeight", Display.main.renderingHeight);
+    int width = EditorPrefs.GetInt("V_windowWidth", 1920);  //Display.main.renderingWidth
+    int height = EditorPrefs.GetInt("V_windowHeight", 1080);
 
 
     [MenuItem("Hypercube/Caster Window Prefs", false, 1)]  //1 is prio

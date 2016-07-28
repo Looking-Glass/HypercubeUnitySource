@@ -82,7 +82,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 3.0818622, y: 4.160514, z: 1}
+  m_LocalScale: {x: 4, y: 5.4, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -429,7 +429,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
   calibrator: {fileID: 11493960}
-  testTexture: {fileID: 0}
   casterMaterial: {fileID: 0}
 --- !u!114 &11468286
 MonoBehaviour:

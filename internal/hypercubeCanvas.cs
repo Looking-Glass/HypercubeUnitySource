@@ -51,8 +51,6 @@ public class hypercubeCanvas : MonoBehaviour
 
 
     public canvasCalibrator calibrator = null;
-
-    public Texture2D testTexture;
     public Material casterMaterial;
 
     public void setCustomWidthHeight(float w, float h)
@@ -83,7 +81,7 @@ public class hypercubeCanvas : MonoBehaviour
     }
   
     //tweaks to the cube design to offset physical distortions
-    public void setCalibrationOffsets(dataFileAssoc d, int maxSlices)
+    public void setCalibrationOffsets(dataFileDict d, int maxSlices)
     {
         ULOffsets = new Vector2[maxSlices]; //init our calibration vars
         UROffsets = new Vector2[maxSlices];
@@ -109,7 +107,7 @@ public class hypercubeCanvas : MonoBehaviour
         }
     }
 
-    public void saveCalibrationOffsets(dataFileAssoc d)
+    public void saveCalibrationOffsets(dataFileDict d)
     {
         for (int s = 0; s < ULOffsets.Length; s++)
         {

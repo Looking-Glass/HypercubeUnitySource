@@ -2,16 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+public enum softSliceMode
+{
+    OFF = 0,
+    INTEGRAL,
+    FREE
+}
+
 [ExecuteInEditMode]
-[RequireComponent (typeof(dataFileAssoc))]
+[RequireComponent (typeof(dataFileDict))]
 public class hypercubeCamera : MonoBehaviour {
 
+    public softSliceMode softSlicing;
     public float overlap = 2f;
+    [Range(0.001f, .5f)]
     public float shaderOverlap = .5f;
     public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
     public int slices = 12;
 	public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
-    public bool useSoftSlices = true;
+
     [Tooltip ("This can be used to differentiate between negative space, and 'black'.  This Color will be added to everything except actual void.")]
     public Color blackPoint; 
     public Shader softSliceShader;
@@ -63,10 +73,18 @@ public class hypercubeCamera : MonoBehaviour {
 
     void OnValidate()
     {
-        if (slices < 1)
-            slices = 1;
+        if (sliceTextures.Length == 0)
+            Debug.LogError("The Hypercube has no slice textures to render to.  Please assign them or reset the prefab.");
+
+
         if (slices > sliceTextures.Length)
             slices = sliceTextures.Length;
+
+        if (slices < 1)
+            slices = 1;
+
+        if (softSlicing == softSliceMode.OFF)
+            shaderOverlap = 0f;
 
         if (localCanvas)
         {
@@ -84,6 +102,7 @@ public class hypercubeCamera : MonoBehaviour {
         updateOverlap();
     }
 
+
     //let the slice image filter shader know how much 'softness' they should apply to the soft overlap
     void updateOverlap()
     {
@@ -91,10 +110,14 @@ public class hypercubeCamera : MonoBehaviour {
             overlap = 0;
 
         softOverlap o = renderCam.GetComponent<softOverlap>();
-        if (useSoftSlices)
+        if (softSlicing != softSliceMode.OFF)
         {
+            if (softSlicing == softSliceMode.INTEGRAL)
+                shaderOverlap = overlap / ((overlap * 2f) + 1f);
+
             o.enabled = true;
             o.setShaderProperties(shaderOverlap, blackPoint);
+
         }
         else
             o.enabled = false;
@@ -102,7 +125,7 @@ public class hypercubeCamera : MonoBehaviour {
 
     public void render()
     {
-        //if (overlap > 0f && useSoftSlices)
+        if (overlap > 0f && softSlicing != softSliceMode.OFF)
             renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
 
 		float baseViewAngle = renderCam.fieldOfView;
@@ -119,7 +142,7 @@ public class hypercubeCamera : MonoBehaviour {
 
 		renderCam.fieldOfView = baseViewAngle;
 
-        //if (overlap > 0f && useSoftSlices)
+        if (overlap > 0f && softSlicing != softSliceMode.OFF)
             renderCam.gameObject.SetActive(false);
 
 		//TEMP
@@ -129,7 +152,10 @@ public class hypercubeCamera : MonoBehaviour {
     //prefs input
     public void softSliceToggle()
     {
-        useSoftSlices = !useSoftSlices;
+        if (softSlicing == softSliceMode.OFF)
+            softSlicing = softSliceMode.INTEGRAL;
+        else
+            softSlicing = softSliceMode.OFF;
     }
     public void overlapUp()
     {
@@ -156,16 +182,18 @@ public class hypercubeCamera : MonoBehaviour {
 
         for (int i = 0; i < slices && i < sliceTextures.Length; i ++ )
         {
-            nearValues[i] = i * sliceDepth - (sliceDepth * overlap);
-            farValues[i] = (i + 1) * sliceDepth + (sliceDepth * overlap);
+            nearValues[i] = (i * sliceDepth) - (sliceDepth * overlap);
+            farValues[i] = ((i + 1) * sliceDepth) + (sliceDepth * overlap);
         }
+
+
 			
         updateOverlap();
     }
 
     public void loadSettings(bool forceLoad = false)
     {
-        dataFileAssoc d = GetComponent<dataFileAssoc>();
+        dataFileDict d = GetComponent<dataFileDict>();
 
         d.clear();
         d.load();
@@ -189,7 +217,7 @@ public class hypercubeCamera : MonoBehaviour {
             localCanvas.flipZ = d.getValueAsBool("flipZ", false);
             overlap = d.getValueAsFloat("overlap", 1f);
             shaderOverlap = d.getValueAsFloat("shaderOverlap", 1f);
-            useSoftSlices = d.getValueAsBool("useSoftSlices", true);
+            softSlicing = (softSliceMode)d.getValueAsInt("softSlicing", (int)softSliceMode.INTEGRAL);
         }
 
         localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
@@ -199,7 +227,7 @@ public class hypercubeCamera : MonoBehaviour {
     public void saveSettings()
     {
         //save our settings whether in editor mode or play mode.
-        dataFileAssoc d = GetComponent<dataFileAssoc>();
+        dataFileDict d = GetComponent<dataFileDict>();
         if (!d)
             return;
         d.setValue("sliceCount", slices.ToString(), true);
@@ -213,7 +241,7 @@ public class hypercubeCamera : MonoBehaviour {
         d.setValue("flipZ", localCanvas.flipZ.ToString(), true);
         d.setValue("overlap", overlap.ToString(), true);
         d.setValue("shaderOverlap", shaderOverlap.ToString(), true);
-        d.setValue("useSoftSlices", useSoftSlices.ToString(), true);
+        d.setValue("softSlicing", ((int)softSlicing).ToString(), true);
 
         if (localCanvas)
             localCanvas.saveCalibrationOffsets(d);

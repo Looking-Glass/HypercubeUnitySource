@@ -20,6 +20,10 @@ Shader "Hidden/softOverlap"
 			
 			#include "UnityCG.cginc"
 
+			//SOFTSLICE_SOFT does not preserve the 'meat' of the blended slice
+			//SOFTSLICE_INTEGRAL will not touch the 'meat' of the slice
+			#pragma multi_compile SOFTSLICE_SOFT SOFTSLICE_INTEGRAL 
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -56,11 +60,18 @@ Shader "Hidden/softOverlap"
 
 				//return 1-d; //uncomment this to show the raw depth
 
-				float mask = 1;
+//soft slicing--------------------------------------
+				//if(_softPercent <= 0)   //this should not be used because we can count on our component being off if this is not needed
+				//	return col;
+
+				float mask = 1;	
+									
 				if (d < _softPercent)
-					mask *= d / _softPercent; //this is the darkening of the slice near 0
+					mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
 				else if (d > 1 - _softPercent)
-					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 
+					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
+//end soft slicing----------------------------------------
+
 
 					//return mask;
 				return (col + _blackPoint) * mask;

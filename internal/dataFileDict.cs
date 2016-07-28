@@ -3,10 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 
-//this utilizes a text file to save/load data arranged as an associative array
+//this utilizes a text file to save/load data arranged as a dictionary
+//the file should be arranged like so:
+/*
+ 
+myKey=itsValue
+speed=10
+ 
+ */
+
+//use this component if you don't care about editing settings or defaults via the inspector, or want a more efficient algorithm
+//Definitely use this instead of dataFileAssoc if you plan to have thousands of entries from the data file.
 
 
-public class dataFileAssoc : MonoBehaviour {
+public class dataFileDict : MonoBehaviour {
 
     public string fileName;
     public bool readOnly = false;

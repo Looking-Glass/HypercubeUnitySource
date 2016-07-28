@@ -25,6 +25,9 @@ public class hypercubePreview : MonoBehaviour {
 
     void OnValidate()
     {
+        if (previewMaterials.Length < 1)
+            Debug.LogError("Preview has no items in it's material list.  It needs to be able to choose from materials to apply to it's slices.");
+
         if (sliceCount < 1)
             sliceCount = 1;
 
