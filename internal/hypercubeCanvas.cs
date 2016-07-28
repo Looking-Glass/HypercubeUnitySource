@@ -29,7 +29,8 @@ public class hypercubeCanvas : MonoBehaviour
     public float sliceHeight;
     public float sliceGap ;
     public float zPos = .01f;
-    public int tesselation = 3;
+    [Range(1, 20)]
+    public int tesselation = 8;
     public GameObject sliceMesh;
 
     [Tooltip("The materials set here will be applied to the dynamic mesh")]

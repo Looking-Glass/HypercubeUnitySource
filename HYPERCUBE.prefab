@@ -81,9 +81,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0.11757722, y: 0.90576476, z: -0.25569335, w: 0.3168387}
-  m_LocalPosition: {x: 9.87, y: 0.24, z: 4.9}
-  m_LocalScale: {x: 7.5977993, y: 3.7839954, z: 5.7934504}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 5, z: 7}
   m_Children:
   - {fileID: 446836}
   - {fileID: 432058}
@@ -349,9 +349,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  softSlicing: 1
+  slicing: 1
   overlap: 0.5
-  shaderOverlap: 0.25
+  softness: 0.25
   brightness: 1
   slices: 10
   forcedPerspective: 0
