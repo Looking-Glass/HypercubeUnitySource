@@ -429,7 +429,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
   calibrator: {fileID: 11493960}
-  casterMaterial: {fileID: 0}
+  casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
 --- !u!114 &11468286
 MonoBehaviour:
   m_ObjectHideFlags: 1

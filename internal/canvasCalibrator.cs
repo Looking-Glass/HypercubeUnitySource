@@ -172,7 +172,12 @@ public class canvasCalibrator : MonoBehaviour
     {
 
         if (!canvas)
-            Debug.LogError("The calibration tool has no hypercubeCanvas to calibrate!");
+        {
+            //thats weird... this should already be set in the prefab, try to automagically fix...
+            canvas = GetComponent<hypercubeCanvas>(); 
+            if (!canvas)
+                Debug.LogError("The calibration tool has no hypercubeCanvas to calibrate!");
+        }
 
         selectedMat.SetFloat("_Mod", brightness);
         offMat.SetFloat("_Mod", brightness);

@@ -28,7 +28,6 @@ GameObject:
   - 114: {fileID: 11483894}
   - 33: {fileID: 3327710}
   - 23: {fileID: 2348930}
-  - 114: {fileID: 11408168}
   - 114: {fileID: 11414210}
   - 114: {fileID: 11438496}
   m_Layer: 9
@@ -273,31 +272,6 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
   m_Enabled: 0
---- !u!114 &11408168
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  invertMouse: 0
-  moveSpeed: 2
-  scaleSpeed: 1
-  rollSpeed: 20
-  keyboardLookSpeed: 30
-  sensitivityX: 30
-  sensitivityY: 30
-  minimumX: -360
-  maximumX: 360
-  minimumY: -60
-  maximumY: 60
-  moveNode: {fileID: 0}
-  pauseKey: 0
-  paused: 0
 --- !u!114 &11413466
 MonoBehaviour:
   m_ObjectHideFlags: 1

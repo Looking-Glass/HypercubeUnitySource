@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-//this script does nothing.
-//It's purpose is so that the hypercube can query if an appropriate canvas exists in the scene.
-//If it doesn't exist, it will create one.
+
+//This script manages the canvas surface
+//the canvas surface translates the rendered slices into a form that the Volume can display properly.
 
 public enum canvasEditMode
 {
