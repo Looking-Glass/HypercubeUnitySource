@@ -9,14 +9,13 @@ GameObject:
   m_Component:
   - 4: {fileID: 431134}
   - 114: {fileID: 11407910}
-  - 114: {fileID: 11469270}
   m_Layer: 0
   m_Name: HYPERCUBE_INPUTS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &431134
 Transform:
   m_ObjectHideFlags: 1
@@ -24,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 148016}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.9299583, y: 1.0878196, z: 6.3780127}
+  m_LocalPosition: {x: 2.1779172, y: -6.735715, z: -4.63398}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -40,23 +39,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6faf1b2ae50b784e81e45d81b9f00e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchScreenFront: {fileID: 0}
---- !u!114 &11469270
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bc5f48af2cffd747a079fe8c632e2c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portName: COM5
   baudRate: 115200
   reconnectionDelay: 500
-  maxUnreadMessages: 1
-  maxFailuresAllowed: 3
+  maxUnreadMessage: 5
+  maxAllowedFailure: 3
+  touchScreenFront: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -22,6 +22,7 @@ public class hypercubeCanvas : MonoBehaviour
     public bool flipX = false;
     public bool flipY = false;
     public bool flipZ = false;
+
     public float sliceOffsetX ;
     public float sliceOffsetY ;
     int sliceCount = 12; //this is given by the attached hypercube
@@ -112,18 +113,18 @@ public class hypercubeCanvas : MonoBehaviour
     {
         for (int s = 0; s < ULOffsets.Length; s++)
         {
-            d.setValue("s" + s + "_ULx", ULOffsets[s].x.ToString(), true);
-            d.setValue("s" + s + "_ULy", ULOffsets[s].y.ToString(), true);
-            d.setValue("s" + s + "_URx", UROffsets[s].x.ToString(), true);
-            d.setValue("s" + s + "_URy", UROffsets[s].y.ToString(), true);
-            d.setValue("s" + s + "_LLx", LLOffsets[s].x.ToString(), true);
-            d.setValue("s" + s + "_LLy", LLOffsets[s].y.ToString(), true);
-            d.setValue("s" + s + "_LRx", LROffsets[s].x.ToString(), true);
-            d.setValue("s" + s + "_LRy", LROffsets[s].y.ToString(), true);
-            d.setValue("s" + s + "_Mx", MOffsets[s].x.ToString(), true);
-            d.setValue("s" + s + "_My", MOffsets[s].y.ToString(), true);
-			d.setValue("s" + s + "_Sx", skews[s].x.ToString(), true);
-            d.setValue("s" + s + "_Sy", skews[s].y.ToString(), true);
+            d.setValue("s" + s + "_ULx", ULOffsets[s].x);
+            d.setValue("s" + s + "_ULy", ULOffsets[s].y);
+            d.setValue("s" + s + "_URx", UROffsets[s].x);
+            d.setValue("s" + s + "_URy", UROffsets[s].y);
+            d.setValue("s" + s + "_LLx", LLOffsets[s].x);
+            d.setValue("s" + s + "_LLy", LLOffsets[s].y);
+            d.setValue("s" + s + "_LRx", LROffsets[s].x);
+            d.setValue("s" + s + "_LRy", LROffsets[s].y);
+            d.setValue("s" + s + "_Mx", MOffsets[s].x);
+            d.setValue("s" + s + "_My", MOffsets[s].y);
+			d.setValue("s" + s + "_Sx", skews[s].x);
+            d.setValue("s" + s + "_Sy", skews[s].y);
         }
     }
 

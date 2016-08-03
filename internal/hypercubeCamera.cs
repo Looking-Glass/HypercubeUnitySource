@@ -31,7 +31,14 @@ public class hypercubeCamera : MonoBehaviour {
     public hypercubeCanvas canvasPrefab;
     public hypercubeCanvas localCanvas = null;
     public hypercubePreview preview = null;
-    //public hypercubeCanvas getLocalCanvas() { return localCanvas; }
+
+#if HYPERCUBE_INPUT
+    //this will tell our hypercube to try to use the settings stored in the hardware so that we can use any kind of Volume, seamlessly
+    //turn it off if you are trying to modify your Volume hardware or are a Volume developer working on prototypes.
+    private bool useHardwareCalibrations = true;  
+#else
+    private bool useHardwareCalibrations = false;  
+#endif
 
     //store our camera values here.
     float[] nearValues;
@@ -208,22 +215,34 @@ public class hypercubeCamera : MonoBehaviour {
             UnityEditor.Undo.RecordObject(this, "Loaded saved settings from file.");
 #endif
 
-            slices = d.getValueAsInt("sliceCount", 10);
-            localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
-            localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-            localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
-            localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
-            localCanvas.sliceGap = d.getValueAsFloat("sliceGap", 0f);
-            localCanvas.flipX = d.getValueAsBool("flipX", false);
-            localCanvas.flipY = d.getValueAsBool("flipY", false);
-            localCanvas.flipZ = d.getValueAsBool("flipZ", false);
-            overlap = d.getValueAsFloat("overlap", 1f);
-            softness = d.getValueAsFloat("shaderOverlap", 1f);
+            //these always come from the prefs
             slicing = (softSliceMode)d.getValueAsInt("softSlicing", (int)softSliceMode.SOFT);
-        }
+            softness = d.getValueAsFloat("shaderOverlap", 1f);
+            overlap = d.getValueAsFloat("overlap", 1f);    
 
-        localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
-        localCanvas.updateMesh(slices);       
+            if (useHardwareCalibrations && hypercube.input.get() != null && hypercube.input.isHardwareReady() )
+            {
+                //this will tell the hardware to give us it's specs
+                //once complete, it will also update the canvas mesh when the response "get:complete" is received from the serialComm
+                hypercube.input.sendCommandToHardware("#get");                
+            }
+            else //try to read them from our prefs file instead... using defaults as backup.  This will never be as good as using the config stored in the hardware.
+            {
+                slices = d.getValueAsInt("sliceCount", 10);
+                localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
+                localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
+                localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
+                localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
+                localCanvas.sliceGap = d.getValueAsFloat("sliceGap", 0f);
+                localCanvas.flipX = d.getValueAsBool("flipX", false);
+                localCanvas.flipY = d.getValueAsBool("flipY", false);
+                localCanvas.flipZ = d.getValueAsBool("flipZ", false);
+
+                localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
+                localCanvas.updateMesh(slices); 
+            }           
+        }       
+              
     }
 
     public void saveSettings()
@@ -232,24 +251,35 @@ public class hypercubeCamera : MonoBehaviour {
         dataFileDict d = GetComponent<dataFileDict>();
         if (!d)
             return;
-        d.setValue("sliceCount", slices.ToString(), true);
-        d.setValue("offsetX", localCanvas.sliceOffsetX.ToString(), true);
-        d.setValue("offsetY", localCanvas.sliceOffsetY.ToString(), true);
-        d.setValue("sliceWidth", localCanvas.sliceWidth.ToString(), true);
-        d.setValue("pixelsPerSlice", localCanvas.sliceHeight.ToString(), true);
-        d.setValue("sliceGap", localCanvas.sliceGap.ToString(), true);
-        d.setValue("flipX", localCanvas.flipX.ToString(), true);
-        d.setValue("flipY", localCanvas.flipY.ToString(), true);
-        d.setValue("flipZ", localCanvas.flipZ.ToString(), true);
-        d.setValue("overlap", overlap.ToString(), true);
-        d.setValue("shaderOverlap", softness.ToString(), true);
-        d.setValue("softSlicing", ((int)slicing).ToString(), true);
+        d.setValue("overlap", overlap.ToString());
+        d.setValue("shaderOverlap", softness.ToString());
+        d.setValue("softSlicing", ((int)slicing).ToString());
 
-        if (localCanvas)
-            localCanvas.saveCalibrationOffsets(d);
+        if (useHardwareCalibrations && hypercube.input.get() != null && hypercube.input.isHardwareReady())
+        {
+           // hypercube.input.saveValueToHardware("sliceCount", slices);  //TODO!!!
+            //TODO finish
+        }
+        else //save hardware settings to our prefs file.
+        {
+            d.setValue("sliceCount", slices);
+            d.setValue("offsetX", localCanvas.sliceOffsetX);
+            d.setValue("offsetY", localCanvas.sliceOffsetY);
+            d.setValue("sliceWidth", localCanvas.sliceWidth);
+            d.setValue("pixelsPerSlice", localCanvas.sliceHeight);
+            d.setValue("sliceGap", localCanvas.sliceGap);
+            d.setValue("flipX", localCanvas.flipX);
+            d.setValue("flipY", localCanvas.flipY);
+            d.setValue("flipZ", localCanvas.flipZ);
 
+            if (localCanvas)
+                localCanvas.saveCalibrationOffsets(d);
+        }
+        
         d.save();
     }
+
+
 
     void OnApplicationQuit()
     {

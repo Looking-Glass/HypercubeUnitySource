@@ -19,7 +19,7 @@ speed=10
 public class dataFileDict : MonoBehaviour {
 
     public string fileName;
-    public bool readOnly = false;
+    public bool readOnly = false; //disallows any changes to the data other than reading from a file. It also prevents saving, thereby protecting the contents of the file.
     public bool loadOnAwake = false;
     public Dictionary<string,string> keyPairs = new Dictionary<string,string>();
 
@@ -64,15 +64,32 @@ public class dataFileDict : MonoBehaviour {
     /// <param name="_key">the associative key</param>
     /// <param name="_val">the value you want the key to have</param>
     /// <returns>returns true if it set the value of the key, returns false if it added the key.</returns>
-    public bool setValue(string _key, string _val) 
+    public virtual bool setValue(string _key, string _val) 
     {
         return setValue(_key, _val, true);
     }
-    public bool setValue(string _key, string _val, bool addIfMissing) //more intuitively named override
+
+    public virtual bool setValue(string _key, int _val)
+    {
+        return setValue(_key, _val.ToString());
+    }
+    public virtual bool setValue(string _key, short _val)
+    {
+        return setValue(_key, _val.ToString());
+    }
+    public virtual bool setValue(string _key, float _val)
+    {
+        return setValue(_key, _val.ToString());
+    }
+    public virtual bool setValue(string _key, bool _val)
+    {
+        return setValue(_key, _val.ToString());
+    }
+    public virtual bool setValue(string _key, string _val, bool addIfMissing) //more intuitively named override
     {
         if (readOnly)
         {
-            Debug.LogWarning("WARNING: Tried to set a value on the READ ONLY dataFileAssoc component in: " + this.name + ". Ignoring.");
+            Debug.LogWarning("WARNING: Tried to set a value on the READ ONLY dataFileDict component in: " + this.name + ". Ignoring.");
             return false;
         }
 
@@ -220,12 +237,12 @@ public class dataFileDict : MonoBehaviour {
     {
         if (fileName == "")
         {
-            Debug.Log("Tried to save dataFileAssoc component in: " + this.name + ", but the fileName has not been set.");
+            Debug.Log("Tried to save dataFileDict component in: " + this.name + ", but the fileName has not been set.");
             return;
         }
         else if (readOnly)
         {
-            Debug.Log("WARNING: Tried to save dataFileAssoc component in: " + this.name + ", but it is set to readOnly. Ignoring the save() call.");
+            Debug.Log("WARNING: Tried to save dataFileDict component in: " + this.name + ", but it is set to readOnly. Ignoring the save() call.");
             return;
         }
 

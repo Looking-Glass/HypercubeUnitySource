@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+
+
 namespace hypercube
 {
+    
     public enum touchEvent
     {
         TOUCH_INVALID = -1,
@@ -26,13 +29,12 @@ namespace hypercube
         public float distY;//this accounts for physical distance that the touch traveled so that an application can react to the physical size of the movement irrelevant to the size of the touch screen (ie the value will be the same for a movement of 1 mm/1 frame regardless of the touch screen's internal resolution or physical size)
     }
 
-
-    public class hypercubeInput : MonoBehaviour
+    public class input : MonoBehaviour
     {
 
         //singleton pattern
 
-        private static hypercubeInput instance = null;
+        private static input instance = null;
         void Awake()
         {
             if (instance != null && instance != this)
@@ -53,12 +55,10 @@ namespace hypercube
         public int maxUnreadMessage = 5;
         public int maxAllowedFailure = 3;
 
-
-
 #if HYPERCUBE_INPUT
         Dictionary<int, Touch> touches = new Dictionary<int, Touch>();
         //TODO add leap hand input dictionary
-        public static hypercubeInput get() { return instance; }
+        public static input get() { return instance; }
 
 
         public SerialController touchScreenFront;
@@ -95,9 +95,97 @@ namespace hypercube
             return sc;
         }
 
+        public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
+        {
+            if (input.get().touchScreenFront && input.get().touchScreenFront.enabled && isFunctional)
+                return true;
+            return false;
+        }
+
+        public static void sendCommandToHardware(string cmd)
+        {
+            if (isHardwareReady())
+                input.get().touchScreenFront.SendSerialMessage(cmd);
+            else
+                Debug.LogWarning("Can't send message to hardware, it is either not yet initialized, disconnected, or malfunctioning.");
+        }
+
+
+
+        public virtual bool saveValueToHardware(string varName, string _val)
+        {
+            if (!isHardwareReady())
+                return false;
+
+            if (varName.Length == 0 || _val.Length == 0)
+                return false;
+
+            if (_val.Length > 8)
+                _val = _val.Substring(0, 8); //the hardware expects less than 8 characters in the string
+
+            touchScreenFront.SendSerialMessage("string," + validateVarName(varName) +","+ _val);
+            return true;
+        }
+        public virtual bool saveValueToHardware(string varName, int _val)
+        {
+            if (!isHardwareReady())
+                return false;
+
+            if (varName.Length == 0 )
+                return false;
+
+            touchScreenFront.SendSerialMessage("int," + validateVarName(varName) + "," + _val.ToString());
+            return true;
+        }
+        public virtual bool saveValueToHardware(string varName, short _val)
+        {
+            if (!isHardwareReady())
+                return false;
+
+            if (varName.Length == 0)
+                return false;
+
+            touchScreenFront.SendSerialMessage("char," + validateVarName(varName) + "," + _val);
+            return true;
+        }
+        public virtual bool saveValueToHardware(string varName, float _val)
+        {
+            if (!isHardwareReady())
+                return false;
+
+            if (varName.Length == 0)
+                return false;
+
+            touchScreenFront.SendSerialMessage("float," + validateVarName(varName) + "," + _val.ToString());
+            return true;
+        }
+
+        static string validateVarName(string varName)
+        {
+            if (varName.Length > 4)
+                return varName.Substring(0, 4);
+            return varName;
+        }
+
+
+        public const bool isFunctional = true; //proof we are compiled with HYPERCUBE_INPUT
+
+
 #else //We use HYPERCUBE_INPUT because I have to choose between this odd warning below, or immediately throwing a compile error for new users who happen to have the wrong settings (IO.Ports is not included in .Net 2.0 Subset).  This solution is odd, but much better than immediately failing to compile.
     
-    public static hypercubeInput get() 
+    public const bool isFunctional = false;
+
+    public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
+    {
+        printWarning();
+        return false;
+    }
+    public static void sendCommandToHardware(string cmd)
+    {
+        printWarning();
+    }
+
+    public static input get() 
     { 
         printWarning();
         return instance; 

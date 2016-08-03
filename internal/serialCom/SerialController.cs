@@ -126,5 +126,6 @@ public class SerialController : MonoBehaviour
     {
         serialThread.SendSerialMessage(message);
     }
-#endif
 }
+#endif
+
