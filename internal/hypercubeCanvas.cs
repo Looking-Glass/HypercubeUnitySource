@@ -50,6 +50,11 @@ public class hypercubeCanvas : MonoBehaviour
     Vector2[] LROffsets = null;
     Vector2[] MOffsets = null;
     Vector2[] skews = null;
+    Vector2[] bows = null;
+
+    //this lets the camera know whether changes have been made that need to be saved back to our prefs
+    bool isDirty = false;
+    public bool getIsDirty() { if (isDirty) { isDirty = false; return true; } return false; }
 
 
     public canvasCalibrator calibrator = null;
@@ -77,6 +82,7 @@ public class hypercubeCanvas : MonoBehaviour
                 LROffsets[s] = LROffsets[fromSlice];
                 MOffsets[s] = MOffsets[fromSlice];
                 skews[s] = skews[fromSlice];
+                bows[s] = bows[fromSlice];
         }
 
         updateMesh();
@@ -91,6 +97,7 @@ public class hypercubeCanvas : MonoBehaviour
         LROffsets = new Vector2[maxSlices];
         MOffsets = new Vector2[maxSlices];
 		skews = new Vector2[maxSlices];
+        bows = new Vector2[maxSlices];
 
         for (int s = 0; s < maxSlices; s++)
         {
@@ -106,9 +113,10 @@ public class hypercubeCanvas : MonoBehaviour
             MOffsets[s].y = d.getValueAsFloat("s" + s + "_My", 0f);
 			skews[s].x = d.getValueAsFloat("s" + s + "_Sx", 0f);
             skews[s].y = d.getValueAsFloat("s" + s + "_Sy", 0f);
+            bows[s].x = d.getValueAsFloat("s" + s + "_Bx", 0f);
+            bows[s].y = d.getValueAsFloat("s" + s + "_By", 0f);
         }
     }
-
     public void saveCalibrationOffsets(dataFileDict d)
     {
         for (int s = 0; s < ULOffsets.Length; s++)
@@ -125,6 +133,31 @@ public class hypercubeCanvas : MonoBehaviour
             d.setValue("s" + s + "_My", MOffsets[s].y);
 			d.setValue("s" + s + "_Sx", skews[s].x);
             d.setValue("s" + s + "_Sy", skews[s].y);
+            d.setValue("s" + s + "_Bx", bows[s].x);
+            d.setValue("s" + s + "_By", bows[s].y);
+        }
+    }
+    public void saveCalibrationOffsets(out string[] str)
+    {
+        str = new string[ULOffsets.Length];
+        //slice,name,1,2,3,4..,14
+        for (int s = 0; s < ULOffsets.Length; s++)
+        {
+            str[s] = "slice,s"+s
+                + "," + ULOffsets[s].x
+                + "," + ULOffsets[s].y
+                + "," + UROffsets[s].x
+                + "," + UROffsets[s].y
+                + "," + LLOffsets[s].x
+                + "," + LLOffsets[s].y
+                + "," + LROffsets[s].x
+                + "," + LROffsets[s].y
+                + "," + MOffsets[s].x
+                + "," + MOffsets[s].y
+                + "," + skews[s].x
+                + "," + skews[s].y
+                + "," + bows[s].x  
+                + "," + bows[s].y;
         }
     }
 
@@ -137,10 +170,14 @@ public class hypercubeCanvas : MonoBehaviour
         if (!sliceMesh)
             return;
 
+        isDirty = true;
+
         updateMesh(sliceCount);
         resetTransform();
 
     }
+
+ 
 
     void Update()
     {
@@ -155,6 +192,18 @@ public class hypercubeCanvas : MonoBehaviour
         return sliceCount;
     }
 
+
+    public void makeBowAdjustment(int slice, bool x, float amount)
+    {
+
+        if (x)
+            bows[slice].x += amount;
+        else
+            bows[slice].y += amount;
+
+        isDirty = true;
+        updateMesh(sliceCount);
+    }
     public void makeSkewAdjustment(int slice, bool x, float amount)
     {
 
@@ -163,6 +212,7 @@ public class hypercubeCanvas : MonoBehaviour
         else
             skews[slice].y += amount;
 
+        isDirty = true;
         updateMesh(sliceCount);
     }
     public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
@@ -171,6 +221,8 @@ public class hypercubeCanvas : MonoBehaviour
             return false;
         if (slice >= ULOffsets.Length)
             return false;
+
+        isDirty = true;
 
         //flip it to keep things intuitive
         if (flipX)
@@ -380,6 +432,7 @@ public class hypercubeCanvas : MonoBehaviour
             LROffsets = new Vector2[sliceCount];
             MOffsets = new Vector2[sliceCount];
 			skews = new Vector2[sliceCount];
+            bows = new Vector2[sliceCount];
             for (int s = 0; s < sliceCount; s++)
             {
                 ULOffsets[s] = new Vector2(0f,0f);
@@ -388,6 +441,7 @@ public class hypercubeCanvas : MonoBehaviour
                 LROffsets[s] = new Vector2(0f, 0f);
                 MOffsets[s] = new Vector2(0f, 0f);
 				skews[s] = new Vector2(0f, 0f);
+                bows[s] = new Vector2(0f, 0f);
             }
         }
 
@@ -497,10 +551,12 @@ public class hypercubeCanvas : MonoBehaviour
 
             //we generate each slice mesh out of 4 interpolated parts.
             List<int> tris = new List<int>();
-            vertCount += generateSliceShard(topL, topM, midL, middle, UV_ul, UV_mid, vertCount, ref verts, ref tris, ref uvs); //top left shard
-            vertCount += generateSliceShard(topM, topR, middle, midR, UV_top, UV_right, vertCount, ref verts, ref tris, ref uvs); //top right shard
-            vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
-            vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
+
+            vertCount += generateSliceShard(topL, topM, midL, middle, UV_ul, UV_mid, bows[s], 1f, 1f, vertCount, ref verts, ref tris, ref uvs); //top left shard
+            vertCount += generateSliceShard(topM, topR, middle, midR, UV_top, UV_right, bows[s], 1f, 0f, vertCount, ref verts, ref tris, ref uvs); //top right shard
+            vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, bows[s], 0f, 1f, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
+            vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br, bows[s], 0f, 0f, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
+
             submeshes.Add(tris.ToArray()); 
     
             //every face has a separate material/texture   
@@ -551,7 +607,7 @@ public class hypercubeCanvas : MonoBehaviour
     //this is used to generate each of 4 sections of every slice.
     //therefore 1 central column and 1 central row of verts are overlapping per slice, but that is OK.  Keeping the interpolation isolated to this function helps readability a lot
     //returns amount of verts created
-    int generateSliceShard(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector2 topLeftUV, Vector2 bottomRightUV, int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
+    int generateSliceShard(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector2 topLeftUV, Vector2 bottomRightUV, Vector2 bow, float xBowPhase, float yBowPhase,  int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
     {
         int vertCount = 0;
         for (var i = 0; i <= tesselation; i++)
@@ -571,6 +627,15 @@ public class hypercubeCanvas : MonoBehaviour
 
                 //now get the final lerped vector
                 Vector2 lerpedVector = Vector2.Lerp(newLeftEndpoint, newRightEndpoint, columnLerpValue);
+
+
+                //add bow distortion compensation
+                lerpedVector.x += (1f - Mathf.Cos(xBowPhase - rowLerpValue)) * bow.y;
+                lerpedVector.y += (1f - Mathf.Cos(yBowPhase - columnLerpValue)) * bow.x;
+                lerpedVector.x -= bow.y * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. These two lines pivot it on the corner points of articulation so that the center is what moves.
+                lerpedVector.y -= bow.x * .5f;
+
+
 
                 //add it
                 verts.Add(new Vector3(lerpedVector.x, lerpedVector.y, 0f));

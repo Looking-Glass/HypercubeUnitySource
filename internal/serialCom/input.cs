@@ -58,6 +58,7 @@ namespace hypercube
 #if HYPERCUBE_INPUT
         Dictionary<int, Touch> touches = new Dictionary<int, Touch>();
         //TODO add leap hand input dictionary
+
         public static input get() { return instance; }
 
 
@@ -65,7 +66,7 @@ namespace hypercube
 
         void Start()
         {
-            touchScreenFront = addSerialPortInput("COM5"); //TEMP - SHOULD NOT BE HARDCODED!
+            touchScreenFront = addSerialPortInput("COM7"); //TEMP - SHOULD NOT BE HARDCODED!
         }
 
         void Update()
@@ -97,22 +98,33 @@ namespace hypercube
 
         public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
         {
-            if (input.get().touchScreenFront && input.get().touchScreenFront.enabled && isFunctional)
+            if (!instance)
+                return false;
+
+            if (input.get().touchScreenFront && isFunctional && input.get().touchScreenFront.enabled )
                 return true;
             return false;
         }
 
-        public static void sendCommandToHardware(string cmd)
+        public static bool sendCommandToHardware(string cmd)
         {
             if (isHardwareReady())
-                input.get().touchScreenFront.SendSerialMessage(cmd);
+            {
+                instance.touchScreenFront.SendSerialMessage(cmd + "\n\r");
+                return true;
+            }
             else
                 Debug.LogWarning("Can't send message to hardware, it is either not yet initialized, disconnected, or malfunctioning.");
+
+            return false;
         }
 
+        public static bool clearAllHardwareValues()
+        {
+            return sendCommandToHardware("#erase");
+        }
 
-
-        public virtual bool saveValueToHardware(string varName, string _val)
+        public static bool saveValueToHardware(string varName, string _val)
         {
             if (!isHardwareReady())
                 return false;
@@ -123,21 +135,11 @@ namespace hypercube
             if (_val.Length > 8)
                 _val = _val.Substring(0, 8); //the hardware expects less than 8 characters in the string
 
-            touchScreenFront.SendSerialMessage("string," + validateVarName(varName) +","+ _val);
+            sendCommandToHardware("string," + validateVarName(varName) + "," + _val);
             return true;
         }
-        public virtual bool saveValueToHardware(string varName, int _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0 )
-                return false;
-
-            touchScreenFront.SendSerialMessage("int," + validateVarName(varName) + "," + _val.ToString());
-            return true;
-        }
-        public virtual bool saveValueToHardware(string varName, short _val)
+        
+        public static bool saveValueToHardware(string varName, int _val)
         {
             if (!isHardwareReady())
                 return false;
@@ -145,10 +147,10 @@ namespace hypercube
             if (varName.Length == 0)
                 return false;
 
-            touchScreenFront.SendSerialMessage("char," + validateVarName(varName) + "," + _val);
+            sendCommandToHardware("int," + validateVarName(varName) + "," + _val.ToString());
             return true;
         }
-        public virtual bool saveValueToHardware(string varName, float _val)
+        public static bool saveValueToHardware(string varName, short _val)
         {
             if (!isHardwareReady())
                 return false;
@@ -156,10 +158,36 @@ namespace hypercube
             if (varName.Length == 0)
                 return false;
 
-            touchScreenFront.SendSerialMessage("float," + validateVarName(varName) + "," + _val.ToString());
+            sendCommandToHardware("char," + validateVarName(varName) + "," + _val);
             return true;
         }
+        public static bool saveValueToHardware(string varName, float _val)
+        {
+            if (!isHardwareReady())
+                return false;
 
+            if (varName.Length == 0)
+                return false;
+
+            sendCommandToHardware("float," + validateVarName(varName) + "," + _val.ToString());
+            return true;
+        }
+        public static bool saveValueToHardware(string varName, bool _val)
+        {
+            if (!isHardwareReady())
+                return false;
+
+            if (varName.Length == 0)
+                return false;
+
+            //bool is saved as an int.
+            int v = 0;
+            if (_val)
+                v = 1;
+            sendCommandToHardware("int," + validateVarName(varName) + "," + v.ToString());
+            return true;
+        }
+        
         static string validateVarName(string varName)
         {
             if (varName.Length > 4)

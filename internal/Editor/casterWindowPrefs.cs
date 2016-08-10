@@ -31,7 +31,7 @@ public class casterWindowPrefs : EditorWindow
     {
         hypercubeCamera cam = GameObject.FindObjectOfType<hypercubeCamera>();
         if (cam)
-            cam.loadSettings(true); //use force load
+            cam.loadSettings(); 
     }
 
 

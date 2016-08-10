@@ -45,6 +45,10 @@ public class canvasCalibrator : MonoBehaviour
     public KeyCode skewXDn;
     public KeyCode skewYUp;
     public KeyCode skewYDn;
+    public KeyCode bowXUp;
+    public KeyCode bowXDn;
+    public KeyCode bowYUp;
+    public KeyCode bowYDn;
     public Texture2D calibrationCorner;
     public Texture2D calibrationCenter;
 
@@ -115,6 +119,22 @@ public class canvasCalibrator : MonoBehaviour
         {
             float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
             canvas.makeSkewAdjustment(currentSlice, false, -interval * yPixel);
+        }
+        else if (Input.GetKeyDown(bowXUp))
+        {
+            canvas.makeBowAdjustment(currentSlice, true, interval / 30f);
+        }
+        else if (Input.GetKeyDown(bowXDn))
+        {
+            canvas.makeBowAdjustment(currentSlice, true, -interval / 30f);
+        }
+        else if (Input.GetKeyDown(bowYUp))
+        {
+            canvas.makeBowAdjustment(currentSlice, false, interval / 30f);
+        }
+        else if (Input.GetKeyDown(bowYDn))
+        {
+            canvas.makeBowAdjustment(currentSlice, false, -interval / 30f);
         }
         else if (Input.GetKeyDown(highlightUL))
         {
