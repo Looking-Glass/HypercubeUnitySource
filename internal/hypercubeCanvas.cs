@@ -101,21 +101,43 @@ public class hypercubeCanvas : MonoBehaviour
 
         for (int s = 0; s < maxSlices; s++)
         {
-            ULOffsets[s].x = d.getValueAsFloat("s" + s + "_ULx", 0f);
-            ULOffsets[s].y = d.getValueAsFloat("s" + s + "_ULy", 0f);
-            UROffsets[s].x = d.getValueAsFloat("s" + s + "_URx", 0f);
-            UROffsets[s].y = d.getValueAsFloat("s" + s + "_URy", 0f);
-            LLOffsets[s].x = d.getValueAsFloat("s" + s + "_LLx", 0f);
-            LLOffsets[s].y = d.getValueAsFloat("s" + s + "_LLy", 0f);
-            LROffsets[s].x = d.getValueAsFloat("s" + s + "_LRx", 0f);
-            LROffsets[s].y = d.getValueAsFloat("s" + s + "_LRy", 0f);
-            MOffsets[s].x = d.getValueAsFloat("s" + s + "_Mx", 0f);
-            MOffsets[s].y = d.getValueAsFloat("s" + s + "_My", 0f);
-			skews[s].x = d.getValueAsFloat("s" + s + "_Sx", 0f);
-            skews[s].y = d.getValueAsFloat("s" + s + "_Sy", 0f);
-            bows[s].x = d.getValueAsFloat("s" + s + "_Bx", 0f);
-            bows[s].y = d.getValueAsFloat("s" + s + "_By", 0f);
+            setCalibrationOffset(s,
+            d.getValueAsFloat("s" + s + "_ULx", 0f),
+            d.getValueAsFloat("s" + s + "_ULy", 0f),
+            d.getValueAsFloat("s" + s + "_URx", 0f),
+            d.getValueAsFloat("s" + s + "_URy", 0f),
+            d.getValueAsFloat("s" + s + "_LLx", 0f),
+            d.getValueAsFloat("s" + s + "_LLy", 0f),
+            d.getValueAsFloat("s" + s + "_LRx", 0f),
+            d.getValueAsFloat("s" + s + "_LRy", 0f),
+            d.getValueAsFloat("s" + s + "_Mx", 0f),
+            d.getValueAsFloat("s" + s + "_My", 0f),
+            d.getValueAsFloat("s" + s + "_Sx", 0f),
+            d.getValueAsFloat("s" + s + "_Sy", 0f),
+            d.getValueAsFloat("s" + s + "_Bx", 0f),
+            d.getValueAsFloat("s" + s + "_By", 0f)
+                );
         }
+    }
+    public void setCalibrationOffset(int slice, float _ULx, float _ULy, float _URx, float _URy, float _LLx, float _LLy, float _LRx, float _LRy, float _Mx, float _My, float _Sx, float _Sy, float _Bx, float _By)
+    {
+        if (slice < 0 || slice >= bows.Length)
+            return;
+
+        ULOffsets[slice].x = _ULx;
+        ULOffsets[slice].y = _ULy;
+        UROffsets[slice].x = _URx;
+        UROffsets[slice].y = _URy;
+        LLOffsets[slice].x = _LLx;
+        LLOffsets[slice].y = _LLy;
+        LROffsets[slice].x = _LRx;
+        LROffsets[slice].y = _LRy;
+        MOffsets[slice].x = _Mx;
+        MOffsets[slice].y = _My;
+        skews[slice].x = _Sx;
+        skews[slice].y = _Sy;
+        bows[slice].x = _Bx;
+        bows[slice].y = _By;
     }
     public void saveCalibrationOffsets(dataFileDict d)
     {

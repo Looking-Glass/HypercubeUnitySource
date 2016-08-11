@@ -122,19 +122,27 @@ public class canvasCalibrator : MonoBehaviour
         }
         else if (Input.GetKeyDown(bowXUp))
         {
-            canvas.makeBowAdjustment(currentSlice, true, interval / 30f);
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeBowAdjustment(currentSlice, true, -interval * yPixel);
         }
         else if (Input.GetKeyDown(bowXDn))
         {
-            canvas.makeBowAdjustment(currentSlice, true, -interval / 30f);
+            float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+            canvas.makeBowAdjustment(currentSlice, true, interval * yPixel);
         }
         else if (Input.GetKeyDown(bowYUp))
         {
-            canvas.makeBowAdjustment(currentSlice, false, interval / 30f);
+            float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *= canvas.getSliceCount();
+            canvas.makeBowAdjustment(currentSlice, false, interval * xPixel);
         }
         else if (Input.GetKeyDown(bowYDn))
         {
-            canvas.makeBowAdjustment(currentSlice, false, -interval / 30f);
+            float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
+            if (relativeTo == distortionCompensationType.SPATIAL)
+                xPixel *= canvas.getSliceCount();
+            canvas.makeBowAdjustment(currentSlice, false, -interval * xPixel);
         }
         else if (Input.GetKeyDown(highlightUL))
         {

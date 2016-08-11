@@ -72,6 +72,7 @@ using System.Collections.Generic;
                 preview = GameObject.FindObjectOfType<hypercubePreview>();
 
 
+
             loadSettings();
             resetSettings();
         }

@@ -60,28 +60,206 @@ namespace hypercube
         //TODO add leap hand input dictionary
 
         public static input get() { return instance; }
+        static bool hardwareInitReceived = false;  //this is flipped as soon as we get 'init:done' from the front touchscreen.  It is flipped off if we detect that it is disabled.
 
 
-        public SerialController touchScreenFront;
+        public SerialController touchScreenFront;   
 
         void Start()
         {
-            touchScreenFront = addSerialPortInput("COM7"); //TEMP - SHOULD NOT BE HARDCODED!
+            touchScreenFront = addSerialPortInput("COM8"); //TODO - SHOULD NOT BE HARDCODED!
         }
 
         void Update()
         {
-            processRawTouchscreenInput(touchScreenFront);
+            processRawTouchscreenInput(touchScreenFront, true); //we only really care about config messages for the front touch screen, which is where we store data.
         }
 
-        void processRawTouchscreenInput(SerialController c)
+        void processRawTouchscreenInput(SerialController c, bool considerConfigMessages = false)
         {
 
             string data = c.ReadSerialMessage();
             if (data == null)
                 return;
 
+            if (considerConfigMessages)
+            {
+                if (processConfigData(data))
+                    return; //we found some data that corresponds to config or settings, no need to do more with it
+            }
+
+            //TODO process touch events
+
             Debug.Log(data);
+        }
+
+        bool processConfigData(string data)
+        {
+            if (data == "init:done")
+            {
+                hardwareInitReceived = true;
+
+                hypercubeCamera[] cameras = getHypercubeCameras();
+                foreach (hypercubeCamera ca in cameras)
+                {
+                        ca.loadSettings();
+                }
+                return true;
+            }
+            else if (data == "get:complete") //TODO make this say 'done'  so it is consistent with the rest of the acks
+            {
+                hardwareInitReceived = true;
+
+                hypercubeCamera[] cameras = getHypercubeCameras();
+                foreach (hypercubeCamera ca in cameras)
+                {
+                    if (ca.localCanvas)
+                        ca.localCanvas.updateMesh();
+                }
+                return true;
+            }
+            else if (data.StartsWith("int,"))
+            {
+                string[] toks = data.Split(',');
+                hypercubeCamera[] cameras = getHypercubeCameras();
+
+                if (toks[1] == "sNum" )
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        ca.slices = dataFileDict.stringToInt(toks[2], ca.slices);
+                        if (ca.localCanvas)
+                            ca.localCanvas.updateMesh(ca.slices);  //the above line should call OnValidate and update this, but sometimes it doesn't... so we force it to call here.
+                    }
+                    return true;
+                }
+                else if (toks[1] == "invX")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.flipX = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipX);
+                    }
+                    return true;
+                }
+                else if (toks[1] == "invY")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.flipY = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipY);
+                    }
+                    return true;
+                }
+                else if (toks[1] == "invZ")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.flipZ = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipZ);
+                    }
+                    return true;
+                }           
+            }
+            else if (data.StartsWith("float,"))
+            {
+                string[] toks = data.Split(',');
+                hypercubeCamera[] cameras = getHypercubeCameras();
+                if (toks[1] == "offX")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.sliceOffsetX = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceOffsetX);
+                    }
+                    return true;
+                }
+                if (toks[1] == "offY")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.sliceOffsetY = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceOffsetY);
+                    }
+                    return true;
+                }
+                if (toks[1] == "wide")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.sliceWidth = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceWidth);
+                    }
+                    return true;
+                }
+                if (toks[1] == "heig")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.sliceHeight = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceHeight);
+                    }
+                    return true;
+                }
+                if (toks[1] == "gap")
+                {
+                    foreach (hypercubeCamera ca in cameras)
+                    {
+                        if (ca.localCanvas)
+                            ca.localCanvas.sliceGap = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceGap);
+                    }
+                    return true;
+                }
+            }
+            else if (data.StartsWith("slice,"))
+            {
+                string[] toks = data.Split(',');
+
+                if (toks.Length != 16) //type + name + 14 values 
+                    return false;
+
+                int s = dataFileDict.stringToInt(toks[1].Substring(1), -1);
+
+                hypercubeCamera[] cameras = getHypercubeCameras();
+                foreach (hypercubeCamera ca in cameras)
+                {
+                    if (ca.localCanvas)
+                    {
+                        ca.localCanvas.setCalibrationOffset(s,
+                            dataFileDict.stringToFloat(toks[2], 0f),
+                            dataFileDict.stringToFloat(toks[3], 0f),
+                            dataFileDict.stringToFloat(toks[4], 0f),
+                            dataFileDict.stringToFloat(toks[5], 0f),
+                            dataFileDict.stringToFloat(toks[6], 0f),
+                            dataFileDict.stringToFloat(toks[7], 0f),
+                            dataFileDict.stringToFloat(toks[8], 0f),
+                            dataFileDict.stringToFloat(toks[9], 0f),
+                            dataFileDict.stringToFloat(toks[10], 0f),
+                            dataFileDict.stringToFloat(toks[11], 0f),
+                            dataFileDict.stringToFloat(toks[12], 0f),
+                            dataFileDict.stringToFloat(toks[13], 0f),
+                            dataFileDict.stringToFloat(toks[14], 0f),
+                            dataFileDict.stringToFloat(toks[15], 0f)
+                            );
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        static hypercubeCamera[] getHypercubeCameras()
+        {
+            List<hypercubeCamera> outcams = new List<hypercubeCamera>(); 
+
+            hypercubeCamera[] cameras = GameObject.FindObjectsOfType<hypercubeCamera>();
+            foreach (hypercubeCamera ca in cameras)
+            {
+                if (ca.useHardwareCalibrations)
+                    outcams.Add(ca);
+            }
+            return outcams.ToArray();
         }
 
         SerialController addSerialPortInput(string comName)
@@ -98,11 +276,18 @@ namespace hypercube
 
         public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
         {
-            if (!instance)
+
+            if (!isFunctional || !instance)
                 return false;
 
-            if (input.get().touchScreenFront && isFunctional && input.get().touchScreenFront.enabled )
-                return true;
+            if (input.get().touchScreenFront)
+            {
+                if (!input.get().touchScreenFront.enabled)
+                    hardwareInitReceived = false; //we must wait for another init:done before we give the go-ahead to talk to the hardware.
+                else if (hardwareInitReceived)
+                    return true;
+            }
+           
             return false;
         }
 
