@@ -326,9 +326,9 @@ MonoBehaviour:
   slicing: 1
   overlap: 2
   softness: 0.4
-  brightness: 1
   forcedPerspective: 0
-  blackPoint: {r: 0.15686275, g: 0.12941177, b: 0.23137255, a: 0}
+  brightness: 1
+  blackPoint: {r: 0.053026035, g: 0.018382356, b: 0.14705884, a: 0}
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:
@@ -364,7 +364,6 @@ MonoBehaviour:
   - {fileID: 8400000, guid: 7addaa8ee32d5314691f3efb487f8c8b, type: 2}
   castMeshPrefab: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
   localCastMesh: {fileID: 0}
-  useHardwareCalibrations: 1
 --- !u!124 &12486252
 Behaviour:
   m_ObjectHideFlags: 1

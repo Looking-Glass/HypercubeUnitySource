@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class hypercubeRotator : MonoBehaviour {
+public class demoRotator : MonoBehaviour {
 
     public float pauseTime = 4f;
     float paused = -1f;
@@ -16,15 +16,18 @@ public class hypercubeRotator : MonoBehaviour {
     Vector3 startScale;
     Vector3 startRot;
     Vector3 currentRot;
-    float startRotateTime;
+    float rotationTime;
     void Start()
     {
-        reset();
+        startScale = rotated.transform.localScale;
+        startRot = rotated.transform.localRotation.eulerAngles;
+        rotationTime = 0;
     }
 	
 	// Update is called once per frame
 	void Update () 
     {
+
         if ( 
             Input.GetKey(KeyCode.W) ||
             Input.GetKey(KeyCode.A) ||
@@ -47,22 +50,21 @@ public class hypercubeRotator : MonoBehaviour {
         if (paused > 0)
         {
             paused -= Time.deltaTime;
-            if (paused <= 0)
-                reset();
-            else
+            if (paused > 0)
                 return;
         }
 
+        rotationTime += Time.deltaTime;
+
         //auto rotation
         currentRot = startRot;
-        float timeDiff = Time.timeSinceLevelLoad - startRotateTime;
-        currentRot.y += rotationSpeed * timeDiff;
-        currentRot.x += Mathf.Sin(timeDiff * verticalSwingSpeed) * verticalSwing;
+        currentRot.y += rotationSpeed * rotationTime;
+        currentRot.x += Mathf.Sin(rotationTime * verticalSwingSpeed) * verticalSwing;
         rotated.transform.localRotation = Quaternion.Euler(currentRot);
 
         //scale
         Vector3 temp = startScale;
-        float mod = Mathf.Sin(timeDiff * scaleSpeed) * scaleMod;
+        float mod = Mathf.Sin(rotationTime * scaleSpeed) * scaleMod;
         if (mod < .01f)
             mod = .01f;
         temp.x += mod;
@@ -71,10 +73,12 @@ public class hypercubeRotator : MonoBehaviour {
         rotated.transform.localScale = temp;      
 	}
 
-    void reset()
+    public void reset()
     {
-        startScale = rotated.transform.localScale;
-        startRot = rotated.transform.localRotation.eulerAngles;
-        startRotateTime = Time.timeSinceLevelLoad;
+        rotated.transform.localRotation = Quaternion.Euler(startRot);
+        rotated.transform.localScale = startScale;
+        rotationTime = 0;
     }
+
+
 }

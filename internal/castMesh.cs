@@ -220,7 +220,7 @@ namespace hypercube
                 setCalibrationOffsets(d, slices);
                 updateMesh();
 
-                Debug.Log("Settings read from config file: " + d.fileName);
+                Debug.Log("Done reading from: " + d.fileName);
             }
         }
 
