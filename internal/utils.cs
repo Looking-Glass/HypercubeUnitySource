@@ -7,8 +7,12 @@ namespace hypercube
     public class utils
     {
         //this method is used to figure out which drive is the usb flash drive attached to Volume, and then returns that path so that our settings can load normally from there.
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         public static string getConfigPath(string relativePathToConfig)
         {
+            relativePathToConfig = relativePathToConfig.Replace('\\', Path.DirectorySeparatorChar);
+            relativePathToConfig = relativePathToConfig.Replace('/', Path.DirectorySeparatorChar);
+
             string[] drives = Directory.GetLogicalDrives();
             foreach (string drive in drives)
             {
@@ -16,10 +20,28 @@ namespace hypercube
                 {
                     return drive + relativePathToConfig;
                 }
-            }
-
+            }      
             return Path.GetFileName(relativePathToConfig); //return the base name of the file only.
         }
+#else  //osx,  TODO: linux untested in standalone
+        public static string getConfigPath(string relativePathToConfig)        
+        {                        
+            string[] directories = Directory.GetDirectories("/Volumes/");
+            foreach (string d in directories)
+            {
+                string fixedPath = d + "/" + relativePathToConfig;
+                fixedPath = fixedPath.Replace('\\', Path.DirectorySeparatorChar);
+                fixedPath = fixedPath.Replace('/', Path.DirectorySeparatorChar);
+
+                FileInfo f = new FileInfo (fixedPath);
+                if (f.Exists)                
+                {                    
+                    return f.FullName;                
+                }            
+            }            
+            return Path.GetFileName(relativePathToConfig); //return the base name of the file only.        
+        }
+#endif
 
         // Note that Color32 and Color implictly convert to each other. You may pass a Color object to this method without first casting it.
         public static string colorToHex(Color32 color)

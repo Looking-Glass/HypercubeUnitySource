@@ -300,6 +300,10 @@ Prefab:
       propertyPath: preview
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: relativeSettingsPath
+      value: volumeCalibrationData/hardwareCalibration.txt
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
   m_IsPrefabParent: 0
@@ -373,31 +377,31 @@ Prefab:
     m_Modifications:
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 9.99
+      value: 10.08
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.62
+      value: 2.13
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.31
+      value: 5.22
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.x
-      value: -0.047406964
+      value: -0.06598042
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.y
-      value: -0.9119932
+      value: -0.96660507
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0.110216744
+      value: 0.10020846
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -0.39226696
+      value: -0.22645004
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_RootOrder
@@ -797,9 +801,9 @@ MonoBehaviour:
   rotated: {fileID: 996809094}
   rotationSpeed: 10
   scaleSpeed: 0.17
-  scaleMod: 0
+  scaleMod: 0.5
   verticalSwingSpeed: 0.37
-  verticalSwing: 0
+  verticalSwing: 4
 --- !u!4 &996809096
 Transform:
   m_ObjectHideFlags: 0

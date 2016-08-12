@@ -36,6 +36,10 @@ public class demoRotator : MonoBehaviour {
             Input.GetKey(KeyCode.E) ||
             Input.GetKey(KeyCode.Q) ||
             Input.GetKey(KeyCode.R) ||
+            Input.GetKey(KeyCode.LeftArrow) ||
+            Input.GetKey(KeyCode.RightArrow) ||
+            Input.GetKey(KeyCode.UpArrow) ||
+            Input.GetKey(KeyCode.DownArrow) ||
             Input.GetKey(KeyCode.Tab) ||
             Input.GetKey(KeyCode.LeftControl) ||
             Input.GetKey(KeyCode.LeftShift) ||
@@ -65,6 +69,7 @@ public class demoRotator : MonoBehaviour {
         //scale
         Vector3 temp = startScale;
         float mod = Mathf.Sin(rotationTime * scaleSpeed) * scaleMod;
+        mod += .5f;  //the mod is based around the original scale, not 0.
         if (mod < .01f)
             mod = .01f;
         temp.x += mod;

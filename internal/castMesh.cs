@@ -177,7 +177,8 @@ namespace hypercube
         {
             hypercube.input.printWarning();
         }
-#endif*/
+#endif
+         */
 #else
         public void saveConfigSettings()
         {
@@ -199,11 +200,11 @@ namespace hypercube
             UnityEditor.Undo.RecordObject(this, "Loaded calibration settings from file."); //these force the editor to mark the canvas as dirty and save what is loaded.
 #endif
 
-            if (!d.load()  && hypercube.input.isHardwareReady()) //we failed to load the file!  try to get them from the hardware?
+            if (!d.load() && hypercube.input.isHardwareReady()) //we failed to load the file!  try to get them from the hardware?
             {
                 //this will tell the hardware to give us it's specs
                 //once complete, it will also update the canvas mesh when the response "get:complete" is received from the serialComm
-                hypercube.input.sendCommandToHardware("#get");
+                    hypercube.input.sendCommandToHardware("#get");
             }
             else //try to read them from our prefs file instead... using defaults as backup.  This will never be as good as using the config stored in the hardware.
             {

@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-
-
 namespace hypercube
 {
     
@@ -31,9 +28,7 @@ namespace hypercube
 
     public class input : MonoBehaviour
     {
-
         //singleton pattern
-
         private static input instance = null;
         void Awake()
         {
@@ -82,158 +77,18 @@ namespace hypercube
             if (data == null)
                 return;
 
-            if (considerConfigMessages)
+            if (!hardwareInitReceived)
             {
-                if (processConfigData(data))
+                if (data == "init:done")
+                {
+                    hardwareInitReceived = true;
                     return; //we found some data that corresponds to config or settings, no need to do more with it
+                }
             }
 
             //TODO process touch events
 
             Debug.Log(data);
-        }
-
-        bool processConfigData(string data)
-        {
-            if (data == "init:done")
-            {
-                hardwareInitReceived = true;
-
-                castMesh[] cameras = getCastMeshes();
-                foreach (castMesh ca in cameras)
-                {
-                        ca.loadSettings();
-                }
-                return true;
-            }
-            else if (data == "get:complete") //TODO make this say 'done'  so it is consistent with the rest of the acks
-            {
-                hardwareInitReceived = true;
-
-                castMesh[] cameras = getCastMeshes();
-                foreach (castMesh ca in cameras)
-                {
-                        ca.updateMesh();
-                }
-                return true;
-            }
-            else if (data.StartsWith("int,"))
-            {
-                string[] toks = data.Split(',');
-                castMesh[] casts = getCastMeshes();
-
-                if (toks[1] == "sNum" )
-                {
-                    foreach (castMesh ca in casts)
-                    {
-                        ca.slices = dataFileDict.stringToInt(toks[2], ca.slices);
-                        ca.updateMesh();  //the above line should call OnValidate and update this, but sometimes it doesn't... so we force it to call here.
-                    }
-                    return true;
-                }
-                else if (toks[1] == "invX")
-                {
-                    foreach (castMesh ca in casts)
-                    {
-                            ca.flipX = dataFileDict.stringToBool(toks[2], ca.flipX);
-                    }
-                    return true;
-                }
-                else if (toks[1] == "invY")
-                {
-                    foreach (castMesh ca in casts)
-                    {
-                            ca.flipY = dataFileDict.stringToBool(toks[2], ca.flipY);
-                    }
-                    return true;
-                }
-                else if (toks[1] == "invZ")
-                {
-                    foreach (castMesh ca in casts)
-                    {
-                            ca.flipZ = dataFileDict.stringToBool(toks[2], ca.flipZ);
-                    }
-                    return true;
-                }           
-            }
-            else if (data.StartsWith("float,"))
-            {
-                string[] toks = data.Split(',');
-                castMesh[] cameras = getCastMeshes();
-                if (toks[1] == "offX")
-                {
-                    foreach (castMesh ca in cameras)
-                    {
-                            ca.sliceOffsetX = dataFileDict.stringToFloat(toks[2], ca.sliceOffsetX);
-                    }
-                    return true;
-                }
-                if (toks[1] == "offY")
-                {
-                    foreach (castMesh ca in cameras)
-                    {
-                            ca.sliceOffsetY = dataFileDict.stringToFloat(toks[2], ca.sliceOffsetY);
-                    }
-                    return true;
-                }
-                if (toks[1] == "wide")
-                {
-                    foreach (castMesh ca in cameras)
-                    {
-                            ca.sliceWidth = dataFileDict.stringToFloat(toks[2], ca.sliceWidth);
-                    }
-                    return true;
-                }
-                if (toks[1] == "heig")
-                {
-                    foreach (castMesh ca in cameras)
-                    {
-                            ca.sliceHeight = dataFileDict.stringToFloat(toks[2], ca.sliceHeight);
-                    }
-                    return true;
-                }
-                if (toks[1] == "gap")
-                {
-                    foreach (castMesh ca in cameras)
-                    {
-                            ca.sliceGap = dataFileDict.stringToFloat(toks[2], ca.sliceGap);
-                    }
-                    return true;
-                }
-            }
-            else if (data.StartsWith("slice,"))
-            {
-                string[] toks = data.Split(',');
-
-                if (toks.Length != 16) //type + name + 14 values 
-                    return false;
-
-                int s = dataFileDict.stringToInt(toks[1].Substring(1), -1);
-
-                castMesh[] casts = getCastMeshes();
-                foreach (castMesh ca in casts)
-                {
-                        ca.setCalibrationOffset(s,
-                            dataFileDict.stringToFloat(toks[2], 0f),
-                            dataFileDict.stringToFloat(toks[3], 0f),
-                            dataFileDict.stringToFloat(toks[4], 0f),
-                            dataFileDict.stringToFloat(toks[5], 0f),
-                            dataFileDict.stringToFloat(toks[6], 0f),
-                            dataFileDict.stringToFloat(toks[7], 0f),
-                            dataFileDict.stringToFloat(toks[8], 0f),
-                            dataFileDict.stringToFloat(toks[9], 0f),
-                            dataFileDict.stringToFloat(toks[10], 0f),
-                            dataFileDict.stringToFloat(toks[11], 0f),
-                            dataFileDict.stringToFloat(toks[12], 0f),
-                            dataFileDict.stringToFloat(toks[13], 0f),
-                            dataFileDict.stringToFloat(toks[14], 0f),
-                            dataFileDict.stringToFloat(toks[15], 0f)
-                            );
-                    }
-                return true;
-            }
-
-            return false;
         }
 
         static castMesh[] getCastMeshes()
@@ -262,8 +117,7 @@ namespace hypercube
 
         public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
         {
-
-            if (!isFunctional || !instance)
+            if ( !instance)
                 return false;
 
             if (input.get().touchScreenFront)
@@ -290,116 +144,36 @@ namespace hypercube
             return false;
         }
 
-        public static bool clearAllHardwareValues()
-        {
-            return sendCommandToHardware("#erase");
-        }
-
-        public static bool saveValueToHardware(string varName, string _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0 || _val.Length == 0)
-                return false;
-
-            if (_val.Length > 8)
-                _val = _val.Substring(0, 8); //the hardware expects less than 8 characters in the string
-
-            sendCommandToHardware("string," + validateVarName(varName) + "," + _val);
-            return true;
-        }
-        
-        public static bool saveValueToHardware(string varName, int _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0)
-                return false;
-
-            sendCommandToHardware("int," + validateVarName(varName) + "," + _val.ToString());
-            return true;
-        }
-        public static bool saveValueToHardware(string varName, short _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0)
-                return false;
-
-            sendCommandToHardware("char," + validateVarName(varName) + "," + _val);
-            return true;
-        }
-        public static bool saveValueToHardware(string varName, float _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0)
-                return false;
-
-            sendCommandToHardware("float," + validateVarName(varName) + "," + _val.ToString());
-            return true;
-        }
-        public static bool saveValueToHardware(string varName, bool _val)
-        {
-            if (!isHardwareReady())
-                return false;
-
-            if (varName.Length == 0)
-                return false;
-
-            //bool is saved as an int.
-            int v = 0;
-            if (_val)
-                v = 1;
-            sendCommandToHardware("int," + validateVarName(varName) + "," + v.ToString());
-            return true;
-        }
-        
-        static string validateVarName(string varName)
-        {
-            if (varName.Length > 4)
-                return varName.Substring(0, 4);
-            return varName;
-        }
-
-
-        public const bool isFunctional = true; //proof we are compiled with HYPERCUBE_INPUT
+   
 
 
 #else //We use HYPERCUBE_INPUT because I have to choose between this odd warning below, or immediately throwing a compile error for new users who happen to have the wrong settings (IO.Ports is not included in .Net 2.0 Subset).  This solution is odd, but much better than immediately failing to compile.
     
-    public const bool isFunctional = false;
+        public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
+        {
+            return false;
+        }
+        public static void sendCommandToHardware(string cmd)
+        {
+            printWarning();
+        }
 
-    public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
-    {
-        printWarning();
-        return false;
-    }
-    public static void sendCommandToHardware(string cmd)
-    {
-        printWarning();
-    }
-
-    public static input get() 
-    { 
-        printWarning();
-        return instance; 
-    }
+        public static input get() 
+        { 
+            printWarning();
+            return instance; 
+        }
     
-    void Start () 
-    {
-        printWarning();
-        this.enabled = false;
-    }
+        void Start () 
+        {
+            printWarning();
+            this.enabled = false;
+        }
 
-    static void printWarning()
-    {
-        Debug.LogWarning("TO USE HYPERCUBE INPUT: \n1) Go To - Edit > Project Settings > Player    2) Set Api Compatability Level to '.Net 2.0'    3) Add HYPERCUBE_INPUT to Scripting Define Symbols (separate by semicolon, if there are others)");
-    }
+        static void printWarning()
+        {
+            Debug.LogWarning("TO USE HYPERCUBE INPUT: \n1) Go To - Edit > Project Settings > Player    2) Set Api Compatability Level to '.Net 2.0'    3) Add HYPERCUBE_INPUT to Scripting Define Symbols (separate by semicolon, if there are others)");
+        }
 #endif
     }
 

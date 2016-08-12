@@ -10,18 +10,22 @@ namespace hypercube
         [MenuItem("Hypercube/Save Settings", false, 51)]
         public static void saveCubeSettings()
         {
-            hypercube.castMesh cam = GameObject.FindObjectOfType<hypercube.castMesh>();
-            if (cam)
-                cam.saveConfigSettings();
+            hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
+            if (c)
+                c.saveConfigSettings();
+            else
+                Debug.LogWarning("No castMesh was found, and therefore no saving could occur.");
         }
 #endif
 
         [MenuItem("Hypercube/Load Settings", false, 52)]
         public static void loadCubeSettings()
         {
-            hypercube.castMesh cam = GameObject.FindObjectOfType<hypercube.castMesh>();
-            if (cam)
-                cam.loadSettings();
+            hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
+            if (c)
+                c.loadSettings();
+            else
+                Debug.LogWarning("No castMesh was found, and therefore no loading occurred.");
         }
 
 #if HYPERCUBE_DEV
@@ -32,19 +36,10 @@ namespace hypercube
 
             if (c)
                 c.copyCurrentSliceCalibration();
-        }
-
-
-#if HYPERCUBE_INPUT
-        [MenuItem("Hypercube/Clear all hardware values - DANGER!", false, 302)]
-        public static void clearHardwareValues()
-        {
-            hypercube.input.clearAllHardwareValues();
+            else
+                Debug.LogWarning("No calibrator was found, and therefore no copying occurred.");
         }
 
 #endif
-#endif
-
-
     }
 }
