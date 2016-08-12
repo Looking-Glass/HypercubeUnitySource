@@ -13,19 +13,21 @@ using System.Collections.Generic;
     }
 
     [ExecuteInEditMode]
-    [RequireComponent(typeof(dataFileDict))]
     public class hypercubeCamera : MonoBehaviour
     {
-
+        [Tooltip("HARD = no slice blending (also no blackPoint modification)\nSOFT = autocalculate softness based on the overlap\nSOFT_CUSTOM = manage your own overlap and softness")]
         public softSliceMode slicing;
+        [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
         public float overlap = 2f;
         [Tooltip("Softness is calculated for you to blend only overlapping areas. It can be set manually if Slicing is set to SOFT_CUSTOM.")]
         [Range(0.001f, .5f)]
         public float softness = .5f;
-        public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
-        public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
 
-        [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color will be added to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.")]
+        [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.")]
+        public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
+        [Tooltip("Brightness is a final modifier on the output to Volume.\nCalculated value * Brightness = output")]
+        public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
+        [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
         public Shader softSliceShader;
         public Camera renderCam;
@@ -55,7 +57,6 @@ using System.Collections.Generic;
                 }
             }
 
-            loadSettings();
             resetSettings();
         }
 
@@ -91,9 +92,6 @@ using System.Collections.Generic;
                 localCastMesh.updateMesh();
             }
 
-            saveSettings();
-
-            //handle softOverlap
             updateOverlap();
         }
 
@@ -108,7 +106,7 @@ using System.Collections.Generic;
             if (slicing != softSliceMode.HARD)
             {
                 if (slicing == softSliceMode.SOFT)
-                    softness = overlap / ((overlap * 2f) + 1f);
+                    softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area
 
                 o.enabled = true;
                 o.setShaderProperties(softness, blackPoint);
@@ -169,61 +167,22 @@ using System.Collections.Generic;
             if (!localCastMesh)
                 return;
 
-            nearValues = new float[localCastMesh.slices];
-            farValues = new float[localCastMesh.slices];
+            nearValues = new float[localCastMesh.getSliceCount()];
+            farValues = new float[localCastMesh.getSliceCount()];
 
-            float sliceDepth = transform.lossyScale.z / (float)localCastMesh.slices;
+            float sliceDepth = transform.lossyScale.z / (float)localCastMesh.getSliceCount();
 
             renderCam.aspect = transform.lossyScale.x / transform.lossyScale.y;
             renderCam.orthographicSize = .5f * transform.lossyScale.y;
 
-            for (int i = 0; i < localCastMesh.slices && i < sliceTextures.Length; i++)
+            for (int i = 0; i < localCastMesh.getSliceCount() && i < sliceTextures.Length; i++)
             {
                 nearValues[i] = (i * sliceDepth) - (sliceDepth * overlap);
                 farValues[i] = ((i + 1) * sliceDepth) + (sliceDepth * overlap);
             }
 
 
-
             updateOverlap();
         }
 
-        public void loadSettings()
-        {
-            dataFileDict d = GetComponent<dataFileDict>();
-
-            d.clear();
-            d.load();
-
-#if UNITY_EDITOR
-            UnityEditor.Undo.RecordObject(this, "Loaded saved settings from file.");
-#endif
-
-            //these always come from the prefs
-            slicing = (softSliceMode)d.getValueAsInt("softSlicing", (int)softSliceMode.SOFT);
-            softness = d.getValueAsFloat("shaderOverlap", softness);
-            overlap = d.getValueAsFloat("overlap", overlap);
-            forcedPerspective = d.getValueAsFloat("forcedPersp", forcedPerspective);
-
-        }
-
-        public void saveSettings()
-        {
-            dataFileDict d = GetComponent<dataFileDict>();
-            if (!d)
-                return;
-            d.setValue("overlap", overlap.ToString());
-            d.setValue("shaderOverlap", softness.ToString());
-            d.setValue("softSlicing", ((int)slicing).ToString());
-            d.setValue("forcedPersp", forcedPerspective.ToString());
-            d.setValue("blackPoint", blackPoint.ToString());
-
-            d.save();
-        }
-
-
-        void OnApplicationQuit()
-        {
-            saveSettings();
-        }
     }

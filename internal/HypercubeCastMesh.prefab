@@ -83,7 +83,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 1.160043, y: 2.7841032, z: 1}
+  m_LocalScale: {x: 1.160043, y: 2.320086, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -155,8 +155,6 @@ MeshRenderer:
   - {fileID: 2100000, guid: b5b1218e00f417f4ca951217a56588ae, type: 2}
   - {fileID: 2100000, guid: db8b473a9c2788f4b8b8f58aa84262fd, type: 2}
   - {fileID: 2100000, guid: 224a15b0108b5094db887c1ea8ccbe6c, type: 2}
-  - {fileID: 2100000, guid: b202850f1875d7a4eba98e6afa3de771, type: 2}
-  - {fileID: 2100000, guid: 1a3edf76230fbd348ab2e6c86198d2a2, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -386,7 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7346ab28221aa05448d03de0a1a3d36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slices: 12
+  slices: 10
   flipX: 0
   flipY: 0
   flipZ: 0
@@ -396,7 +394,7 @@ MonoBehaviour:
   sliceHeight: 108
   sliceGap: 0
   zPos: 0.24
-  tesselation: 10
+  tesselation: 11
   sliceMesh: {fileID: 150924}
   canvasMaterials:
   - {fileID: 2100000, guid: ffc2c9266484f0141a16b1c50cd0fa0f, type: 2}
@@ -432,6 +430,7 @@ MonoBehaviour:
   usingCustomDimensions: 1
   preview: {fileID: 0}
   casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
+  relativeSettingsPath: volumeCalibrationData\hardwareCalibration.txt
 --- !u!114 &11468286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -499,7 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ff99fc26316fc47ac9b7fd9f166420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: volumeCalibrationData\hardwareCalibration.txt
+  fileName: 
   readOnly: 0
   loadOnAwake: 0
 --- !u!114 &11489406

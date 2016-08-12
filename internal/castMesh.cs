@@ -62,6 +62,9 @@ namespace hypercube
         calibrator calibrator = null;
         public Material casterMaterial;
 
+        [Tooltip("This path is how we find the calibration and system settings in the internal drive for the Volume in use. Don't change unless you know what you are changing.")]
+        public string relativeSettingsPath;  
+
         void Start()
         {
             calibrator = GetComponent<calibrator>();
@@ -69,9 +72,6 @@ namespace hypercube
             if (!preview)
                 preview = GameObject.FindObjectOfType<hypercubePreview>();
 
-            //use the file path inside dataFileDict as a base path to search for the drive provided with Volume.
-            dataFileDict d = GetComponent<dataFileDict>();
-            d.fileName = driveFinder.getConfigPath(d.fileName);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
             loadSettings();
         }
 
@@ -108,6 +108,9 @@ namespace hypercube
             if (!d)
                 return;
 
+            d.fileName = hypercube.utils.getConfigPath(relativeSettingsPath);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
+       
+
             d.setValue("sliceCount", slices);
             d.setValue("offsetX", sliceOffsetX);
             d.setValue("offsetY", sliceOffsetY);
@@ -123,6 +126,8 @@ namespace hypercube
             d.save();
           //  if (hypercube.input.isFunctional) //try to save it to the circuit board as well, as a backup.
          //       saveSettingsToHardware();
+
+            Debug.Log("Settings saved to config file: " + d.fileName);
         }
         /*
 #if HYPERCUBE_INPUT
@@ -174,15 +179,20 @@ namespace hypercube
         }
 #endif*/
 #else
-        public void saveSettingsToHardware()
+        public void saveConfigSettings()
         {
             Debug.LogWarning("Overwriting calibration settings from this application will overwrite the settings for ALL Volume apps!\nUse dataFileDict to manage any custom settings yourself.");
         } 
 #endif
-       
+
         public void loadSettings()
         {
+            
             dataFileDict d = GetComponent<dataFileDict>();
+
+            //use this path as a base path to search for the drive provided with Volume.
+            d.fileName = hypercube.utils.getConfigPath(relativeSettingsPath);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
+            
             d.clear();
 
 #if UNITY_EDITOR
@@ -209,6 +219,8 @@ namespace hypercube
 
                 setCalibrationOffsets(d, slices);
                 updateMesh();
+
+                Debug.Log("Settings read from config file: " + d.fileName);
             }
         }
 
