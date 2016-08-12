@@ -99,8 +99,8 @@ namespace hypercube
             {
                 hardwareInitReceived = true;
 
-                hypercubeCamera[] cameras = getHypercubeCameras();
-                foreach (hypercubeCamera ca in cameras)
+                castMesh[] cameras = getCastMeshes();
+                foreach (castMesh ca in cameras)
                 {
                         ca.loadSettings();
                 }
@@ -110,53 +110,48 @@ namespace hypercube
             {
                 hardwareInitReceived = true;
 
-                hypercubeCamera[] cameras = getHypercubeCameras();
-                foreach (hypercubeCamera ca in cameras)
+                castMesh[] cameras = getCastMeshes();
+                foreach (castMesh ca in cameras)
                 {
-                    if (ca.localCanvas)
-                        ca.localCanvas.updateMesh();
+                        ca.updateMesh();
                 }
                 return true;
             }
             else if (data.StartsWith("int,"))
             {
                 string[] toks = data.Split(',');
-                hypercubeCamera[] cameras = getHypercubeCameras();
+                castMesh[] casts = getCastMeshes();
 
                 if (toks[1] == "sNum" )
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in casts)
                     {
                         ca.slices = dataFileDict.stringToInt(toks[2], ca.slices);
-                        if (ca.localCanvas)
-                            ca.localCanvas.updateMesh(ca.slices);  //the above line should call OnValidate and update this, but sometimes it doesn't... so we force it to call here.
+                        ca.updateMesh();  //the above line should call OnValidate and update this, but sometimes it doesn't... so we force it to call here.
                     }
                     return true;
                 }
                 else if (toks[1] == "invX")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in casts)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.flipX = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipX);
+                            ca.flipX = dataFileDict.stringToBool(toks[2], ca.flipX);
                     }
                     return true;
                 }
                 else if (toks[1] == "invY")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in casts)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.flipY = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipY);
+                            ca.flipY = dataFileDict.stringToBool(toks[2], ca.flipY);
                     }
                     return true;
                 }
                 else if (toks[1] == "invZ")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in casts)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.flipZ = dataFileDict.stringToBool(toks[2], ca.localCanvas.flipZ);
+                            ca.flipZ = dataFileDict.stringToBool(toks[2], ca.flipZ);
                     }
                     return true;
                 }           
@@ -164,49 +159,44 @@ namespace hypercube
             else if (data.StartsWith("float,"))
             {
                 string[] toks = data.Split(',');
-                hypercubeCamera[] cameras = getHypercubeCameras();
+                castMesh[] cameras = getCastMeshes();
                 if (toks[1] == "offX")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in cameras)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.sliceOffsetX = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceOffsetX);
+                            ca.sliceOffsetX = dataFileDict.stringToFloat(toks[2], ca.sliceOffsetX);
                     }
                     return true;
                 }
                 if (toks[1] == "offY")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in cameras)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.sliceOffsetY = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceOffsetY);
+                            ca.sliceOffsetY = dataFileDict.stringToFloat(toks[2], ca.sliceOffsetY);
                     }
                     return true;
                 }
                 if (toks[1] == "wide")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in cameras)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.sliceWidth = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceWidth);
+                            ca.sliceWidth = dataFileDict.stringToFloat(toks[2], ca.sliceWidth);
                     }
                     return true;
                 }
                 if (toks[1] == "heig")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in cameras)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.sliceHeight = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceHeight);
+                            ca.sliceHeight = dataFileDict.stringToFloat(toks[2], ca.sliceHeight);
                     }
                     return true;
                 }
                 if (toks[1] == "gap")
                 {
-                    foreach (hypercubeCamera ca in cameras)
+                    foreach (castMesh ca in cameras)
                     {
-                        if (ca.localCanvas)
-                            ca.localCanvas.sliceGap = dataFileDict.stringToFloat(toks[2], ca.localCanvas.sliceGap);
+                            ca.sliceGap = dataFileDict.stringToFloat(toks[2], ca.sliceGap);
                     }
                     return true;
                 }
@@ -220,12 +210,10 @@ namespace hypercube
 
                 int s = dataFileDict.stringToInt(toks[1].Substring(1), -1);
 
-                hypercubeCamera[] cameras = getHypercubeCameras();
-                foreach (hypercubeCamera ca in cameras)
+                castMesh[] casts = getCastMeshes();
+                foreach (castMesh ca in casts)
                 {
-                    if (ca.localCanvas)
-                    {
-                        ca.localCanvas.setCalibrationOffset(s,
+                        ca.setCalibrationOffset(s,
                             dataFileDict.stringToFloat(toks[2], 0f),
                             dataFileDict.stringToFloat(toks[3], 0f),
                             dataFileDict.stringToFloat(toks[4], 0f),
@@ -242,21 +230,19 @@ namespace hypercube
                             dataFileDict.stringToFloat(toks[15], 0f)
                             );
                     }
-                }
                 return true;
             }
 
             return false;
         }
 
-        static hypercubeCamera[] getHypercubeCameras()
+        static castMesh[] getCastMeshes()
         {
-            List<hypercubeCamera> outcams = new List<hypercubeCamera>(); 
+            List<castMesh> outcams = new List<castMesh>();
 
-            hypercubeCamera[] cameras = GameObject.FindObjectsOfType<hypercubeCamera>();
-            foreach (hypercubeCamera ca in cameras)
+            castMesh[] cameras = GameObject.FindObjectsOfType<castMesh>();
+            foreach (castMesh ca in cameras)
             {
-                if (ca.useHardwareCalibrations)
                     outcams.Add(ca);
             }
             return outcams.ToArray();

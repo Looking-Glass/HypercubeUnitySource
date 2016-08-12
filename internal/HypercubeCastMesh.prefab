@@ -38,8 +38,9 @@ GameObject:
   - 114: {fileID: 11467166}
   - 114: {fileID: 11493886}
   - 114: {fileID: 11493960}
+  - 114: {fileID: 11482954}
   m_Layer: 9
-  m_Name: HypercubeCanvas
+  m_Name: HypercubeCastMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +83,7 @@ Transform:
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 2.0622985, y: 2.7841032, z: 1}
+  m_LocalScale: {x: 1.160043, y: 2.7841032, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -124,7 +125,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 512
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -385,12 +386,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7346ab28221aa05448d03de0a1a3d36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slices: 12
   flipX: 0
-  flipY: 1
+  flipY: 0
   flipZ: 0
   sliceOffsetX: 0
   sliceOffsetY: 0
-  sliceWidth: 1920
+  sliceWidth: 1080
   sliceHeight: 108
   sliceGap: 0
   zPos: 0.24
@@ -428,7 +430,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 0183823436f9bfc4c879c835b8d71fcd, type: 2}
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
-  calibrator: {fileID: 11493960}
+  preview: {fileID: 0}
   casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
 --- !u!114 &11468286
 MonoBehaviour:
@@ -486,6 +488,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+--- !u!114 &11482954
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 148522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ff99fc26316fc47ac9b7fd9f166420, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: volumeCalibrationData\hardwareCalibration.txt
+  readOnly: 0
+  loadOnAwake: 0
 --- !u!114 &11489406
 MonoBehaviour:
   m_ObjectHideFlags: 1

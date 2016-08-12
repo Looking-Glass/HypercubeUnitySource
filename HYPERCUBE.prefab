@@ -141,17 +141,17 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 4.924433
-  far clip plane: 6.0831237
+  near clip plane: 5.25
+  far clip plane: 8.166666
   field of view: 60
   orthographic: 1
-  orthographic size: 1.8919978
+  orthographic size: 2.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294964479
   m_RenderingPath: 3
-  m_TargetTexture: {fileID: 8400000, guid: 23bf5d0442c3b48438e4040064a2bfec, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 340cc3aeb2104984d98853ebf810f8d5, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -324,10 +324,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slicing: 1
-  overlap: 0.5
-  softness: 0.25
+  overlap: 2
+  softness: 0.4
   brightness: 1
-  slices: 10
   forcedPerspective: 0
   blackPoint: {r: 0.15686275, g: 0.12941177, b: 0.23137255, a: 0}
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
@@ -363,9 +362,9 @@ MonoBehaviour:
   - {fileID: 8400000, guid: ab6de71e183d87b4d9e232655a3f0472, type: 2}
   - {fileID: 8400000, guid: d6c6568746562c64eb4fa480704a27b7, type: 2}
   - {fileID: 8400000, guid: 7addaa8ee32d5314691f3efb487f8c8b, type: 2}
-  canvasPrefab: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-  localCanvas: {fileID: 0}
-  preview: {fileID: 0}
+  castMeshPrefab: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+  localCastMesh: {fileID: 0}
+  useHardwareCalibrations: 1
 --- !u!124 &12486252
 Behaviour:
   m_ObjectHideFlags: 1

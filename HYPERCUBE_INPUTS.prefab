@@ -41,7 +41,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baudRate: 115200
   reconnectionDelay: 500
-  maxUnreadMessage: 5
+  maxUnreadMessage: 50
   maxAllowedFailure: 3
   touchScreenFront: {fileID: 0}
 --- !u!1001 &100100000

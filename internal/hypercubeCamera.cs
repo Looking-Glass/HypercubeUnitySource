@@ -23,7 +23,6 @@ using System.Collections.Generic;
         [Range(0.001f, .5f)]
         public float softness = .5f;
         public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
-        public int slices = 12;
         public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
 
         [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color will be added to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.")]
@@ -31,21 +30,9 @@ using System.Collections.Generic;
         public Shader softSliceShader;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
-        public hypercubeCanvas canvasPrefab;
-        public hypercubeCanvas localCanvas = null;
-        public hypercubePreview preview = null;
-
-#if HYPERCUBE_INPUT
-        //this will tell our hypercube to try to use the settings stored in the hardware so that we can use any kind of Volume, seamlessly
-        //turn it off if you are trying to modify your Volume hardware or are a Volume developer working on prototypes.
-#if HYPERCUBE_DEV
-        public bool useHardwareCalibrations = true; //if we are developing for Volume, let's show the value so we can modify it in the inspector.
-#else
-        private bool useHardwareCalibrations = true;
-#endif
-#else
-    private bool useHardwareCalibrations = false;  
-#endif
+        public hypercube.castMesh castMeshPrefab;
+        public hypercube.castMesh localCastMesh = null;
+       
 
         //store our camera values here.
         float[] nearValues;
@@ -54,24 +41,19 @@ using System.Collections.Generic;
         void Start()
         {
 
-            if (!localCanvas)
+            if (!localCastMesh)
             {
-                localCanvas = GameObject.FindObjectOfType<hypercubeCanvas>();
-                if (!localCanvas)
+                localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
+                if (!localCastMesh)
                 {
                     //if no canvas exists. we need to have one or the hypercube is useless.
 #if UNITY_EDITOR
-                    localCanvas = UnityEditor.PrefabUtility.InstantiatePrefab(canvasPrefab) as hypercubeCanvas;  //try to keep the prefab connection, if possible
+                    localCastMesh = UnityEditor.PrefabUtility.InstantiatePrefab(castMeshPrefab) as hypercube.castMesh;  //try to keep the prefab connection, if possible
 #else
-                localCanvas = Instantiate(canvasPrefab); //normal instantiation, lost the prefab connection
+                localCastMesh = Instantiate(canvasPrefab); //normal instantiation, lost the prefab connection
 #endif
                 }
             }
-
-            if (!preview)
-                preview = GameObject.FindObjectOfType<hypercubePreview>();
-
-
 
             loadSettings();
             resetSettings();
@@ -80,8 +62,9 @@ using System.Collections.Generic;
 
         void Update()
         {
-            if (localCanvas && localCanvas.getIsDirty())
-                saveSettings();
+
+            if (!localCastMesh)
+                localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
 
             if (transform.hasChanged)
             {
@@ -96,26 +79,19 @@ using System.Collections.Generic;
                 Debug.LogError("The Hypercube has no slice textures to render to.  Please assign them or reset the prefab.");
 
 
-            if (slices > sliceTextures.Length)
-                slices = sliceTextures.Length;
-
-            if (slices < 1)
-                slices = 1;
-
             if (slicing == softSliceMode.HARD)
                 softness = 0f;
 
-            if (localCanvas)
+            if (!localCastMesh)
+                localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
+
+            if (localCastMesh)
             {
-                localCanvas.setTone(brightness);
-                localCanvas.updateMesh(slices);
+                localCastMesh.setTone(brightness);
+                localCastMesh.updateMesh();
             }
-            if (preview)
-            {
-                preview.sliceCount = slices;
-                preview.sliceDistance = 1f / (float)slices;
-                preview.updateMesh();
-            }
+
+            saveSettings();
 
             //handle softOverlap
             updateOverlap();
@@ -136,7 +112,6 @@ using System.Collections.Generic;
 
                 o.enabled = true;
                 o.setShaderProperties(softness, blackPoint);
-
             }
             else
                 o.enabled = false;
@@ -149,7 +124,10 @@ using System.Collections.Generic;
 
             float baseViewAngle = renderCam.fieldOfView;
 
-            for (int i = 0; i < slices; i++)
+            if (localCastMesh.slices > sliceTextures.Length)
+                localCastMesh.slices = sliceTextures.Length;
+
+            for (int i = 0; i < localCastMesh.slices; i++)
             {
                 renderCam.fieldOfView = baseViewAngle + (i * forcedPerspective); //allow forced perspective or perspective correction
 
@@ -163,9 +141,6 @@ using System.Collections.Generic;
 
             if (overlap > 0f && slicing != softSliceMode.HARD)
                 renderCam.gameObject.SetActive(false);
-
-            //TEMP
-            //Camera.main.Render();
         }
 
         //prefs input
@@ -191,15 +166,18 @@ using System.Collections.Generic;
         //TODO change this to use a proper matrix to handle local scale in a heirarchy
         public void resetSettings()
         {
-            nearValues = new float[slices];
-            farValues = new float[slices];
+            if (!localCastMesh)
+                return;
 
-            float sliceDepth = transform.lossyScale.z / (float)slices;
+            nearValues = new float[localCastMesh.slices];
+            farValues = new float[localCastMesh.slices];
+
+            float sliceDepth = transform.lossyScale.z / (float)localCastMesh.slices;
 
             renderCam.aspect = transform.lossyScale.x / transform.lossyScale.y;
             renderCam.orthographicSize = .5f * transform.lossyScale.y;
 
-            for (int i = 0; i < slices && i < sliceTextures.Length; i++)
+            for (int i = 0; i < localCastMesh.slices && i < sliceTextures.Length; i++)
             {
                 nearValues[i] = (i * sliceDepth) - (sliceDepth * overlap);
                 farValues[i] = ((i + 1) * sliceDepth) + (sliceDepth * overlap);
@@ -217,39 +195,15 @@ using System.Collections.Generic;
             d.clear();
             d.load();
 
-
 #if UNITY_EDITOR
-            if (localCanvas)
-                UnityEditor.Undo.RecordObject(localCanvas, "Loaded saved settings from file."); //these force the editor to mark the canvas as dirty and save what is loaded.
             UnityEditor.Undo.RecordObject(this, "Loaded saved settings from file.");
 #endif
 
             //these always come from the prefs
             slicing = (softSliceMode)d.getValueAsInt("softSlicing", (int)softSliceMode.SOFT);
-            softness = d.getValueAsFloat("shaderOverlap", 1f);
-            overlap = d.getValueAsFloat("overlap", 1f);
-
-            if (useHardwareCalibrations && hypercube.input.isHardwareReady())
-            {
-                //this will tell the hardware to give us it's specs
-                //once complete, it will also update the canvas mesh when the response "get:complete" is received from the serialComm
-                hypercube.input.sendCommandToHardware("#get");
-            }
-            else //try to read them from our prefs file instead... using defaults as backup.  This will never be as good as using the config stored in the hardware.
-            {
-                slices = d.getValueAsInt("sliceCount", 10);
-                localCanvas.sliceOffsetX = d.getValueAsFloat("offsetX", 0);
-                localCanvas.sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-                localCanvas.sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
-                localCanvas.sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
-                localCanvas.sliceGap = d.getValueAsFloat("sliceGap", 0f);
-                localCanvas.flipX = d.getValueAsBool("flipX", false);
-                localCanvas.flipY = d.getValueAsBool("flipY", false);
-                localCanvas.flipZ = d.getValueAsBool("flipZ", false);
-
-                localCanvas.setCalibrationOffsets(d, sliceTextures.Length);
-                localCanvas.updateMesh(slices);
-            }
+            softness = d.getValueAsFloat("shaderOverlap", softness);
+            overlap = d.getValueAsFloat("overlap", overlap);
+            forcedPerspective = d.getValueAsFloat("forcedPersp", forcedPerspective);
 
         }
 
@@ -261,66 +215,11 @@ using System.Collections.Generic;
             d.setValue("overlap", overlap.ToString());
             d.setValue("shaderOverlap", softness.ToString());
             d.setValue("softSlicing", ((int)slicing).ToString());
-
-            d.setValue("sliceCount", slices);
-            d.setValue("offsetX", localCanvas.sliceOffsetX);
-            d.setValue("offsetY", localCanvas.sliceOffsetY);
-            d.setValue("sliceWidth", localCanvas.sliceWidth);
-            d.setValue("pixelsPerSlice", localCanvas.sliceHeight);
-            d.setValue("sliceGap", localCanvas.sliceGap);
-            d.setValue("flipX", localCanvas.flipX);
-            d.setValue("flipY", localCanvas.flipY);
-            d.setValue("flipZ", localCanvas.flipZ);
-
-            if (localCanvas)
-                localCanvas.saveCalibrationOffsets(d);
+            d.setValue("forcedPersp", forcedPerspective.ToString());
+            d.setValue("blackPoint", blackPoint.ToString());
 
             d.save();
         }
-
-        public void saveSettingsToHardware()
-        {
-            StartCoroutine(ieSaveSettingsToHardware(2f));
-        }
-        IEnumerator ieSaveSettingsToHardware(float secondsBetweenCommands)
-        {
-            if (useHardwareCalibrations && hypercube.input.isHardwareReady())
-            {
-                Debug.Log("Saving to hardware...");
-                hypercube.input.saveValueToHardware("sNum", slices);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("offX", localCanvas.sliceOffsetX);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("offY", localCanvas.sliceOffsetY);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("wide", localCanvas.sliceWidth);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("heig", localCanvas.sliceHeight);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("gap", localCanvas.sliceGap);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invX", localCanvas.flipX);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invY", localCanvas.flipY);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invZ", localCanvas.flipZ);
-
-                if (localCanvas)
-                {
-                    string[] calibrations;
-                    localCanvas.saveCalibrationOffsets(out calibrations);
-                    foreach (string c in calibrations)
-                    {
-                        yield return new WaitForSeconds(secondsBetweenCommands * 2f);
-                        hypercube.input.sendCommandToHardware(c);
-                    }
-                }
-                Debug.Log("Done saving to hardware.");
-            }
-            else
-                Debug.LogWarning("Failed to save settings to hardware.");
-        }
-
 
 
         void OnApplicationQuit()
