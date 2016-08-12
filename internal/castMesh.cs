@@ -123,62 +123,8 @@ namespace hypercube
 
             saveCalibrationOffsets(d);
 
-            d.save();
-          //  if (hypercube.input.isFunctional) //try to save it to the circuit board as well, as a backup.
-         //       saveSettingsToHardware();
-
             Debug.Log("Settings saved to config file: " + d.fileName);
         }
-        /*
-#if HYPERCUBE_INPUT
-        bool saveSettingsToHardware()
-        {
-            StartCoroutine(ieSaveSettingsToHardware(2f));
-            return true;
-        }
-        IEnumerator ieSaveSettingsToHardware(float secondsBetweenCommands)
-        {
-            if (hypercube.input.isHardwareReady())
-            {
-                Debug.Log("Saving to PCB hardware...");
-                hypercube.input.saveValueToHardware("sNum", slices);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("offX", sliceOffsetX);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("offY", sliceOffsetY);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("wide", sliceWidth);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("heig", sliceHeight);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("gap", sliceGap);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invX", flipX);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invY", flipY);
-                yield return new WaitForSeconds(secondsBetweenCommands);
-                hypercube.input.saveValueToHardware("invZ", flipZ);
-
-                string[] calibrations;
-                saveCalibrationOffsets(out calibrations);
-                foreach (string c in calibrations)
-                {
-                    yield return new WaitForSeconds(secondsBetweenCommands * 2f);
-                    hypercube.input.sendCommandToHardware(c);
-                }
-   
-                Debug.Log("Done saving to PCB hardware.");
-            }
-            else
-                Debug.LogWarning("Failed to save settings to PCB hardware.");
-        }
-#else
-        void saveSettingsToHardware()
-        {
-            hypercube.input.printWarning();
-        }
-#endif
-         */
 #else
         public void saveConfigSettings()
         {
@@ -200,29 +146,21 @@ namespace hypercube
             UnityEditor.Undo.RecordObject(this, "Loaded calibration settings from file."); //these force the editor to mark the canvas as dirty and save what is loaded.
 #endif
 
-            if (!d.load() && hypercube.input.isHardwareReady()) //we failed to load the file!  try to get them from the hardware?
-            {
-                //this will tell the hardware to give us it's specs
-                //once complete, it will also update the canvas mesh when the response "get:complete" is received from the serialComm
-                    hypercube.input.sendCommandToHardware("#get");
-            }
-            else //try to read them from our prefs file instead... using defaults as backup.  This will never be as good as using the config stored in the hardware.
-            {
-                slices = d.getValueAsInt("sliceCount", 10);
-                sliceOffsetX = d.getValueAsFloat("offsetX", 0);
-                sliceOffsetY = d.getValueAsFloat("offsetY", 0);
-                sliceWidth = d.getValueAsFloat("sliceWidth", 1080f);
-                sliceHeight = d.getValueAsFloat("pixelsPerSlice", 108f);
-                sliceGap = d.getValueAsFloat("sliceGap", 0f);
-                flipX = d.getValueAsBool("flipX", false);
-                flipY = d.getValueAsBool("flipY", false);
-                flipZ = d.getValueAsBool("flipZ", false);
+            if (!d.load()) //we failed to load the file!  ...use backup defaults.
+                Debug.LogWarning("Could not read Volume calibration data!\nIs Volume connected via USB? Using defaults..."); //This will never be as good as using the config stored with the hardware and the view will have distortions in Volume's display.
 
-                setCalibrationOffsets(d, slices);
-                updateMesh();
+            slices = d.getValueAsInt("sliceCount", slices);
+            sliceOffsetX = d.getValueAsFloat("offsetX", sliceOffsetX);
+            sliceOffsetY = d.getValueAsFloat("offsetY", sliceOffsetY);
+            sliceWidth = d.getValueAsFloat("sliceWidth", sliceWidth);
+            sliceHeight = d.getValueAsFloat("pixelsPerSlice", sliceHeight);
+            sliceGap = d.getValueAsFloat("sliceGap", sliceGap);
+            flipX = d.getValueAsBool("flipX", flipX);
+            flipY = d.getValueAsBool("flipY", flipY);
+            flipZ = d.getValueAsBool("flipZ", flipZ);
 
-                Debug.Log("Done reading from: " + d.fileName);
-            }
+            setCalibrationOffsets(d, slices);
+            updateMesh();         
         }
 
         //tweaks to the cube design to offset physical distortions
@@ -255,7 +193,8 @@ namespace hypercube
                 d.getValueAsFloat("s" + s + "_By", 0f)
                     );
             }
-        }
+        } 
+        //this call is separate, so it can be flexible enough to accept different ways of storing the calibration data
         public void setCalibrationOffset(int slice, float _ULx, float _ULy, float _URx, float _URy, float _LLx, float _LLy, float _LRx, float _LRy, float _Mx, float _My, float _Sx, float _Sy, float _Bx, float _By)
         {
             if (slice < 0 || slice >= bows.Length)
@@ -295,30 +234,9 @@ namespace hypercube
                 d.setValue("s" + s + "_Bx", bows[s].x);
                 d.setValue("s" + s + "_By", bows[s].y);
             }
+
+            d.save();
         }
-        //public void saveCalibrationOffsets(out string[] str) //this returns a command that can be sent to the touchscreen circuit board
-        //{
-        //    str = new string[ULOffsets.Length];
-        //    //slice,name,1,2,3,4..,14
-        //    for (int s = 0; s < ULOffsets.Length; s++)
-        //    {
-        //        str[s] = "slice,s" + s
-        //            + "," + ULOffsets[s].x
-        //            + "," + ULOffsets[s].y
-        //            + "," + UROffsets[s].x
-        //            + "," + UROffsets[s].y
-        //            + "," + LLOffsets[s].x
-        //            + "," + LLOffsets[s].y
-        //            + "," + LROffsets[s].x
-        //            + "," + LROffsets[s].y
-        //            + "," + MOffsets[s].x
-        //            + "," + MOffsets[s].y
-        //            + "," + skews[s].x
-        //            + "," + skews[s].y
-        //            + "," + bows[s].x
-        //            + "," + bows[s].y;
-        //    }
-        //}
 
         void OnValidate()
         {
@@ -782,7 +700,7 @@ namespace hypercube
                     //add bow distortion compensation
                     lerpedVector.x += (1f - Mathf.Cos(xBowPhase - rowLerpValue)) * bow.y;
                     lerpedVector.y += (1f - Mathf.Cos(yBowPhase - columnLerpValue)) * bow.x;
-                    lerpedVector.x -= bow.y * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. These two lines pivot it on the corner points of articulation so that the center is what moves.
+                    lerpedVector.x -= bow.y * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
                     lerpedVector.y -= bow.x * .5f;
 
                     //add it
