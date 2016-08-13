@@ -25,18 +25,18 @@ namespace hypercube
 #else
         [MenuItem("Hypercube/Toggle Caster Window _%e", false, 10)] //see  https://docs.unity3d.com/ScriptReference/MenuItem.html)
 #endif
-        public static void V_toggleWindow()
+        public static void toggleWindow()
         {
             if (caster)
-                V_closeWindow();
+                closeWindow();
             else
-                V_openWindow();
+                openWindow();
         }
 
-        public static void V_openWindow()
+        public static void openWindow()
         {
             //allow only 1 window
-            V_closeWindow();
+            closeWindow();
 
             int posX = EditorPrefs.GetInt("V_windowOffsetX", 0);
             int posY = EditorPrefs.GetInt("V_windowOffsetY", 0);
@@ -48,11 +48,21 @@ namespace hypercube
             caster.position = new Rect(posX, posY, w, h);
             caster.autoRepaintOnSceneChange = true;  //this lets it update any changes.  see also: http://docs.unity3d.com/ScriptReference/EditorWindow-autoRepaintOnSceneChange.html
             caster.ShowPopup();
+
+            //give a warning if Playmode tint color is not white.
+            string tintVal = EditorPrefs.GetString("Playmode tint", "");
+            if (tintVal != "Playmode tint;1;1;1;1")
+#if UNITY_EDITOR_WIN
+                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark in PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Edit > Preferences > Colors");
+#elif UNITY_EDITOR_OSX
+                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark in PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Unity > Preferences > Colors");
+#endif
+
         }
 
 
 
-        public static void V_closeWindow()
+        public static void closeWindow()
         {
             if (caster != null)
                 caster.Close();
@@ -75,6 +85,9 @@ namespace hypercube
 
         public void Awake()
         {
+
+            if (EditorApplication.isPlaying) 
+
             //close the game window, if it's up.
             //EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll(typeof(EditorWindow)) as EditorWindow[];
             //foreach (EditorWindow w in allWindows)
@@ -103,7 +116,7 @@ namespace hypercube
                 else
                 {
                     Debug.LogWarning("No Hypercube Canvas found, closing window.");
-                    V_closeWindow();
+                    closeWindow();
                     return;
                 }
             }

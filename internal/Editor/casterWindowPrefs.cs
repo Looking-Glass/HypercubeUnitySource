@@ -71,7 +71,7 @@ public class casterWindowPrefs : EditorWindow
             EditorPrefs.SetInt("V_windowWidth", width);
             EditorPrefs.SetInt("V_windowHeight", height);
 
-            hypercube.casterWindow.V_closeWindow();
+            hypercube.casterWindow.closeWindow();
         }
     }
 

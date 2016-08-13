@@ -147,7 +147,7 @@ namespace hypercube
 #endif
 
             if (!d.load()) //we failed to load the file!  ...use backup defaults.
-                Debug.LogWarning("Could not read Volume calibration data!\nIs Volume connected via USB? Using defaults..."); //This will never be as good as using the config stored with the hardware and the view will have distortions in Volume's display.
+                Debug.LogWarning("Could not read calibration data from Volume!\nIs Volume connected via USB? Using defaults..."); //This will never be as good as using the config stored with the hardware and the view will have distortions in Volume's display.
 
             slices = d.getValueAsInt("sliceCount", slices);
             sliceOffsetX = d.getValueAsFloat("offsetX", sliceOffsetX);
