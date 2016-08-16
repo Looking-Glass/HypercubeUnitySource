@@ -62,7 +62,7 @@ namespace hypercube
 
         void Start()
         {
-            touchScreenFront = addSerialPortInput("COM8"); //TODO - SHOULD NOT BE HARDCODED!
+            touchScreenFront = addSerialPortInput("COM4"); //TODO - SHOULD NOT BE HARDCODED!
         }
 
         void Update()

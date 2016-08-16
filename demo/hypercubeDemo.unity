@@ -339,11 +339,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: near clip plane
-      value: 5.6814775
+      value: 5.5394406
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: far clip plane
-      value: 7.8120317
+      value: 7.9540687
       objectReference: {fileID: 0}
     - target: {fileID: 11413466, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_Enabled
@@ -351,11 +351,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: slicing
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: softness
-      value: 0.33333334
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: slices
@@ -387,7 +387,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: overlap
-      value: 1
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: blackPoint.a
@@ -417,6 +417,10 @@ Prefab:
       propertyPath: blackPoint.g
       value: 0.022491349
       objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: brightness
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
   m_IsPrefabParent: 0
@@ -440,8 +444,8 @@ MonoBehaviour:
   scaleSpeed: 1
   rollSpeed: 20
   keyboardLookSpeed: 30
-  sensitivityX: 30
-  sensitivityY: 30
+  sensitivityX: 80
+  sensitivityY: 80
   minimumX: -360
   maximumX: 360
   minimumY: -60
@@ -630,7 +634,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 431134, guid: 5bdc0de1805894d4e9081f98c24e707a, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 148016, guid: 5bdc0de1805894d4e9081f98c24e707a, type: 2}
       propertyPath: m_IsActive
@@ -989,21 +993,37 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0.06401042
+      objectReference: {fileID: 0}
+    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -0.97585183
+      objectReference: {fileID: 0}
+    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1.2833334
+      objectReference: {fileID: 0}
+    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1.9555554
+      objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: preview
       value: 
       objectReference: {fileID: 2074426296}
-    - target: {fileID: 11482954, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: fileName
-      value: hardwareCalibration.txt
+    - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: flipY
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 1.0000001
+    - target: {fileID: 11493960, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: relativeTo
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 2
+    - target: {fileID: 11493960, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}

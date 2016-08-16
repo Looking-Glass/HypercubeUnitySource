@@ -86,4 +86,9 @@ public class demoRotator : MonoBehaviour {
     }
 
 
+    public void quitApp()
+    {
+        Application.Quit();
+    }
+
 }

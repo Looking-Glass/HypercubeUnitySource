@@ -42,7 +42,6 @@ using System.Collections.Generic;
 
         void Start()
         {
-
             if (!localCastMesh)
             {
                 localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
@@ -50,9 +49,11 @@ using System.Collections.Generic;
                 {
                     //if no canvas exists. we need to have one or the hypercube is useless.
 #if UNITY_EDITOR
+                    Cursor.visible = true;
                     localCastMesh = UnityEditor.PrefabUtility.InstantiatePrefab(castMeshPrefab) as hypercube.castMesh;  //try to keep the prefab connection, if possible
 #else
-                localCastMesh = Instantiate(canvasPrefab); //normal instantiation, lost the prefab connection
+                Cursor.visible = false;
+                localCastMesh = Instantiate(castMeshPrefab); //normal instantiation, lost the prefab connection
 #endif
                 }
             }

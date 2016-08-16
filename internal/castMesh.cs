@@ -9,14 +9,6 @@ using System.Collections.Generic;
 namespace hypercube
 {
 
-    public enum canvasEditMode
-    {
-        UL = 0,
-        UR,
-        LL,
-        LR,
-        M
-    }
 
     [ExecuteInEditMode]
     [RequireComponent(typeof(hypercube.calibrator))]
@@ -287,6 +279,8 @@ namespace hypercube
 
             updateMesh();
         }
+
+#if HYPERCUBE_DEV
         public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
         {
             if (slice < 0)
@@ -363,6 +357,8 @@ namespace hypercube
 
             return true;
         }
+#endif
+
         public void flip()
         {
             flipX = !flipX;
@@ -664,9 +660,11 @@ namespace hypercube
             if (!calibrator)
                 calibrator = GetComponent<calibrator>();
 
+#if HYPERCUBE_DEV
             if (calibrator.enabled)
                 r.materials = calibrator.getMaterials();
             else
+#endif
                 r.materials = faceMaterials; //normal path
 
             m.RecalculateBounds();

@@ -82,8 +82,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0.24}
-  m_LocalScale: {x: 2.25, y: 4.5, z: 1}
+  m_LocalPosition: {x: 0.16630581, y: -0.95873415, z: 0.24}
+  m_LocalScale: {x: 2.1930377, y: 3.341772, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -388,11 +388,11 @@ MonoBehaviour:
   flipX: 0
   flipY: 0
   flipZ: 0
-  sliceOffsetX: 0
-  sliceOffsetY: 0
-  sliceWidth: 1080
-  sliceHeight: 108
-  sliceGap: 0
+  sliceOffsetX: 122.9
+  sliceOffsetY: 13.04
+  sliceWidth: 1386
+  sliceHeight: 105.6
+  sliceGap: 2
   zPos: 0.24
   tesselation: 11
   sliceMesh: {fileID: 150924}
@@ -498,7 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ff99fc26316fc47ac9b7fd9f166420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
+  fileName: hardwareCalibration.txt
   readOnly: 0
   loadOnAwake: 0
 --- !u!114 &11489406
@@ -582,7 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a8df1d96bede848a06a5e5055f13b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: s0  UL
+  current: 
   canvas: {fileID: 11467166}
   brightness: 3
   interval: 1
@@ -602,8 +602,8 @@ MonoBehaviour:
   skewXDn: 275
   skewYUp: 273
   skewYDn: 274
-  bowXUp: 111
-  bowXDn: 108
+  bowXUp: 108
+  bowXDn: 111
   bowYUp: 107
   bowYDn: 59
   calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}

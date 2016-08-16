@@ -15,51 +15,77 @@ using System.Collections;
 namespace hypercube
 {
 
+#if HYPERCUBE_DEV
     public enum distortionCompensationType
     {
         PIXEL,
         SPATIAL
     }
 
+    public enum canvasEditMode
+    {
+        UL = 0,
+        UR,
+        LL,
+        LR,
+        M
+    }
+#endif
+
     public class calibrator : MonoBehaviour
     {
+        
+#if !HYPERCUBE_DEV
+        [Header("-Requires HYPERCUBE_DEV define-")]
+
+        //don't lose these references, but they are useless without the define so hide them.
+        
+        public castMesh canvas;
+        [HideInInspector]
+        public Texture2D calibrationCorner;
+        [HideInInspector]
+        public Texture2D calibrationCenter;
+        [HideInInspector]
+        public Material selectedMat;
+        [HideInInspector]
+        public Material offMat;
+#else
 
         public string current;
-
         public castMesh canvas;
         public float brightness = 3f;
 
         [Tooltip("How sensitive do you want your calibrations to be.")]
-        public float interval = .5f;
+        public float interval = 1f;
         [Tooltip("Pixel movement will cause the interval to cause interval * pixel movements. Spatial will feel more intuitive if you are working directly on the volume.")]
-        public distortionCompensationType relativeTo = distortionCompensationType.PIXEL;
+        public distortionCompensationType relativeTo = distortionCompensationType.SPATIAL;
 
-        public KeyCode nextSlice;
-        public KeyCode prevSlice;
-        public KeyCode highlightUL;
-        public KeyCode highlightUR;
-        public KeyCode highlightLL;
-        public KeyCode highlightLR;
-        public KeyCode highlightM;
-        public KeyCode up;
-        public KeyCode down;
-        public KeyCode left;
-        public KeyCode right;
-        public KeyCode skewXUp;
-        public KeyCode skewXDn;
-        public KeyCode skewYUp;
-        public KeyCode skewYDn;
-        public KeyCode bowXUp;
-        public KeyCode bowXDn;
-        public KeyCode bowYUp;
-        public KeyCode bowYDn;
+        //these default to upside down because the 'default' orientation of Volume is upside down on the castMesh if viewed in a normal monitor
+        //this may sound strange, but it keeps the most difficult code inside castMesh more readable and corresponding to intuition.
+        public KeyCode nextSlice = KeyCode.R;
+        public KeyCode prevSlice = KeyCode.F;
+        public KeyCode highlightUL = KeyCode.Z;
+        public KeyCode highlightUR = KeyCode.C;
+        public KeyCode highlightLL = KeyCode.Q;
+        public KeyCode highlightLR = KeyCode.E;
+        public KeyCode highlightM = KeyCode.S;
+        public KeyCode up = KeyCode.X;
+        public KeyCode down = KeyCode.W;
+        public KeyCode left = KeyCode.A;
+        public KeyCode right = KeyCode.D;
+        public KeyCode skewXUp = KeyCode.LeftArrow;
+        public KeyCode skewXDn = KeyCode.RightArrow;
+        public KeyCode skewYUp = KeyCode.UpArrow;
+        public KeyCode skewYDn = KeyCode.DownArrow;
+        public KeyCode bowXUp = KeyCode.L;
+        public KeyCode bowXDn = KeyCode.O;
+        public KeyCode bowYUp = KeyCode.K;
+        public KeyCode bowYDn = KeyCode.Semicolon;
+
         public Texture2D calibrationCorner;
         public Texture2D calibrationCenter;
-
         public Material selectedMat;
         public Material offMat;
-
-        //  public bool forceLoadFromFile = false;
 
         canvasEditMode m;
         int currentSlice;
@@ -72,7 +98,6 @@ namespace hypercube
         {
             canvas.updateMesh();
         }
-
 
         public void copyCurrentSliceCalibration()
         {
@@ -87,6 +112,7 @@ namespace hypercube
 
             canvasEditMode oldMode = m;
             int oldSelection = currentSlice;
+
 
             if (Input.GetKeyDown(nextSlice))
             {
@@ -250,6 +276,8 @@ namespace hypercube
             }
             return outMats;
         }
+#endif
+
     }
 
 }
