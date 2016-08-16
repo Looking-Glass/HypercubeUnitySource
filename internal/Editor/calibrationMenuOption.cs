@@ -19,7 +19,7 @@ namespace hypercube
 #endif
 
         [MenuItem("Hypercube/Load Settings", false, 52)]
-        public static void loadCubeSettings()
+        public static void loadHardwareCalibrationSettings()
         {
             hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
             if (c)

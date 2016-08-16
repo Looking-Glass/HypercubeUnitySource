@@ -20,7 +20,8 @@ namespace hypercube
                 {
                     return drive + relativePathToConfig;
                 }
-            }      
+            }
+            Debug.LogWarning("Could not locate Volume calibration file!\nIs Volume connected via USB?");
             return Path.GetFileName(relativePathToConfig); //return the base name of the file only.
         }
 #else  //osx,  TODO: linux untested in standalone
