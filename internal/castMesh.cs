@@ -152,7 +152,11 @@ namespace hypercube
             flipZ = d.getValueAsBool("flipZ", flipZ);
 
             setCalibrationOffsets(d, slices);
-            updateMesh();         
+            updateMesh();       
+  
+            //setup input to take into account touchscreen hardware config
+            if (input.get())
+                input.get().applySettings(d);
         }
 
         //tweaks to the cube design to offset physical distortions

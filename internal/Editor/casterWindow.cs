@@ -53,9 +53,9 @@ namespace hypercube
             string tintVal = EditorPrefs.GetString("Playmode tint", "");
             if (tintVal != "Playmode tint;1;1;1;1")
 #if UNITY_EDITOR_WIN
-                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark in PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Edit > Preferences > Colors");
+                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark during PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Edit > Preferences > Colors");
 #elif UNITY_EDITOR_OSX
-                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark in PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Unity > Preferences > Colors");
+                Debug.LogWarning("In some versions of Unity, caster window may appear incorrectly dark during PLAY mode.\nThis can be fixed by setting \"Playmode tint\" to white in: Unity > Preferences > Colors");
 #endif
 
         }

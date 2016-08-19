@@ -310,7 +310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: cubePrefs.txt
-  readOnly: 0
+  readOnly: 1
   loadOnAwake: 0
 --- !u!114 &11483894
 MonoBehaviour:
@@ -324,11 +324,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slicing: 1
-  overlap: 2
-  softness: 0.4
+  overlap: 0.96
+  softness: 0.32876712
   forcedPerspective: 0
   brightness: 1
   blackPoint: {r: 0.053026035, g: 0.018382356, b: 0.14705884, a: 0}
+  autoHideMouse: 1
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:

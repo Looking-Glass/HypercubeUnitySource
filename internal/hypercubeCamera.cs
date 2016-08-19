@@ -29,6 +29,7 @@ using System.Collections.Generic;
         public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
         [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
+        public bool autoHideMouse = true;
         public Shader softSliceShader;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
@@ -62,8 +63,20 @@ using System.Collections.Generic;
         }
 
 
+
         void Update()
         {
+            if (autoHideMouse)
+            {
+#if !UNITY_EDITOR
+
+                Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+                if (screenRect.Contains(Input.mousePosition))
+                    Cursor.visible = false;
+                else
+                    Cursor.visible = true;          
+#endif
+            }
 
             if (!localCastMesh)
                 localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
