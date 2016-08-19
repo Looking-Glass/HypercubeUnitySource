@@ -4,6 +4,8 @@ using System.IO.Ports;
 using System.Collections.Generic;
 using System;
 
+//the base of this code came from: http://pxp1230.github.io/Arduino/Unity%E4%B8%8EArduino%E9%80%9A%E4%BF%A1/Unity%E4%B8%8EArduino%E9%80%9A%E4%BF%A1.html
+
 public class serialStreamer : MonoBehaviour {
 
     public int baudRate = 115200;
@@ -24,7 +26,7 @@ public class serialStreamer : MonoBehaviour {
             if (names[i].StartsWith("COM"))
             {
                 port = new SerialPort(names[i], baudRate);
-                port.ReadBufferSize = 1024;//默认值为4096
+                port.ReadBufferSize = 512;//默认值为4096
                 port.NewLine = "\r\n";
                 port.ReadTimeout = 1;//Unity在Windows平台下不能通过新线程与串口通信，这样会导致数据丢失，必须在主线程中进行
                 //port.DataReceived += PortDataReceived;//Unity不支持DataReceived事件，参考：http://www.cnblogs.com/zhaozhengling/p/3696251.html
