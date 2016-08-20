@@ -9,49 +9,52 @@ using System;
 public class serialStreamer : MonoBehaviour {
 
     public int baudRate = 115200;
+    public uint maxBuffer = 1024;
     SerialPort port;
     List<int> buffer = new List<int>();
-    byte[] arduinoTime = new byte[4];
-    uint micros;
-    uint deltaMicros;
+   // byte[] arduinoTime = new byte[4];
+  //  uint micros;
+  //  uint deltaMicros;
 
+    System.Text.StringBuilder sb = new System.Text.StringBuilder();
     UnityEngine.UI.Text outputText = null;
     void Start()
     {
         outputText = GameObject.Find("OUTPUT").GetComponent<UnityEngine.UI.Text>();
 
+
         string[] names = SerialPort.GetPortNames();
         for (int i = 0; i < names.Length; i++)
-        {
+        {          
             if (names[i].StartsWith("COM"))
             {
+                Debug.Log("Connecting to PORT: " + names[i]);
+
                 port = new SerialPort(names[i], baudRate);
-                port.ReadBufferSize = 512;//默认值为4096
+                port.ReadBufferSize = 7;//default 4096
                 port.NewLine = "\r\n";
-                port.ReadTimeout = 1;//Unity在Windows平台下不能通过新线程与串口通信，这样会导致数据丢失，必须在主线程中进行
-                //port.DataReceived += PortDataReceived;//Unity不支持DataReceived事件，参考：http://www.cnblogs.com/zhaozhengling/p/3696251.html
-                //port.ReceivedBytesThreshold = 1;//理由同上
+                port.ReadTimeout = 100; //Unity can not pass under the Windows platform, the new thread and serial communication, which can cause loss of data, must be in the main thread
+                port.WriteTimeout = 100;
+                //port.DataReceived += PortDataReceived; //Unity does not support DataReceived event, reference: http: //www.cnblogs.com/zhaozhengling/p/3696251.html
+                //port.ReceivedBytesThreshold = 1;//...same
                 break;
             }
         }
+
         if (port == null)
-        {
-           
-        }
+            Debug.LogWarning("Failed to connect to a port.");
         else
-        {
             port.Open();
-        }
     }
 
     void Update()
     {
-        if (buffer.Count > 0)
+     /*     if (buffer.Count > 0)
         {
-            int i = 0;
+             int i = 0;
             for (; i < buffer.Count; i++)
             {
-                if ((char)buffer[i] == ';')
+                 if ((char)buffer[i] == ';')
                 {
                     if (i + 4 < buffer.Count)
                     {
@@ -78,7 +81,7 @@ public class serialStreamer : MonoBehaviour {
                     }
                 }
             }
-        }
+        }*/
 
         if (port != null && port.IsOpen)
         {
@@ -87,26 +90,30 @@ public class serialStreamer : MonoBehaviour {
             //    byte[] bs = new byte[] { 0x61, 0x62, 0x3B };
             //    port.Write(bs, 0, 3);
             //}
+      //      if (buffer.Count >= maxBuffer) //if we reached the max buffer, throw out the old data and just read new data.
+      //          buffer.Clear();
 
             try
             {
                 for (int i = 0; i < port.ReadBufferSize; i++)
                 {
-                    buffer.Add(port.ReadByte());//port.ReadByte()：当串口缓冲区无数据可读时将触发"读取超时"异常
+                    buffer.Add(port.ReadByte());//port.ReadByte()：当串口缓冲区无数据可读时将触发"读取超时"异常 When no serial buffer readable, the data will trigger "Read timeout" exception
                 }
             }
             catch (TimeoutException)
             {
-                //UnityEngine.Debug.Log("读取超时");
+                //UnityEngine.Debug.Log("读取超时"); //Read Timeout
             }
         }
 
         if (buffer.Count > 0)
         {
-            outputText.text = "";
-            foreach (int i in buffer)
-                outputText.text += i.ToString() + " ";
+            
+            //foreach (int i in buffer)
+            //    sb.Append(i.ToString() + " ");
+            //outputText.text = sb.ToString();
             buffer.Clear();
+            sb.Length = 0; //clear the stringBuilder
         }
     }
 
@@ -115,42 +122,4 @@ public class serialStreamer : MonoBehaviour {
         if (port != null && port.IsOpen)
             port.Close();
     }
-
-
-/*    public int baudRate = 115200;
-
-    static SerialPort serialPort = null;
-
-	void Start () 
-    {
-        foreach (string s in SerialPort.GetPortNames())
-            Debug.Log("PORT: " +s);
-
-        serialPort = new SerialPort("COM9", baudRate);
-        serialPort.ReadTimeout = 100;
-        serialPort.WriteTimeout = 100;
-        //arduinoSerial.DataReceived += arduinoSerial_DataReceived;
-
-        serialPort.Open();
-
-	}
-
-
-    //static void arduinoSerial_DataReceived(object sender, SerialDataReceivedEventArgs e)
-    void Update()
-    {
-        if (!serialPort.IsOpen)
-            return;
-
-        if (serialPort.BytesToRead != null && serialPort.BytesToRead >= 4)
-        {
-            byte[] data = new byte[4];
-            serialPort.Read(data, 0, 4);
-
-            UInt32 result = BitConverter.ToUInt32(data, 0);
-
-             GameObject.Find("OUTPUT").GetComponent<UnityEngine.UI.Text>().text = result.ToString();
-        }
-
-    }*/
 }

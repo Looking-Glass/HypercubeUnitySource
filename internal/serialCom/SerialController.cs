@@ -40,6 +40,8 @@ public class SerialController : MonoBehaviour
     [Tooltip("Maximum number of failed connections before disabling component. ")]
     public int maxFailuresAllowed = 7;
 
+    public bool readDataAsString = true;
+
     int failures = 0;
 
     // Constants used to mark the start and end of a connection. There is no
@@ -59,6 +61,12 @@ public class SerialController : MonoBehaviour
     void Awake()
     {
         this.enabled = false;
+    }
+
+    void OnValidate()
+    {
+        if (serialThread != null)
+            serialThread.readDataAsString = readDataAsString;
     }
 
     // ------------------------------------------------------------------------

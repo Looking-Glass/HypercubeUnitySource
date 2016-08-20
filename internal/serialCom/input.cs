@@ -135,8 +135,8 @@ namespace hypercube
                 //    return; //still initializing
                 //}
 
-                byte[] d = System.Text.Encoding.UTF8.GetBytes (data);
-                outputText.text = BitConverter.ToString(d);
+                //byte[] d = System.Text.Encoding.UTF8.GetBytes (data);
+                outputText.text = data;
 
                 // PROCESS TOUCH EVENT
                 //first, obtain the raw info.
