@@ -68,7 +68,7 @@ namespace hypercube
 
         }
 
-        public virtual void processData(byte[] dataChunk)
+        protected virtual void processData(byte[] dataChunk)
         {
 
         }

@@ -14,6 +14,9 @@ namespace hypercube
         TOUCH_HOLD
     }
 
+    //Note that resolution dependent dims are not exposed.
+    //this is important because different devices will host different resolutions and all users of this API should create device independent software.
+    //all needed data has been abstracted here for maximum compatibility among all types of Volume hardware
     public class touch
     {
         public int id;
@@ -25,7 +28,12 @@ namespace hypercube
 
         public float distX; //this accounts for physical distance that the touch traveled so that an application can react to the physical size of the movement irrelevant to the size of the touch screen (ie the value will be the same for a movement of 1 mm/1 frame regardless of the touch screen's internal resolution or physical size)
         public float distY;//this accounts for physical distance that the touch traveled so that an application can react to the physical size of the movement irrelevant to the size of the touch screen (ie the value will be the same for a movement of 1 mm/1 frame regardless of the touch screen's internal resolution or physical size)
+
+        public Vector3 getWorldPos(hypercubeCamera c);
+        public Vector3 getLocalPos(hypercubeCamera c); 
     }
+
+ 
 
 public class touchScreenInputManager  : streamedInputManager
 {
@@ -35,6 +43,49 @@ public class touchScreenInputManager  : streamedInputManager
     public readonly string deviceName;
 
     HashSet<touch> touches = new HashSet<touch>();
+
+    public uint totalTouches
+    {
+        get;
+        private set;
+    }
+    public Vector2 averageDiff  //0-1
+    {
+        get;
+        private set;
+    }
+    public Vector2 averageDist  //in centimeters
+    {
+        get;
+        private set;
+    }
+    public float twist
+    {
+        get;
+        private set;
+    }
+    public float scale //0-1
+    {
+        get;
+        private set;
+    }
+    public float scaleDist  //in centimeters
+    {
+        get;
+        private set;
+    }
+    public Vector3 averagePosWorld 
+    {
+        get;
+        private set;
+    }
+    public Vector3 averagePosLocal  
+    {
+        get;
+        private set;
+    }
+
+
 
     float screenResX = 800f; //these are not public, as the touchscreen res can vary from device to device.  We abstract this for the dev as 0-1.
     float screenResY = 450f;
@@ -85,7 +136,7 @@ public class touchScreenInputManager  : streamedInputManager
     }
 
 
-    public override void processData(byte[] dataChunk)
+    protected override void processData(byte[] dataChunk)
     {
         /*  the expected data here is ..
          * 1 byte = total touches
