@@ -156,7 +156,7 @@ namespace hypercube
   
             //setup input to take into account touchscreen hardware config
             if (input.get())
-                input.get().applySettings(d);
+                input.get().init(d);
         }
 
         //tweaks to the cube design to offset physical distortions

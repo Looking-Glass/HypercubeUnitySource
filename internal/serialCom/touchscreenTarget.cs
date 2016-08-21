@@ -32,9 +32,6 @@ public class touchscreenTarget : MonoBehaviour
 	{
 	}
 
-	public virtual void onTouchRelativeMoved(int uid, Vector2 difference) //the difference between the last frame position and the current position
-	{
-	}
 
 
 	public Vector2 mapToRange(float x, float y)

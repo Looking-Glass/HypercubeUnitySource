@@ -50,7 +50,7 @@ public class SerialThread
     private bool stopRequested = false;
 
 
-    byte[] bytes = new byte[32];
+    byte[] bytes = new byte[32];  //the size here is the chunk read value from the serialPort
 
     /**************************************************************************
      * Methods intended to be invoked from the Unity thread.
@@ -248,13 +248,14 @@ public class SerialThread
         catch (TimeoutException)
         {
             // This is normal, not everytime we have a report from the serial device
+            return;
         }
 
-        if (readDataAsString)
-            return;
+   //     if (readDataAsString)
+  //          return;
 
-        int byteCount = 0;
-        
+        //READ DATA AS BYTES
+        int byteCount = 0;    
         try
         {
             for (int i = 0; i < bytes.Length; i++)
@@ -287,12 +288,12 @@ public class SerialThread
         return new string(chars);
     }
 
-    static string bytesToStr(byte[] bytes)
-    {
-        char[] chars = new char[bytes.Length / sizeof(char)];
-        System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-        return new string(chars);
-    }
+    //static string bytesToStr(byte[] bytes)
+    //{
+    //    char[] chars = new char[bytes.Length / sizeof(char)];
+    //    System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+    //    return new string(chars);
+    //}
 }
 #endif
 
