@@ -267,33 +267,23 @@ public class SerialThread
          catch (TimeoutException)
         {
             // This is normal, not everytime we have a report from the serial device
+             //but on a side note... what kind of nutcase designs an API that depends on itself crashing and for the dev to catch that exception to know that the api is 'done'.... wtf Ports.IO?!?!?
         }
         if (byteCount > 0)
-            inputQueue.Enqueue(bytesToStr(bytes, byteCount));
-
+           // inputQueue.Enqueue(bytesToStr(bytes, byteCount));
+            inputQueue.Enqueue(System.Text.Encoding.Unicode.GetString(bytes));
 
     }
 
-    //static byte[] strToBytes(string str)
+    //from http://stackoverflow.com/questions/472906/how-to-get-a-consistent-byte-representation-of-strings-in-c-sharp-without-manual
+    //static string bytesToStr(byte[] bytes, int count)
     //{
-    //    byte[] bytes = new byte[str.Length * sizeof(char)];
-    //    System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-    //    return bytes;
-    //}
-
-    static string bytesToStr(byte[] bytes, int count)
-    {
-        char[] chars = new char[count * sizeof(char)];
-        System.Buffer.BlockCopy(bytes, 0, chars, 0, count);
-        return new string(chars);
-    }
-
-    //static string bytesToStr(byte[] bytes)
-    //{
-    //    char[] chars = new char[bytes.Length / sizeof(char)];
-    //    System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+    //    char[] chars = new char[count * sizeof(char)];
+    //    System.Buffer.BlockCopy(bytes, 0, chars, 0, count);
     //    return new string(chars);
     //}
+
+
 }
 #endif
 

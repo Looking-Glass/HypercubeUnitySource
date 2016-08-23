@@ -5,35 +5,7 @@ using System.Collections.Generic;
 namespace hypercube
 {
 
-    public enum touchEvent
-    {
-        TOUCH_INVALID = -1,
-        TOUCH_DOWN = 0,  //a brand new touch will contain this event;
-        TOUCH_UP,  //the last touch with this id will contain this event;
-        TOUCH_MOVE,
-        TOUCH_HOLD
-    }
 
-    //Note that resolution dependent dims are not exposed.
-    //this is important because different devices will host different resolutions and all users of this API should create device independent software.
-    //all needed data has been abstracted here for maximum compatibility among all types of Volume hardware
-    public class touch
-    {
-        public int id;
-        public touchEvent e = touchEvent.TOUCH_INVALID;
-        public float posX; //0-1
-        public float posY; //0-1
-        public float diffX; //normalized relative movement this frame inside 0-1
-        public float diffY; //normalized relative movement this frame inside 0-1
-
-        public float distX; //this accounts for physical distance that the touch traveled so that an application can react to the physical size of the movement irrelevant to the size of the touch screen (ie the value will be the same for a movement of 1 mm/1 frame regardless of the touch screen's internal resolution or physical size)
-        public float distY;//this accounts for physical distance that the touch traveled so that an application can react to the physical size of the movement irrelevant to the size of the touch screen (ie the value will be the same for a movement of 1 mm/1 frame regardless of the touch screen's internal resolution or physical size)
-
-        public Vector3 getWorldPos(hypercubeCamera c);
-        public Vector3 getLocalPos(hypercubeCamera c); 
-    }
-
- 
 
 public class touchScreenInputManager  : streamedInputManager
 {
@@ -44,46 +16,18 @@ public class touchScreenInputManager  : streamedInputManager
 
     HashSet<touch> touches = new HashSet<touch>();
 
-    public uint totalTouches
-    {
-        get;
-        private set;
-    }
-    public Vector2 averageDiff  //0-1
-    {
-        get;
-        private set;
-    }
-    public Vector2 averageDist  //in centimeters
-    {
-        get;
-        private set;
-    }
-    public float twist
-    {
-        get;
-        private set;
-    }
-    public float scale //0-1
-    {
-        get;
-        private set;
-    }
-    public float scaleDist  //in centimeters
-    {
-        get;
-        private set;
-    }
-    public Vector3 averagePosWorld 
-    {
-        get;
-        private set;
-    }
-    public Vector3 averagePosLocal  
-    {
-        get;
-        private set;
-    }
+    public uint totalTouches { get; private set; }
+
+    public Vector2 averageDiff { get; private set; } //0-1
+    public Vector2 averageDist {get;private set;} //in centimeters
+
+    public float twist {get;private set;}
+    public float scale { get; private set; }//0-1
+    public float scaleDist {get;private set;} //in centimeters
+
+    public Vector3 averagePosWorld {get;private set;}
+    public Vector3 averagePosLocal { get; private set; }
+
 
 
 
@@ -127,9 +71,10 @@ public class touchScreenInputManager  : streamedInputManager
                     return; //still initializing
                 }
 
-                byte[] bytes = new byte[data.Length * sizeof(char)];
-                System.Buffer.BlockCopy(data.ToCharArray(), 0, bytes, 0, bytes.Length);
-                addData(bytes); //inherited from base class. Will process our data given the delimiter.
+                //byte[] bytes = new byte[data.Length * sizeof(char)];
+                //System.Buffer.BlockCopy(data.ToCharArray(), 0, bytes, 0, bytes.Length);
+                //addData(bytes); //inherited from base class. Will process our data given the delimiter.
+                addData(System.Text.Encoding.Unicode.GetBytes(data));
      
                 data = serial.ReadSerialMessage();
             }
