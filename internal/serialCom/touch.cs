@@ -35,6 +35,7 @@ namespace hypercube
 
         public enum activationState
         {
+            TOUCHDOWN = 1,
             ACTIVE = 0,
             TOUCHUP = -1,  //touch will be marked as 'destroyed' next frame
             DESTROYED = -2  //error out on any use.
@@ -78,7 +79,11 @@ namespace hypercube
                 return;
             }
 
-            state = activationState.ACTIVE;
+            if (state < activationState.ACTIVE)
+                state = activationState.TOUCHDOWN;
+            else
+                state = activationState.ACTIVE;
+
             _diffX = posX - i.normalizedX;
             _diffY = posY - i.normalizedY;
             _distX = physicalX - i.physicalX;
@@ -96,6 +101,9 @@ namespace hypercube
             if (state == activationState.DESTROYED)
                 return;
 
+            if (state == activationState.TOUCHDOWN) //rare for a touch to last only 1 hardware frame, but possible.  Force it down.
+                state = activationState.ACTIVE;
+
             state--;
             _diffX = _diffY = _distX = _distY = 0f;
 
@@ -107,7 +115,7 @@ namespace hypercube
         {
             if (state == activationState.DESTROYED)
             {
-                Debug.LogError("Code is attempting to use a destroyed touch! Test for this first by checking touch.state");
+                Debug.LogError("Code attempted to use a destroyed touch! Test for this first by checking touch.state.\nDon't hold pointers to touches once they are 'Destroyed'.");
                 return false;
             }
             return true;

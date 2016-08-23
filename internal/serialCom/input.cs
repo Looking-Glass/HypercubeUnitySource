@@ -50,19 +50,26 @@ namespace hypercube
 
             if (!d.hasKey("touchscreenResX") || 
                 !d.hasKey("touchscreenResY") ||
-                !d.hasKey("touchscreenCentimetersX") ||
-                !d.hasKey("touchscreenCentimetersY") ||
-                !d.hasKey("touchscreenCentimetersZ")
+                !d.hasKey("projectionCentimeterWidth") ||
+                !d.hasKey("projectionCentimeterHeight") ||
+                !d.hasKey("touchscreenCentimeterWidth") ||
+                !d.hasKey("touchscreenCentimeterHeight") ||
+                !d.hasKey("projectionCentimeterDepth")  //this one is necessary to keep the hypercube aspect ratio
                 )
                 Debug.LogWarning("Volume config file lacks touch screen hardware specs!"); //these must be manually entered, so we should warn if they are missing.
 
-            if (touchScreenFront != null)
+            if (frontTouchScreen != null)
             {
-                touchScreenFront.setTouchScreenDims(
+                frontTouchScreen.setTouchScreenDims(
                     d.getValueAsFloat("touchscreenResX", 800f),
                     d.getValueAsFloat("touchscreenResY", 450f),
-                    d.getValueAsFloat("touchscreenCentimetersX", 20f),
-                    d.getValueAsFloat("touchscreenCentimetersY", 12f));
+                    d.getValueAsFloat("projectionCentimeterWidth", 20f),
+                    d.getValueAsFloat("projectionCentimeterHeight", 12f),
+                    d.getValueAsFloat("touchscreenCentimeterWidth", 20f),
+                    d.getValueAsFloat("touchscreenCentimetersHeight", 12f),
+                    d.getValueAsFloat("centimeterWidthOffset", 0f),
+                    d.getValueAsFloat("centimeterHeightOffset", 0f)             
+                    );
             }
 
         }
@@ -82,21 +89,21 @@ namespace hypercube
                 }
             }
 
-            if (touchScreenFront == null)
-                touchScreenFront = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName));
+            if (frontTouchScreen == null)
+                frontTouchScreen = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
         }
 
 
         //get the instance of hypercube.input
         public static input get() { return instance; }
 
-        public touchScreenInputManager touchScreenFront = null; 
+        public touchScreenInputManager frontTouchScreen = null; 
         
 
         void Update()
         {
-            if (touchScreenFront != null && touchScreenFront.serial.enabled)
-                touchScreenFront.update(debug);
+            if (frontTouchScreen != null && frontTouchScreen.serial.enabled)
+                frontTouchScreen.update(debug);
         }
 
   
@@ -130,11 +137,11 @@ namespace hypercube
             if ( !instance)
                 return false;
 
-            if (instance.touchScreenFront != null)
+            if (instance.frontTouchScreen != null)
             {
-                if (!instance.touchScreenFront.serial.enabled)
-                    instance.touchScreenFront.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
-                else if (instance.touchScreenFront.serial.readDataAsString == false)
+                if (!instance.frontTouchScreen.serial.enabled)
+                    instance.frontTouchScreen.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
+                else if (instance.frontTouchScreen.serial.readDataAsString == false)
                     return true;
             }
            
