@@ -25,8 +25,11 @@ namespace hypercube
 
             setupSerialComs();
         }
-       
 
+        //get the instance of hypercube.input
+        public static input get() { return instance; }
+
+       
         public int baudRate = 115200;
         public int reconnectionDelay = 500;
         public int maxUnreadMessage = 5;
@@ -36,8 +39,10 @@ namespace hypercube
 
         const int maxTouchesPerScreen = 9;
 
+        public static touchScreenInputManager frontTouchScreen = null; 
 
 
+#if HYPERCUBE_INPUT
 
         //use this instead of Start(),  that way we know we have our hardware settings info ready before we begin receiving data
         public void init(dataFileDict d)
@@ -74,7 +79,7 @@ namespace hypercube
 
         }
 
-#if HYPERCUBE_INPUT
+
 
 
         void setupSerialComs()
@@ -92,12 +97,6 @@ namespace hypercube
             if (frontTouchScreen == null)
                 frontTouchScreen = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
         }
-
-
-        //get the instance of hypercube.input
-        public static input get() { return instance; }
-
-        public touchScreenInputManager frontTouchScreen = null; 
         
 
         void Update()
@@ -137,11 +136,11 @@ namespace hypercube
             if ( !instance)
                 return false;
 
-            if (instance.frontTouchScreen != null)
+            if (frontTouchScreen != null)
             {
-                if (!instance.frontTouchScreen.serial.enabled)
-                    instance.frontTouchScreen.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
-                else if (instance.frontTouchScreen.serial.readDataAsString == false)
+                if (!frontTouchScreen.serial.enabled)
+                    frontTouchScreen.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
+                else if (frontTouchScreen.serial.readDataAsString == false)
                     return true;
             }
            
@@ -152,7 +151,7 @@ namespace hypercube
         {
             if (isHardwareReady())
             {
-                instance.touchScreenFront.serial.SendSerialMessage(cmd + "\n\r");
+                touchScreenFront.serial.SendSerialMessage(cmd + "\n\r");
                 return true;
             }
             else

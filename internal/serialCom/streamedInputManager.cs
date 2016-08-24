@@ -18,6 +18,7 @@ namespace hypercube
         private ushort dItr = 0;  //the delimiter iterator
         private byte[] delimiter = null;
 
+#if HYPERCUBE_INPUT
         public readonly SerialController serial;
 
         public streamedInputManager(SerialController _serial, byte[] _delimiter, int _bufferSize)
@@ -29,7 +30,7 @@ namespace hypercube
             buffer = new byte[bufferSize];
             delimiter = _delimiter;
         }
-
+#endif
         public void addData(byte[] bytes)
         {
 

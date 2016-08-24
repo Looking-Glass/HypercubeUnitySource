@@ -4,9 +4,10 @@ using System.Collections;
 
 //this class exposes the touch data from Volume to a developer in a way that will be consistent across different models of Volume
 
+//TODO save original local touch coord.
+
 namespace hypercube 
 {
-
 
     public class touchInterface
     {        

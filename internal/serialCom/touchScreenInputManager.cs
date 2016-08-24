@@ -7,7 +7,12 @@ namespace hypercube
 
 public class touchScreenInputManager  : streamedInputManager
 {
+    //current touches, updated every frame
+    public touch[] touches { get; private set; } 
+    public uint touchCount { get; private set; }
+    
 
+#if HYPERCUBE_INPUT
     UnityEngine.UI.Text outputText = null;
 
     public readonly string deviceName;
@@ -35,9 +40,7 @@ public class touchScreenInputManager  : streamedInputManager
 
     //external interface..
 
-    //current touches, updated every frame
-    public touch[] touches { get; private set; } 
-    public uint touchCount { get; private set; }
+ 
 
     public Vector2 averageDiff { get; private set; } //0-1
     public Vector2 averageDist {get;private set;} //in centimeters
@@ -96,7 +99,7 @@ public class touchScreenInputManager  : streamedInputManager
         widthOffset = _widthOffset;
         heightOffset = _heightOffset;
 
-        touchAspectX = projectionWidth / touchScreenWidth;
+        touchAspectX =  touchScreenWidth / projectionWidth;
         touchAspectY = projectionHeight / touchScreenHeight;
     }
 
@@ -151,8 +154,6 @@ public class touchScreenInputManager  : streamedInputManager
         if (dataChunk.Length != (totalTouches * 5) + 1)  //unexpected chunk length! Assume it is corrupted, and dump it.
             return;
 
-        touchCount = totalTouches;
-
         //assume no one is touched.
         for (int i = 0; i < touchPoolSize; i++)
         {
@@ -163,7 +164,7 @@ public class touchScreenInputManager  : streamedInputManager
         float x = 0;
         float y = 0;
         
-        int validTouches = 0; 
+        touchCount = 0; 
         for (int i = 1; i < dataChunk.Length; i= i + 5) //start at 1 and jump 5 each time.
         {
             int id = dataChunk[i];
@@ -179,7 +180,7 @@ public class touchScreenInputManager  : streamedInputManager
             if (y < 0 || y > screenResY)
                 continue;
 
-            validTouches++;
+            touchCount++;
 
             //is this a new touch?  If so, assign it to a new item in the pool, and update our iterators.
             if (touches[touchIdMap[id]].state < touch.activationState.ACTIVE ) //a new touch!  Point it to a new element in our touchPool  (we know it is new because the place where the itr is pointing to is deactivated. Hence, it must have gone through at least 1 frame where no touch info was received for it.)
@@ -202,7 +203,7 @@ public class touchScreenInputManager  : streamedInputManager
                 ;
             interfaces[touchIdMap[id]].normalizedY = 
                 ((y / screenResY) 
-                +(heightOffset / touchScreenHeight) * touchAspectY)
+                +(heightOffset / touchScreenHeight)) * touchAspectY
                 ;
 
             interfaces[touchIdMap[id]].physicalX = (x / screenResX) * touchScreenWidth;
@@ -225,7 +226,7 @@ public class touchScreenInputManager  : streamedInputManager
 
 
 
-        touches = new touch[validTouches];
+        touches = new touch[touchCount];
 
 
         //    if (!outputText)
@@ -234,24 +235,27 @@ public class touchScreenInputManager  : streamedInputManager
 
 
         //apply all, and notify touchScreenTargets
+        int t = 0;
         for (int i = 0; i < touchPoolSize; i++)
         {
             touchPool[i]._interface(interfaces[i]); //update the touch.
             if (touchPool[i].state == touch.activationState.TOUCHDOWN)
             {
+                touches[t] = touchPool[i]; t++;
                 //TODO send events to touchScreenTargets
             }
             else if (touchPool[i].state == touch.activationState.ACTIVE)
             {
-
+                touches[t] = touchPool[i]; t++;
             }
             else if (touchPool[i].state == touch.activationState.TOUCHUP)
             {
-
-            }           
+                touches[t] = touchPool[i]; t++;
+            }         
+            
         }
     }
-
+#endif
 }
 
 }
