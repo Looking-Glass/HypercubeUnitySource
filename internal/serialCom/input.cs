@@ -35,24 +35,33 @@ namespace hypercube
 
         const int maxTouchesPerScreen = 9;
 
-        public static touchScreenInputManager front = null;  //the front touchscreen
-        public static touchScreenInputManager back = null;  //the back touchscreen
+        public static touchScreenInputManager frontScreen = null;  //the front touchscreen
+        public static touchScreenInputManager backScreen = null;  //the back touchscreen
 
-
-#if HYPERCUBE_INPUT
-        //get the instance of hypercube.input
-        public static input get() { return instance; }
+        HashSet<touchscreenTarget> eventTargets = new HashSet<touchscreenTarget>();
+        public static void _setTouchScreenTarget(touchscreenTarget t, bool addRemove)
+        {
+            if (addRemove)
+                instance.eventTargets.Add(t);
+            else
+                instance.eventTargets.Remove(t);
+        }
 
         //use this instead of Start(),  that way we know we have our hardware settings info ready before we begin receiving data
-        public void init(dataFileDict d)
+        public static void init(dataFileDict d)
         {
             if (!d)
             {
-                Debug.LogError("Input was passed bad hardware dataFileDict!"); 
+                Debug.LogError("Input was passed bad hardware dataFileDict!");
                 return;
             }
 
-            if (!d.hasKey("touchscreenResX") || 
+            if (!instance)
+                return;
+
+#if HYPERCUBE_INPUT
+
+            if (!d.hasKey("touchscreenResX") ||
                 !d.hasKey("touchscreenResY") ||
                 !d.hasKey("projectionCentimeterWidth") ||
                 !d.hasKey("projectionCentimeterHeight") ||
@@ -62,9 +71,9 @@ namespace hypercube
                 )
                 Debug.LogWarning("Volume config file lacks touch screen hardware specs!"); //these must be manually entered, so we should warn if they are missing.
 
-            if (front != null)
+            if (frontScreen != null)
             {
-                front.setTouchScreenDims(
+                frontScreen.setTouchScreenDims(
                     d.getValueAsFloat("touchscreenResX", 800f),
                     d.getValueAsFloat("touchscreenResY", 450f),
                     d.getValueAsFloat("projectionCentimeterWidth", 20f),
@@ -72,19 +81,44 @@ namespace hypercube
                     d.getValueAsFloat("touchscreenCentimeterWidth", 20f),
                     d.getValueAsFloat("touchscreenCentimetersHeight", 12f),
                     d.getValueAsFloat("centimeterWidthOffset", 0f),
-                    d.getValueAsFloat("centimeterHeightOffset", 0f)             
+                    d.getValueAsFloat("centimeterHeightOffset", 0f)
                     );
             }
-
+#endif
         }
 
+#if HYPERCUBE_INPUT
 
-
+        public static void _processTouchScreenEvent(touch t)
+        {
+            if (t.state == touch.activationState.TOUCHDOWN)
+            {
+                    foreach(touchscreenTarget target in instance.eventTargets)
+                        target.onTouchDown(t);
+            }
+            else if (t.state == touch.activationState.ACTIVE)
+            {
+                foreach (touchscreenTarget target in instance.eventTargets)
+                    target.onTouchMoved(t);
+            }
+            else if (t.state == touch.activationState.TOUCHUP)
+            {
+                foreach (touchscreenTarget target in instance.eventTargets)
+                    target.onTouchUp(t);
+            }               
+        }
 
         void setupSerialComs()
         {
             string frontComName = "";
-            string[] names = System.IO.Ports.SerialPort.GetPortNames();
+            string[] names = getPortNames();
+
+            if (names.Length == 0)
+            {
+                Debug.LogWarning("No ports detected. Confirm that Volume is connected via USB.");
+                return;
+            }
+
             for (int i = 0; i < names.Length; i++)
             {
                 if (names[i].StartsWith("COM"))
@@ -93,18 +127,42 @@ namespace hypercube
                 }
             }
 
-            if (front == null)
-                front = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
+            if (frontScreen == null)
+                frontScreen = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
 
          //   if (back == null)
          //       back = new touchScreenInputManager("Back Touch Screen", addSerialPortInput(backComName), false);
+        }
+
+
+        static string[] getPortNames()
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            return System.IO.Ports.SerialPort.GetPortNames();
+#else
+            int p = (int)Environment.OSVersion.Platform;
+            List<string> serial_ports = new List<string>();
+
+            // Are we on Unix?
+            if (p == 4 || p == 128 || p == 6)
+            {
+                string[] ttys = System.IO.Directory.GetFiles("/dev/", "tty.*");
+                foreach (string dev in ttys)
+                {
+                    if (dev.StartsWith("/dev/tty.*"))
+                        serial_ports.Add(dev);
+                }
+            }
+
+            return ttys;
+#endif
         }
         
 
         void Update()
         {
-            if (front != null && front.serial.enabled)
-                front.update(debug);
+            if (frontScreen != null && frontScreen.serial.enabled)
+                frontScreen.update(debug);
         }
 
   
@@ -138,11 +196,11 @@ namespace hypercube
             if ( !instance)
                 return false;
 
-            if (front != null)
+            if (frontScreen != null)
             {
-                if (!front.serial.enabled)
-                    front.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
-                else if (front.serial.readDataAsString == false)
+                if (!frontScreen.serial.enabled)
+                    frontScreen.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
+                else if (frontScreen.serial.readDataAsString == false)
                     return true;
             }
            
@@ -177,16 +235,6 @@ namespace hypercube
             return false;
         }
         public static void sendCommandToHardware(string cmd)
-        {
-            printWarning();
-        }
-
-        public static input get() 
-        { 
-            //printWarning();  //warning here can cause the warning even without the input prefab in the scene
-            return null; 
-        }
-        public void init(dataFileDict d)
         {
             printWarning();
         }

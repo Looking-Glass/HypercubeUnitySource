@@ -34,9 +34,8 @@ public class touchScreenInputManager  : streamedInputManager
     int[] touchIdMap = new int[maxTouches];  //this maps the touchId coming from hardware to its arrayPosition in the touchPool;
     System.UInt16 currentTouchID = 0; //strictly for external convenience
 
-  
+ 
     //external interface..
-
     public Vector2 averagePos { get; private set; } //0-1
     public Vector2 averageDiff { get; private set; } //0-1
     public Vector2 averageDist {get;private set;} //in centimeters
@@ -163,8 +162,7 @@ public class touchScreenInputManager  : streamedInputManager
         for (int i = 0; i < touchPoolSize; i++)
         {
             interfaces[i].active = false;
-        }
-        
+        }     
 
         float x = 0;
         float y = 0;
@@ -184,9 +182,7 @@ public class touchScreenInputManager  : streamedInputManager
                 continue;
             if (y < 0 || y > screenResY)
                 continue;
-
-            
-
+        
             //is this a new touch?  If so, assign it to a new item in the pool, and update our iterators.
             if (touchPool[touchIdMap[id]].state < touch.activationState.ACTIVE ) //a new touch!  Point it to a new element in our touchPool  (we know it is new because the place where the itr is pointing to is deactivated. Hence, it must have gone through at least 1 frame where no touch info was received for it.)
             {             
@@ -214,18 +210,6 @@ public class touchScreenInputManager  : streamedInputManager
 
             interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
-
-            //reference...
-            //screenResX = _resX;
-            //screenResY = _resY;
-            //projectionWidth = _projectionWidth;
-            //projectionHeight = _projectionHeight;
-            //touchScreenWidth = _touchScreenWidth;
-            //touchScreenHeight = _touchScreenHeight;
-            //widthOffset = _widthOffset;
-            //heightOffset = _heightOffset;
-            //touchAspectX = projectionWidth / touchScreenWidth;
-            //touchAspectY = projectionHeight / touchScreenHeight;
         }
 
         float averageDiffX = 0f;
@@ -246,18 +230,7 @@ public class touchScreenInputManager  : streamedInputManager
         for (int i = 0; i < touchPoolSize; i++)
         {
 
-            touchPool[i]._interface(interfaces[i]); //update the touch.
-            if (touchPool[i].state == touch.activationState.TOUCHDOWN)
-            {           
-                //TODO send events to touchScreenTargets
-            }
-            else if (touchPool[i].state == touch.activationState.ACTIVE)
-            {
-            }
-            else if (touchPool[i].state == touch.activationState.TOUCHUP)
-            {
-            }         
-            
+            touchPool[i]._interface(interfaces[i]); //update the touch.          
             if (interfaces[i].active)
             {
                 touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches
@@ -281,10 +254,10 @@ public class touchScreenInputManager  : streamedInputManager
             }           
         }
 
+        twist = 0f;
         if (touchCount < 2)
         {
-            touchSize = 0f;
-            twist = 0f;
+            touchSize = 0f;           
             pinch = 0f;
             averageDiff = averageDist = Vector2.zero;
             if (touchCount == 0)
@@ -303,17 +276,34 @@ public class touchScreenInputManager  : streamedInputManager
             if (lastSize == 0f)
                 pinch = 0f;
             else
-                pinch = touchSize / lastSize;      
+                pinch = touchSize / lastSize;   
         }
 
         lastSize = touchSize;
 
-        //twist
 
+        //twist  ... this is only possible to calculate after we have the ave position or touch size, so we do 1 more itr here
+        foreach (touch tch in touches)
+        {
+            if (tch.posY > averagePos.y)
+                twist += tch.diffX;
+            else
+                twist -= tch.diffX;
+
+            if (tch.posX > averagePos.x)
+                twist += tch.diffY;
+            else
+                twist -= tch.diffY;
+        }
+        //turn twist into a proper degree of rotation rather than just a distance of average rotational movement
+        twist = Vector2.Angle(Vector2.zero, new Vector2(touchSize, twist));
+
+        //finally send off the events.
+        foreach (touch tch in touches)
+        {
+            input._processTouchScreenEvent(tch);
+        }
     }
-
-
-
 
 #endif
 }

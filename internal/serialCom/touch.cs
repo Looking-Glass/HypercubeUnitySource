@@ -154,7 +154,19 @@ namespace hypercube
             return true;
         }
 
+        //if you need to map this touch to a gui area or other surface, use this to help you.
+        public Vector2 mapToRange(float x, float y, Vector2 leftTop, Vector2 rightBottom)
+        {
+            Vector2 position = new Vector2(x, y);
+            position.x = map(_posX, 0, 1.0f, leftTop.x, rightBottom.x);
+            position.y = map(_posY, 0.0f, 1.0f, rightBottom.y, leftTop.y);
+            return position;
+        }
 
+        public static float map(float s, float a1, float a2, float b1, float b2)
+        {
+            return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+        }
 
     }
 

@@ -11,7 +11,7 @@ namespace hypercube
     public class streamedInputManager
     {
 
-        private System.Int32 bufferSize;
+        private System.Int32 bufferSize = 0;
         private System.Int32 itr; //the buffer iterator
         private byte[] buffer = null;
 
