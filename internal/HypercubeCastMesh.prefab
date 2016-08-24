@@ -82,8 +82,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2565762, y: -0.95609426, z: 0.24}
-  m_LocalScale: {x: 2.3333335, y: 3.5555553, z: 1}
+  m_LocalPosition: {x: 0.3461972, y: -0.95609426, z: 0.24}
+  m_LocalScale: {x: 2.3333333, y: 3.5555553, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
   m_RootOrder: 1
@@ -582,30 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a8df1d96bede848a06a5e5055f13b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: 
   canvas: {fileID: 11467166}
-  brightness: 3
-  interval: 1
-  relativeTo: 1
-  nextSlice: 114
-  prevSlice: 102
-  highlightUL: 122
-  highlightUR: 99
-  highlightLL: 113
-  highlightLR: 101
-  highlightM: 115
-  up: 120
-  down: 119
-  left: 97
-  right: 100
-  skewXUp: 276
-  skewXDn: 275
-  skewYUp: 273
-  skewYDn: 274
-  bowXUp: 108
-  bowXDn: 111
-  bowYUp: 107
-  bowYDn: 59
   calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}
   calibrationCenter: {fileID: 2800000, guid: 13af63765e4e8744ea5303d7181eb438, type: 3}
   selectedMat: {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}

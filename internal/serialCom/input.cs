@@ -39,7 +39,8 @@ namespace hypercube
 
         const int maxTouchesPerScreen = 9;
 
-        public static touchScreenInputManager frontTouchScreen = null; 
+        public static touchScreenInputManager front = null;  //the front touchscreen
+        public static touchScreenInputManager back = null;  //the back touchscreen
 
 
 #if HYPERCUBE_INPUT
@@ -63,9 +64,9 @@ namespace hypercube
                 )
                 Debug.LogWarning("Volume config file lacks touch screen hardware specs!"); //these must be manually entered, so we should warn if they are missing.
 
-            if (frontTouchScreen != null)
+            if (front != null)
             {
-                frontTouchScreen.setTouchScreenDims(
+                front.setTouchScreenDims(
                     d.getValueAsFloat("touchscreenResX", 800f),
                     d.getValueAsFloat("touchscreenResY", 450f),
                     d.getValueAsFloat("projectionCentimeterWidth", 20f),
@@ -94,15 +95,18 @@ namespace hypercube
                 }
             }
 
-            if (frontTouchScreen == null)
-                frontTouchScreen = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
+            if (front == null)
+                front = new touchScreenInputManager("Front Touch Screen", addSerialPortInput(frontComName), true);
+
+         //   if (back == null)
+         //       back = new touchScreenInputManager("Back Touch Screen", addSerialPortInput(backComName), false);
         }
         
 
         void Update()
         {
-            if (frontTouchScreen != null && frontTouchScreen.serial.enabled)
-                frontTouchScreen.update(debug);
+            if (front != null && front.serial.enabled)
+                front.update(debug);
         }
 
   
@@ -136,11 +140,11 @@ namespace hypercube
             if ( !instance)
                 return false;
 
-            if (frontTouchScreen != null)
+            if (front != null)
             {
-                if (!frontTouchScreen.serial.enabled)
-                    frontTouchScreen.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
-                else if (frontTouchScreen.serial.readDataAsString == false)
+                if (!front.serial.enabled)
+                    front.serial.readDataAsString = true; //we must wait for another init:done before we give the go-ahead to get raw data again.
+                else if (front.serial.readDataAsString == false)
                     return true;
             }
            

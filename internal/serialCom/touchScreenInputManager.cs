@@ -13,9 +13,7 @@ public class touchScreenInputManager  : streamedInputManager
     
 
 #if HYPERCUBE_INPUT
-    UnityEngine.UI.Text outputText = null;
-
-    public readonly string deviceName;
+  public readonly string deviceName;
 
     //is this the front touch screen?
     public readonly bool isFront;
@@ -70,6 +68,8 @@ public class touchScreenInputManager  : streamedInputManager
 
     public touchScreenInputManager(string _deviceName, SerialController _serial, bool _isFrontTouchScreen) : base(_serial, new byte[]{255,255}, 1024)
     {
+        touches = null;
+        touchCount = 0;
         deviceName = _deviceName;
         isFront = _isFrontTouchScreen;
 
@@ -180,10 +180,10 @@ public class touchScreenInputManager  : streamedInputManager
             if (y < 0 || y > screenResY)
                 continue;
 
-            touchCount++;
+            
 
             //is this a new touch?  If so, assign it to a new item in the pool, and update our iterators.
-            if (touches[touchIdMap[id]].state < touch.activationState.ACTIVE ) //a new touch!  Point it to a new element in our touchPool  (we know it is new because the place where the itr is pointing to is deactivated. Hence, it must have gone through at least 1 frame where no touch info was received for it.)
+            if (touchPool[touchIdMap[id]].state < touch.activationState.ACTIVE ) //a new touch!  Point it to a new element in our touchPool  (we know it is new because the place where the itr is pointing to is deactivated. Hence, it must have gone through at least 1 frame where no touch info was received for it.)
             {             
                 touchIdMap[id] = touchPoolItr; //point the id to the current iterator 
 
@@ -195,6 +195,7 @@ public class touchScreenInputManager  : streamedInputManager
                     touchPoolItr = 0;
             }
 
+            touchCount++;
             interfaces[touchIdMap[id]].active = true;
 
             interfaces[touchIdMap[id]].normalizedX =
@@ -220,14 +221,9 @@ public class touchScreenInputManager  : streamedInputManager
             //heightOffset = _heightOffset;
             //touchAspectX = projectionWidth / touchScreenWidth;
             //touchAspectY = projectionHeight / touchScreenHeight;
-
-
         }
 
-
-
-        touches = new touch[touchCount];
-
+        
 
         //    if (!outputText)
         //        outputText = GameObject.Find("OUTPUT").GetComponent<UnityEngine.UI.Text>();
@@ -235,22 +231,23 @@ public class touchScreenInputManager  : streamedInputManager
 
 
         //apply all, and notify touchScreenTargets
+        touches = new touch[touchCount];
         int t = 0;
         for (int i = 0; i < touchPoolSize; i++)
         {
+            if (interfaces[i].active)
+            { touches[t] = touchPool[i]; t++; } //these are the touches that can be queried from hypercube.input.front.touches
+
             touchPool[i]._interface(interfaces[i]); //update the touch.
             if (touchPool[i].state == touch.activationState.TOUCHDOWN)
-            {
-                touches[t] = touchPool[i]; t++;
+            {           
                 //TODO send events to touchScreenTargets
             }
             else if (touchPool[i].state == touch.activationState.ACTIVE)
             {
-                touches[t] = touchPool[i]; t++;
             }
             else if (touchPool[i].state == touch.activationState.TOUCHUP)
             {
-                touches[t] = touchPool[i]; t++;
             }         
             
         }
