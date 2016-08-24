@@ -13,10 +13,17 @@ namespace hypercube
     {        
         public bool active = false;
         public System.UInt16 _id = System.UInt16.MaxValue;
-        public float normalizedX = 0f;
-        public float normalizedY = 0f;
-        public float physicalX = 0f;
-        public float physicalY = 0f;
+        //public float normalizedX = 0f;
+        //public float normalizedY = 0f;
+        //public float physicalX = 0f;
+        //public float physicalY = 0f;
+        public Vector2 normalizedPos;
+        public Vector2 physicalPos;
+
+        public float getPhysicalDistance(touchInterface i)
+        {
+            return Vector2.Distance(physicalPos, i.physicalPos);
+        }
     }
 
     //Note that resolution dependent dims are not exposed.
@@ -27,7 +34,7 @@ namespace hypercube
         public touch(bool _frontScreen)
         {
             frontScreen = _frontScreen;
-            _posX = _posY = physicalX = physicalY = _diffX = _diffY = _distX = _distY= 0;
+            _posX = _posY = physicalPos.x = physicalPos.y = _diffX = _diffY = _distX = _distY= 0;
             state = activationState.DESTROYED;
         }
 
@@ -67,11 +74,34 @@ namespace hypercube
                 return new Vector3((1f - _posX) + .5f, _posY + .5f, .5f);
         }
 
+        //how much time since touchDown
+        public float touchDownTime { get; private set; }
+        public float age { get { if (state == activationState.DESTROYED) return 0f; return Time.timeSinceLevelLoad - touchDownTime; } }
 
-        private float physicalX;
-        private float physicalY;
 
- 
+
+        public float getPhysicalDistanceTo(touch t) 
+        { 
+            touchInterface i = null;
+            t._getInterface(ref i);
+            return Vector2.Distance(i.physicalPos, physicalPos);
+        }
+
+        private Vector2 physicalPos;
+
+        public void _getInterface(ref touchInterface i)
+        {
+            i.normalizedPos.x = _posX;
+            i.normalizedPos.y = _posY;
+         //   i.physicalPos.x =
+            i.physicalPos = physicalPos;
+            i._id = id;
+            if (state < activationState.ACTIVE)
+                i.active = false;
+            else
+                i.active = true;
+
+        }   
         public void _interface(touchInterface i)
         {
             if (!i.active) //deactivate this touch.
@@ -81,19 +111,21 @@ namespace hypercube
             }
 
             if (state < activationState.ACTIVE)
+            {
                 state = activationState.TOUCHDOWN;
+                touchDownTime = Time.timeSinceLevelLoad;
+            }
             else
                 state = activationState.ACTIVE;
 
-            _diffX = posX - i.normalizedX;
-            _diffY = posY - i.normalizedY;
-            _distX = physicalX - i.physicalX;
-            _distY = physicalY - i.physicalY;
+            _diffX = posX - i.normalizedPos.x;
+            _diffY = posY - i.normalizedPos.y;
+            _distX = physicalPos.x - i.physicalPos.x;
+            _distY = physicalPos.y - i.physicalPos.y;
 
-            _posX = i.normalizedX;
-            _posY = i.normalizedY;
-            physicalX = i.physicalX;
-            physicalY = i.physicalY;
+            _posX = i.normalizedPos.x;
+            _posY = i.normalizedPos.y;
+            physicalPos = i.physicalPos;
 
             id = i._id; //faster and easier to just set it all the time than check if this is a new touch or not.
         }
@@ -109,7 +141,7 @@ namespace hypercube
             _diffX = _diffY = _distX = _distY = 0f;
 
             if (state == activationState.DESTROYED)
-                _posX = _posY = physicalX = physicalY = 0f;
+                touchDownTime = _posX = _posY = physicalPos.x = physicalPos.y = 0f;
         }
 
         bool activeCheck()

@@ -25,11 +25,7 @@ namespace hypercube
 
             setupSerialComs();
         }
-
-        //get the instance of hypercube.input
-        public static input get() { return instance; }
-
-       
+      
         public int baudRate = 115200;
         public int reconnectionDelay = 500;
         public int maxUnreadMessage = 5;
@@ -44,6 +40,8 @@ namespace hypercube
 
 
 #if HYPERCUBE_INPUT
+        //get the instance of hypercube.input
+        public static input get() { return instance; }
 
         //use this instead of Start(),  that way we know we have our hardware settings info ready before we begin receiving data
         public void init(dataFileDict d)

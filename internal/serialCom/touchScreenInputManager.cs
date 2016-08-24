@@ -34,21 +34,26 @@ public class touchScreenInputManager  : streamedInputManager
     int[] touchIdMap = new int[maxTouches];  //this maps the touchId coming from hardware to its arrayPosition in the touchPool;
     System.UInt16 currentTouchID = 0; //strictly for external convenience
 
-   
-
+  
     //external interface..
 
- 
-
+    public Vector2 averagePos { get; private set; } //0-1
     public Vector2 averageDiff { get; private set; } //0-1
     public Vector2 averageDist {get;private set;} //in centimeters
 
     public float twist {get;private set;}
-    public float scale { get; private set; }//0-1
-    public float scaleDist {get;private set;} //in centimeters
+    public float pinch { get; private set; }//0-1
+    public float touchSize {get;private set;} //the ave distance between the farthest 2 touches in 1 axis, in centimeters
+    private float lastSize = 0f; //0-1
 
-    public Vector3 averagePosWorld {get;private set;}
-    public Vector3 averagePosLocal { get; private set; }
+    public Vector3 getAverageTouchWorldPos(hypercubeCamera c) { return c.transform.TransformPoint(getAverageTouchLocalPos()); }
+    public Vector3 getAverageTouchLocalPos()
+    {
+          if (isFront)
+                return new Vector3(averagePos.x + .5f, averagePos.y + .5f, -.5f);
+            else
+                return new Vector3((1f - averagePos.x) + .5f, averagePos.y + .5f, .5f);
+    }
 
     //these variables map the raw touches into coherent positional data that is consistent across devices.
     float screenResX = 800f; //these are not public, as the touchscreen res can vary from device to device.  We abstract this for the dev as 0-1.
@@ -198,17 +203,17 @@ public class touchScreenInputManager  : streamedInputManager
             touchCount++;
             interfaces[touchIdMap[id]].active = true;
 
-            interfaces[touchIdMap[id]].normalizedX =
+            interfaces[touchIdMap[id]].normalizedPos.x =
                 touchAspectX * ((x / screenResX)  //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
                 + (widthOffset/touchScreenWidth))  //physical offset between the center of the touchscreen and the projection
                 ;
-            interfaces[touchIdMap[id]].normalizedY = 
+            interfaces[touchIdMap[id]].normalizedPos.y = 
                 ((y / screenResY) 
                 +(heightOffset / touchScreenHeight)) * touchAspectY
                 ;
 
-            interfaces[touchIdMap[id]].physicalX = (x / screenResX) * touchScreenWidth;
-            interfaces[touchIdMap[id]].physicalY = (y / screenResY) * touchScreenHeight;
+            interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
+            interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
 
             //reference...
             //screenResX = _resX;
@@ -223,20 +228,23 @@ public class touchScreenInputManager  : streamedInputManager
             //touchAspectY = projectionHeight / touchScreenHeight;
         }
 
-        
+        float averageDiffX = 0f;
+        float averageDiffY = 0f;
+        float averageDistX = 0f;
+        float averageDistY = 0f;
+        float averagePosX = 0f;
+        float averagePosY = 0f;
 
-        //    if (!outputText)
-        //        outputText = GameObject.Find("OUTPUT").GetComponent<UnityEngine.UI.Text>();
-        //outputText.text = System.BitConverter.ToString(dataChunk);
+        touchInterface highX = null;
+        touchInterface lowX = null;
+        touchInterface highY = null;
+        touchInterface lowY = null;
 
-
-        //apply all, and notify touchScreenTargets
+        //apply all,  notify touchScreenTargets, and do post processing on touches
         touches = new touch[touchCount];
         int t = 0;
         for (int i = 0; i < touchPoolSize; i++)
         {
-            if (interfaces[i].active)
-            { touches[t] = touchPool[i]; t++; } //these are the touches that can be queried from hypercube.input.front.touches
 
             touchPool[i]._interface(interfaces[i]); //update the touch.
             if (touchPool[i].state == touch.activationState.TOUCHDOWN)
@@ -250,8 +258,63 @@ public class touchScreenInputManager  : streamedInputManager
             {
             }         
             
+            if (interfaces[i].active)
+            {
+                touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches
+                t++;
+
+                averagePosX += touchPool[i].posX;
+                averagePosY += touchPool[i].posY;
+                averageDiffX += touchPool[i].diffX;
+                averageDiffY += touchPool[i].diffY;
+                averageDistX += touchPool[i].distX;
+                averageDistY += touchPool[i].distY;
+
+                if (highX == null || interfaces[i].physicalPos.x > highX.physicalPos.x)
+                    highX = interfaces[i];
+                if (lowX == null || interfaces[i].physicalPos.x < lowX.physicalPos.x)
+                    lowX = interfaces[i];
+                if (highY == null || interfaces[i].physicalPos.y > highY.physicalPos.y)
+                    highY = interfaces[i];
+                if (lowY == null || interfaces[i].physicalPos.y < lowY.physicalPos.y)
+                    lowY = interfaces[i];
+            }           
         }
+
+        if (touchCount < 2)
+        {
+            touchSize = 0f;
+            twist = 0f;
+            pinch = 0f;
+            averageDiff = averageDist = Vector2.zero;
+            if (touchCount == 0)
+                averagePos = Vector2.zero;
+            else //only 1 touch
+                averagePos.Set(averagePosX, averagePosY); //these will contain the correct value, since only 1 was added.
+        }
+        else
+        {
+            averagePos = new Vector2(averagePosX / (float)touchCount, averagePosY / (float)touchCount);
+            averageDiff = new Vector2(averageDiffX / (float)touchCount, averageDiffY / (float)touchCount);
+            averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
+
+            //touchSize / pinch
+            touchSize = (highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y) ? highX.getPhysicalDistance(lowX) : highY.getPhysicalDistance(lowY); //use the bigger of the two differences, and then use the true distance
+            if (lastSize == 0f)
+                pinch = 0f;
+            else
+                pinch = touchSize / lastSize;      
+        }
+
+        lastSize = touchSize;
+
+        //twist
+
     }
+
+
+
+
 #endif
 }
 
