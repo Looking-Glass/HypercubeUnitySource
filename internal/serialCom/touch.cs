@@ -20,6 +20,10 @@ namespace hypercube
         public Vector2 normalizedPos;
         public Vector2 physicalPos;
 
+        public float getDistance(touchInterface i)
+        {
+            return Vector2.Distance(normalizedPos, i.normalizedPos);
+        }
         public float getPhysicalDistance(touchInterface i)
         {
             return Vector2.Distance(physicalPos, i.physicalPos);

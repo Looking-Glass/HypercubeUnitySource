@@ -42,7 +42,8 @@ public class touchScreenInputManager  : streamedInputManager
 
     public float twist {get;private set;}
     public float pinch { get; private set; }//0-1
-    public float touchSize {get;private set;} //the ave distance between the farthest 2 touches in 1 axis, in centimeters
+    public float touchSize { get; private set; } //0-1
+    public float touchSizeCm {get;private set;} //the ave distance between the farthest 2 touches in 1 axis, in centimeters
     private float lastSize = 0f; //0-1
 
     public Vector3 getAverageTouchWorldPos(hypercubeCamera c) { return c.transform.TransformPoint(getAverageTouchLocalPos()); }
@@ -72,7 +73,7 @@ public class touchScreenInputManager  : streamedInputManager
 
     public touchScreenInputManager(string _deviceName, SerialController _serial, bool _isFrontTouchScreen) : base(_serial, new byte[]{255,255}, 1024)
     {
-        touches = null;
+        touches = new touch[0];
         touchCount = 0;
         pinch = 1f;
         twist = 0f;
@@ -111,30 +112,37 @@ public class touchScreenInputManager  : streamedInputManager
 
     public override void update(bool debug)
     {
-            string data = serial.ReadSerialMessage();
-            while (data != null)
+        string data = serial.ReadSerialMessage();
+
+        bool hadData = false;
+        while (data != null)
+        {
+            hadData = true;
+
+            if (debug)
+                Debug.Log(deviceName +": "+ data);
+
+            if (serial.readDataAsString)
             {
-                if (debug)
-                    Debug.Log(deviceName +": "+ data);
-
-                if (serial.readDataAsString)
+                if (data == "init:done" || data.Contains("init:done"))
                 {
-                    if (data == "init:done" || data.Contains("init:done"))
-                    {
-                        serial.readDataAsString = false; //start capturing data
-                        Debug.Log(deviceName + " is ready and initialized.");
-                    }
-
-                    return; //still initializing
+                    serial.readDataAsString = false; //start capturing data
+                    Debug.Log(deviceName + " is ready and initialized.");
                 }
 
-                //byte[] bytes = new byte[data.Length * sizeof(char)];
-                //System.Buffer.BlockCopy(data.ToCharArray(), 0, bytes, 0, bytes.Length);
-                //addData(bytes); //inherited from base class. Will process our data given the delimiter.
-                addData(System.Text.Encoding.Unicode.GetBytes(data));
-     
-                data = serial.ReadSerialMessage();
+                return; //still initializing
             }
+
+            //byte[] bytes = new byte[data.Length * sizeof(char)];
+            //System.Buffer.BlockCopy(data.ToCharArray(), 0, bytes, 0, bytes.Length);
+            //addData(bytes); //inherited from base class. Will process our data given the delimiter.
+            addData(System.Text.Encoding.Unicode.GetBytes(data));
+     
+            data = serial.ReadSerialMessage();
+        }
+
+        if (hadData)
+            postProcessData();
     }
 
 
@@ -214,6 +222,11 @@ public class touchScreenInputManager  : streamedInputManager
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
         }
 
+    
+    }
+
+    void postProcessData()
+    {
         float averageDiffX = 0f;
         float averageDiffY = 0f;
         float averageDistX = 0f;
@@ -253,13 +266,13 @@ public class touchScreenInputManager  : streamedInputManager
                     highY = interfaces[i];
                 if (lowY == null || interfaces[i].physicalPos.y < lowY.physicalPos.y)
                     lowY = interfaces[i];
-            }           
+            }
         }
 
         twist = 0f;
         if (touchCount < 2)
         {
-            touchSize = 0f;           
+            touchSize = touchSizeCm = 0f;
             pinch = 1f;
             averageDiff = averageDist = Vector2.zero;
             if (touchCount == 0)
@@ -274,17 +287,27 @@ public class touchScreenInputManager  : streamedInputManager
             averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
 
             //touchSize / pinch
-            touchSize = (highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y) ? highX.getPhysicalDistance(lowX) : highY.getPhysicalDistance(lowY); //use the bigger of the two differences, and then use the true distance
+            if ((highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y))//use the bigger of the two differences, and then use the true distance
+            {
+                touchSizeCm = highX.getPhysicalDistance(lowX);
+                touchSize = highX.getDistance(lowX);
+            }
+            else
+            {
+                touchSizeCm = highY.getPhysicalDistance(lowY);
+                touchSize = highY.getDistance(lowY);
+            }
+
             if (lastSize == 0f)
                 pinch = 1f;
             else
-                pinch = touchSize / lastSize;   
+                pinch = touchSizeCm / lastSize;
         }
-     
+
         if (pinch < .6f || pinch > 1.4f) //the chances that this is junk data coming from the touchscreen, are very high. dump it.
             pinch = 1f;
         else
-            lastSize = touchSize;
+            lastSize = touchSizeCm;
 
         //twist  ... this is only possible to calculate after we have the ave position or touch size, so we do 1 more itr here
         foreach (touch tch in touches)
@@ -292,7 +315,7 @@ public class touchScreenInputManager  : streamedInputManager
             if (tch == null)
                 continue; //how?!!
 
-            if (tch.posY > averagePos.y)
+            if (tch.posY < averagePos.y)
                 twist += tch.diffX;
             else
                 twist -= tch.diffX;
@@ -303,7 +326,12 @@ public class touchScreenInputManager  : streamedInputManager
                 twist -= tch.diffY;
         }
         //turn twist into a proper degree of rotation rather than just a distance of average rotational movement
-        twist = Vector2.Angle(Vector2.zero, new Vector2(touchSize, twist));
+        //twist = Vector2.Angle(Vector2.zero, new Vector2(touchSize, twist));
+        if (touchCount < 2)
+            twist = 0f;
+        else
+            twist = Mathf.Atan2(twist, touchSize) * Mathf.Rad2Deg;
+
 
         //finally send off the events.
         foreach (touch tch in touches)

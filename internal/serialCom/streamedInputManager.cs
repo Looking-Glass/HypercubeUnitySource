@@ -52,9 +52,15 @@ namespace hypercube
                         //we found a chunk of data, cut out the delimiter and send it to the delegate for processing.
                         byte[] outBytes = new byte[itr - dItr + 1];
                         System.Buffer.BlockCopy(buffer, 0, outBytes, 0, itr - dItr + 1);
-                        processData(outBytes);
+                        
                         itr = -1; //-1 so that the itr++ below will process it correctly to 0...
                         dItr = 0;
+                        try //just for safety.  we can't afford to have our iterators screwed up by bugs or mishaps in the higher level event processing code.
+                        {
+                            processData(outBytes);
+                        }
+                        catch { }
+                        
                     }
                 }
                 else
