@@ -74,6 +74,8 @@ public class touchScreenInputManager  : streamedInputManager
     {
         touches = null;
         touchCount = 0;
+        pinch = 1f;
+        twist = 0f;
         deviceName = _deviceName;
         isFront = _isFrontTouchScreen;
 
@@ -258,7 +260,7 @@ public class touchScreenInputManager  : streamedInputManager
         if (touchCount < 2)
         {
             touchSize = 0f;           
-            pinch = 0f;
+            pinch = 1f;
             averageDiff = averageDist = Vector2.zero;
             if (touchCount == 0)
                 averagePos = Vector2.zero;
@@ -274,17 +276,22 @@ public class touchScreenInputManager  : streamedInputManager
             //touchSize / pinch
             touchSize = (highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y) ? highX.getPhysicalDistance(lowX) : highY.getPhysicalDistance(lowY); //use the bigger of the two differences, and then use the true distance
             if (lastSize == 0f)
-                pinch = 0f;
+                pinch = 1f;
             else
                 pinch = touchSize / lastSize;   
         }
-
-        lastSize = touchSize;
-
+     
+        if (pinch < .6f || pinch > 1.4f) //the chances that this is junk data coming from the touchscreen, are very high. dump it.
+            pinch = 1f;
+        else
+            lastSize = touchSize;
 
         //twist  ... this is only possible to calculate after we have the ave position or touch size, so we do 1 more itr here
         foreach (touch tch in touches)
         {
+            if (tch == null)
+                continue; //how?!!
+
             if (tch.posY > averagePos.y)
                 twist += tch.diffX;
             else

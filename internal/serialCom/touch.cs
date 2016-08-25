@@ -135,7 +135,7 @@ namespace hypercube
                 return;
 
             if (state == activationState.TOUCHDOWN) //rare for a touch to last only 1 hardware frame, but possible.  Force it down.
-                state = activationState.ACTIVE;
+                state = activationState.ACTIVE; //from here it will drop down to touchUp
 
             state--;
             _diffX = _diffY = _distX = _distY = 0f;
