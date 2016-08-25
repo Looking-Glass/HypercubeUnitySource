@@ -20,6 +20,9 @@ namespace hypercube
         public Vector2 normalizedPos;
         public Vector2 physicalPos;
 
+        //public float angleToAveragePos; //for calculating twist
+        //public float lastAngle;
+
         public float getDistance(touchInterface i)
         {
             return Vector2.Distance(normalizedPos, i.normalizedPos);
@@ -32,13 +35,13 @@ namespace hypercube
 
     //Note that resolution dependent dims are not exposed.
     //this is important because different devices will host different resolutions and all users of this API should create device independent software.
-    //all needed data has been abstracted here for maximum compatibility among all types of Volume hardware
+    //all un-needed data has been abstracted from here for maximum compatibility among all types of Volume hardware
     public class touch
     {
         public touch(bool _frontScreen)
         {
             frontScreen = _frontScreen;
-            _posX = _posY = physicalPos.x = physicalPos.y = _diffX = _diffY = _distX = _distY= 0;
+            _posX = _posY = physicalPos.x = physicalPos.y = _diffX = _diffY = _distX = _distY = 0;
             state = activationState.DESTROYED;
         }
 
@@ -82,6 +85,7 @@ namespace hypercube
         public float touchDownTime { get; private set; }
         public float age { get { if (state == activationState.DESTROYED) return 0f; return Time.timeSinceLevelLoad - touchDownTime; } }
 
+        private Vector2 physicalPos;
 
 
         public float getPhysicalDistanceTo(touch t) 
@@ -90,8 +94,6 @@ namespace hypercube
             t._getInterface(ref i);
             return Vector2.Distance(i.physicalPos, physicalPos);
         }
-
-        private Vector2 physicalPos;
 
         public void _getInterface(ref touchInterface i)
         {
@@ -118,14 +120,18 @@ namespace hypercube
             {
                 state = activationState.TOUCHDOWN;
                 touchDownTime = Time.timeSinceLevelLoad;
+
+                _diffX = _diffY = _distX = _distY = 0f; //this is a touch down: we don't want to compare this to zeroed out values and get crazy values on the first frame active.
             }
             else
+            {
                 state = activationState.ACTIVE;
+                _diffX = posX - i.normalizedPos.x;
+                _diffY = posY - i.normalizedPos.y;
+                _distX = physicalPos.x - i.physicalPos.x;
+                _distY = physicalPos.y - i.physicalPos.y;
+            }
 
-            _diffX = posX - i.normalizedPos.x;
-            _diffY = posY - i.normalizedPos.y;
-            _distX = physicalPos.x - i.physicalPos.x;
-            _distY = physicalPos.y - i.physicalPos.y;
 
             _posX = i.normalizedPos.x;
             _posY = i.normalizedPos.y;
@@ -142,10 +148,10 @@ namespace hypercube
                 state = activationState.ACTIVE; //from here it will drop down to touchUp
 
             state--;
-            _diffX = _diffY = _distX = _distY = 0f;
+             _diffX = _diffY = _distX = _distY = 0f;
 
             if (state == activationState.DESTROYED)
-                touchDownTime = _posX = _posY = physicalPos.x = physicalPos.y = 0f;
+               touchDownTime = _posX = _posY = physicalPos.x = physicalPos.y = 0f;
         }
 
         bool activeCheck()
@@ -158,16 +164,19 @@ namespace hypercube
             return true;
         }
 
-        //if you need to map this touch to a gui area or other surface, use this to help you.
-        public Vector2 mapToRange(float x, float y, Vector2 leftTop, Vector2 rightBottom)
+        //if you need to map this touch to a gui area or other coordinate sub-area, use this to help you.
+        public Vector2 mapToRange(Vector2 leftTop, Vector2 rightBottom)
         {
-            Vector2 position = new Vector2(x, y);
-            position.x = map(_posX, 0, 1.0f, leftTop.x, rightBottom.x);
-            position.y = map(_posY, 0.0f, 1.0f, rightBottom.y, leftTop.y);
+            return mapToRange(leftTop.y, rightBottom.x, rightBottom.y, leftTop.x);
+        }
+        public Vector2 mapToRange(float top, float right, float bottom, float left)
+        {
+            Vector2 position = new Vector2();
+            position.x = map(_posX, 0, 1.0f, left, right);
+            position.y = map(_posY, 0.0f, 1.0f, bottom, top);
             return position;
         }
-
-        public static float map(float s, float a1, float a2, float b1, float b2)
+        static float map(float s, float a1, float a2, float b1, float b2)
         {
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }

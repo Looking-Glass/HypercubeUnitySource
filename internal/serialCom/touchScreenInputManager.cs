@@ -10,7 +10,28 @@ public class touchScreenInputManager  : streamedInputManager
     //current touches, updated every frame
     public touch[] touches { get; private set; } 
     public uint touchCount { get; private set; }
-    
+
+    //external interface..
+    public Vector2 averagePos { get; private set; } //0-1
+    public Vector2 averageDiff { get; private set; } //0-1
+    public Vector2 averageDist { get; private set; } //in centimeters
+
+    float lastTouchAngle = 0f; //used to calculate twist, this is the angle between the two farthest touches in the last frame
+    public float twist { get; private set; }
+    public float pinch { get; private set; }//0-1
+    public float touchSize { get; private set; } //0-1
+    public float touchSizeCm { get; private set; } //the ave distance between the farthest 2 touches in 1 axis, in centimeters
+    private float lastSize = 0f; //0-1
+
+    public Vector3 getAverageTouchWorldPos(hypercubeCamera c) { return c.transform.TransformPoint(getAverageTouchLocalPos()); }
+    public Vector3 getAverageTouchLocalPos()
+    {
+        if (isFront)
+            return new Vector3(averagePos.x + .5f, averagePos.y + .5f, -.5f);
+        else
+            return new Vector3((1f - averagePos.x) + .5f, averagePos.y + .5f, .5f);
+    }
+
 
 #if HYPERCUBE_INPUT
   public readonly string deviceName;
@@ -35,26 +56,6 @@ public class touchScreenInputManager  : streamedInputManager
     System.UInt16 currentTouchID = 0; //strictly for external convenience
 
  
-    //external interface..
-    public Vector2 averagePos { get; private set; } //0-1
-    public Vector2 averageDiff { get; private set; } //0-1
-    public Vector2 averageDist {get;private set;} //in centimeters
-
-    public float twist {get;private set;}
-    public float pinch { get; private set; }//0-1
-    public float touchSize { get; private set; } //0-1
-    public float touchSizeCm {get;private set;} //the ave distance between the farthest 2 touches in 1 axis, in centimeters
-    private float lastSize = 0f; //0-1
-
-    public Vector3 getAverageTouchWorldPos(hypercubeCamera c) { return c.transform.TransformPoint(getAverageTouchLocalPos()); }
-    public Vector3 getAverageTouchLocalPos()
-    {
-          if (isFront)
-                return new Vector3(averagePos.x + .5f, averagePos.y + .5f, -.5f);
-            else
-                return new Vector3((1f - averagePos.x) + .5f, averagePos.y + .5f, .5f);
-    }
-
     //these variables map the raw touches into coherent positional data that is consistent across devices.
     float screenResX = 800f; //these are not public, as the touchscreen res can vary from device to device.  We abstract this for the dev as 0-1.
     float screenResY = 450f;
@@ -70,6 +71,8 @@ public class touchScreenInputManager  : streamedInputManager
     float touchAspectY = 1f;
 
     static readonly byte[] emptyByte = new byte[] { 0 };
+
+
 
     public touchScreenInputManager(string _deviceName, SerialController _serial, bool _isFrontTouchScreen) : base(_serial, new byte[]{255,255}, 1024)
     {
@@ -110,11 +113,18 @@ public class touchScreenInputManager  : streamedInputManager
         touchAspectY = projectionHeight / touchScreenHeight;
     }
 
+    //used between processData and postProcessData
+    float averageNormalizedX = 0f;
+    float averageNormalizedY = 0f;
+
     public override void update(bool debug)
     {
         string data = serial.ReadSerialMessage();
 
         bool hadData = false;
+
+        averageNormalizedX = 0f;
+        averageNormalizedY = 0f;
         while (data != null)
         {
             hadData = true;
@@ -133,9 +143,6 @@ public class touchScreenInputManager  : streamedInputManager
                 return; //still initializing
             }
 
-            //byte[] bytes = new byte[data.Length * sizeof(char)];
-            //System.Buffer.BlockCopy(data.ToCharArray(), 0, bytes, 0, bytes.Length);
-            //addData(bytes); //inherited from base class. Will process our data given the delimiter.
             addData(System.Text.Encoding.Unicode.GetBytes(data));
      
             data = serial.ReadSerialMessage();
@@ -220,19 +227,23 @@ public class touchScreenInputManager  : streamedInputManager
 
             interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
-        }
 
-    
+            averageNormalizedX += interfaces[touchIdMap[id]].normalizedPos.x;
+            averageNormalizedY += interfaces[touchIdMap[id]].normalizedPos.y;
+        }
     }
 
     void postProcessData()
     {
+        if (touchCount == 0)
+            averagePos = Vector2.zero;
+        else
+            averagePos = new Vector2(averageNormalizedX / (float)touchCount, averageNormalizedX / (float)touchCount);
+
         float averageDiffX = 0f;
         float averageDiffY = 0f;
         float averageDistX = 0f;
         float averageDistY = 0f;
-        float averagePosX = 0f;
-        float averagePosY = 0f;
 
         touchInterface highX = null;
         touchInterface lowX = null;
@@ -245,14 +256,12 @@ public class touchScreenInputManager  : streamedInputManager
         for (int i = 0; i < touchPoolSize; i++)
         {
 
-            touchPool[i]._interface(interfaces[i]); //update the touch.          
+            touchPool[i]._interface(interfaces[i]); //update the touch.      
             if (interfaces[i].active)
             {
-                touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches
+                touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches              
                 t++;
 
-                averagePosX += touchPool[i].posX;
-                averagePosY += touchPool[i].posY;
                 averageDiffX += touchPool[i].diffX;
                 averageDiffY += touchPool[i].diffY;
                 averageDistX += touchPool[i].distX;
@@ -268,79 +277,79 @@ public class touchScreenInputManager  : streamedInputManager
                     lowY = interfaces[i];
             }
         }
-
-        twist = 0f;
+        
         if (touchCount < 2)
         {
             touchSize = touchSizeCm = 0f;
             pinch = 1f;
-            averageDiff = averageDist = Vector2.zero;
+            lastTouchAngle = twist = 0f;
             if (touchCount == 0)
-                averagePos = Vector2.zero;
-            else //only 1 touch
-                averagePos.Set(averagePosX, averagePosY); //these will contain the correct value, since only 1 was added.
+                averageDiff = averageDist = Vector2.zero;
+            else //1 touch only.
+            {
+                averageDiff = new Vector2(touches[0].diffX, touches[0].diffY);
+                averageDist = new Vector2(touches[0].distX, touches[0].distY);
+            }          
         }
         else
         {
-            averagePos = new Vector2(averagePosX / (float)touchCount, averagePosY / (float)touchCount);
             averageDiff = new Vector2(averageDiffX / (float)touchCount, averageDiffY / (float)touchCount);
             averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
 
-            //touchSize / pinch
+            //pinch and twist
+            float angle = 0f;
             if ((highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y))//use the bigger of the two differences, and then use the true distance
             {
                 touchSizeCm = highX.getPhysicalDistance(lowX);
                 touchSize = highX.getDistance(lowX);
+
+                angle = angleBetweenPoints(lowX.normalizedPos, highX.normalizedPos);
             }
             else
             {
                 touchSizeCm = highY.getPhysicalDistance(lowY);
                 touchSize = highY.getDistance(lowY);
+
+                angle = angleBetweenPoints(highY.normalizedPos, lowY.normalizedPos);            
             }
+
+            //validate everything coming out of here... ignore crazy values that may come from hardware artifacts.
+            if (lastTouchAngle == 0)
+                twist = 0;
+            else
+                twist = angle - lastTouchAngle;
+
+            if (twist < -20f || twist > 20f) //more than 20 degrees in 1 frame?!.. most likely junk. toss it.
+                twist = angle = 0f;
+            lastTouchAngle = angle;
 
             if (lastSize == 0f)
                 pinch = 1f;
             else
                 pinch = touchSizeCm / lastSize;
+
+            if (pinch < .7f || pinch > 1.3f) //the chances that this is junk data coming from the touchscreen are very high. dump it.
+                pinch = 1f;
+            
+             lastSize = touchSizeCm;
         }
 
-        if (pinch < .6f || pinch > 1.4f) //the chances that this is junk data coming from the touchscreen, are very high. dump it.
-            pinch = 1f;
-        else
-            lastSize = touchSizeCm;
 
-        //twist  ... this is only possible to calculate after we have the ave position or touch size, so we do 1 more itr here
-        foreach (touch tch in touches)
-        {
-            if (tch == null)
-                continue; //how?!!
-
-            if (tch.posY < averagePos.y)
-                twist += tch.diffX;
-            else
-                twist -= tch.diffX;
-
-            if (tch.posX > averagePos.x)
-                twist += tch.diffY;
-            else
-                twist -= tch.diffY;
-        }
-        //turn twist into a proper degree of rotation rather than just a distance of average rotational movement
-        //twist = Vector2.Angle(Vector2.zero, new Vector2(touchSize, twist));
-        if (touchCount < 2)
-            twist = 0f;
-        else
-            twist = Mathf.Atan2(twist, touchSize) * Mathf.Rad2Deg;
-
-
-        //finally send off the events.
+        //finally, send off the events to touchScreenTargets.
         foreach (touch tch in touches)
         {
             input._processTouchScreenEvent(tch);
         }
     }
 
+     static float angleBetweenPoints(Vector2 v1, Vector2 v2)
+    {      
+        return Mathf.Atan2(v1.x - v2.x, v1.y - v2.y) * Mathf.Rad2Deg;
+    }
+
 #endif
 }
+
+
 
 }
