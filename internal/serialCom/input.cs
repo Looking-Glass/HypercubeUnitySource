@@ -79,7 +79,7 @@ namespace hypercube
             {
                 frontScreen.setTouchScreenDims(
                     d.getValueAsFloat("touchscreenResX", 800f),
-                    d.getValueAsFloat("touchscreenResY", 450f),
+                    d.getValueAsFloat("touchscreenResY", 480f),
                     d.getValueAsFloat("projectionCentimeterWidth", 20f),
                     d.getValueAsFloat("projectionCentimeterHeight", 12f),
                     d.getValueAsFloat("touchscreenCentimeterWidth", 20f),

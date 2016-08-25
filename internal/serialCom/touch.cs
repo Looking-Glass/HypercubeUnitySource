@@ -76,9 +76,9 @@ namespace hypercube
                 return Vector3.zero;
 
             if (frontScreen)
-                return new Vector3(_posX + .5f, _posY + .5f, -.5f);
+                return new Vector3(_posX - .5f, _posY - .5f, -.5f);
             else
-                return new Vector3((1f - _posX) + .5f, _posY + .5f, .5f);
+                return new Vector3((1f - _posX) + .5f, _posY - .5f, .5f);
         }
 
         //how much time since touchDown
