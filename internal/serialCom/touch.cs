@@ -20,6 +20,9 @@ namespace hypercube
         public Vector2 normalizedPos;
         public Vector2 physicalPos;
 
+        public int rawTouchScreenX;
+        public int rawTouchScreenY;
+
         //public float angleToAveragePos; //for calculating twist
         //public float lastAngle;
 
@@ -42,6 +45,7 @@ namespace hypercube
         {
             frontScreen = _frontScreen;
             _posX = _posY = physicalPos.x = physicalPos.y = _diffX = _diffY = _distX = _distY = 0;
+            touchScreenX = touchScreenY = 0;
             state = activationState.DESTROYED;
         }
 
@@ -87,6 +91,9 @@ namespace hypercube
 
         private Vector2 physicalPos;
 
+        private int touchScreenX; //these are the raw coordinates from the touchscreen.  They are not used in this class but stored here for convenience use with calibration tools.
+        private int touchScreenY;
+
 
         public float getPhysicalDistanceTo(touch t) 
         { 
@@ -99,8 +106,11 @@ namespace hypercube
         {
             i.normalizedPos.x = _posX;
             i.normalizedPos.y = _posY;
-         //   i.physicalPos.x =
+         
             i.physicalPos = physicalPos;
+            i.rawTouchScreenX = touchScreenX;
+            i.rawTouchScreenY = touchScreenY;
+
             i._id = id;
             if (state < activationState.ACTIVE)
                 i.active = false;
@@ -132,10 +142,12 @@ namespace hypercube
                 _distY = i.physicalPos.y - physicalPos.y;
             }
 
-
             _posX = i.normalizedPos.x;
             _posY = i.normalizedPos.y;
             physicalPos = i.physicalPos;
+
+            touchScreenX = i.rawTouchScreenX;
+            touchScreenY = i.rawTouchScreenY;
 
             id = i._id; //faster and easier to just set it all the time than check if this is a new touch or not.
         }
@@ -150,8 +162,11 @@ namespace hypercube
             state--;
              _diffX = _diffY = _distX = _distY = 0f;
 
-            if (state == activationState.DESTROYED)
-               touchDownTime = _posX = _posY = physicalPos.x = physicalPos.y = 0f;
+             if (state == activationState.DESTROYED)
+             {
+                 touchDownTime = _posX = _posY = physicalPos.x = physicalPos.y = 0f;
+                 touchScreenX = touchScreenY = 0;
+             }
         }
 
         bool activeCheck()

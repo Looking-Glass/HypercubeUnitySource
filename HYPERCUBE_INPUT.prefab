@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 431134}
   - 114: {fileID: 11407910}
   m_Layer: 0
-  m_Name: HYPERCUBE_INPUTS
+  m_Name: HYPERCUBE_INPUT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
   reconnectionDelay: 500
   maxUnreadMessage: 50
   maxAllowedFailure: 3
-  touchScreenFront: {fileID: 0}
+  debug: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

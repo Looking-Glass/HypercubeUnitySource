@@ -63,14 +63,15 @@ public class touchScreenInputManager  : streamedInputManager
     float screenResY = 450f;
     float projectionWidth = 20f; //the physical size of the projection, in centimeters
     float projectionHeight = 12f;
-    float touchScreenWidth = 0f; // physical size of the touchscreen, in centimeters
-    float touchScreenHeight = 0f;
+    float projectionDepth = 20f;
+    float touchScreenWidth = 20f; // physical size of the touchscreen, in centimeters
+    float touchScreenHeight = 12f;
 
-    float widthOffset = 0f; //any difference between the physical centers of the touchscreen and projection
-    float heightOffset = 0f;  //set as touchScreen - projection
+    int pixelOffsetX = 0; //the difference between the physical centers of the touchscreen and projection, in touchscreen pixels.
+    int pixelOffsetY = 0;  
 
-    float touchAspectX = 1f; //screenSizeX / touchScreenSizeX
-    float touchAspectY = 1f;
+    float projectionAspectX = 1f; //screenSizeX / touchScreenSizeX
+    float projectionAspectY = 1f;
 
     static readonly byte[] emptyByte = new byte[] { 0 };
 
@@ -100,36 +101,44 @@ public class touchScreenInputManager  : streamedInputManager
         }
     }
 
-    public void setTouchScreenDims(float _resX, float _resY, float _projectionWidth, float _projectionHeight, float _touchScreenWidth, float _touchScreenHeight, float _widthOffset, float _heightOffset)
+    public void setTouchScreenDims(dataFileDict d)
     {
-        screenResX = _resX;
-        screenResY = _resY;
-        projectionWidth = _projectionWidth;
-        projectionHeight = _projectionHeight;
-        touchScreenWidth = _touchScreenWidth;
-        touchScreenHeight = _touchScreenHeight;
-        widthOffset = _widthOffset;
-        heightOffset = _heightOffset;
+        if (d == null)
+            return;
 
-        touchAspectX =  touchScreenWidth / projectionWidth;
-        touchAspectY = projectionHeight / touchScreenHeight;
+        if (!d.hasKey("touchScreenResX") ||
+            !d.hasKey("touchScreenResY") ||
+            !d.hasKey("projectionCentimeterWidth") ||
+            !d.hasKey("projectionCentimeterHeight") ||
+            !d.hasKey("projectionCentimeterDepth") ||
+            !d.hasKey("projectionAspectX") ||
+            !d.hasKey("projectionAspectY") ||
+            !d.hasKey("touchScreenResXOffset") ||
+            !d.hasKey("touchScreenResYOffset")  //this one is necessary to keep the hypercube aspect ratio
+            )
+            Debug.LogWarning("Volume config file lacks touch screen hardware specs!"); //these must be manually entered, so we should warn if they are missing.
+
+        screenResX = d.getValueAsFloat("touchScreenResX", screenResX);
+        screenResY = d.getValueAsFloat("touchScreenResY", screenResY);
+        projectionWidth = d.getValueAsFloat("projectionCentimeterWidth", projectionWidth);
+        projectionHeight = d.getValueAsFloat("projectionCentimeterHeight", projectionHeight);
+        projectionDepth = d.getValueAsFloat("projectionCentimeterDepth", projectionDepth);
+        pixelOffsetX = d.getValueAsInt("touchScreenResXOffset", pixelOffsetX);
+        pixelOffsetY = d.getValueAsInt("touchScreenResYOffset", pixelOffsetY);
+
+        projectionAspectX = d.getValueAsFloat("projectionAspectX", 1f); //   projectionWidth / touchScreenWidth;
+        projectionAspectY = d.getValueAsFloat("projectionAspectY", 1f);
+
+        touchScreenWidth = projectionWidth * (1/projectionAspectX);
+        touchScreenHeight = projectionHeight * (1/projectionAspectY);
+
     }
-
-    //used between processData and postProcessData
-    float averageNormalizedX = 0f;
-    float averageNormalizedY = 0f;
 
     public override void update(bool debug)
     {
         string data = serial.ReadSerialMessage();
-
-        bool hadData = false;
-
-        averageNormalizedX = 0f;
-        averageNormalizedY = 0f;
         while (data != null)
         {
-            hadData = true;
 
             if (debug)
                 Debug.Log(deviceName +": "+ data);
@@ -150,8 +159,7 @@ public class touchScreenInputManager  : streamedInputManager
             data = serial.ReadSerialMessage();
         }
 
-        if (hadData)
-            postProcessData();
+        postProcessData();
     }
 
 
@@ -168,6 +176,7 @@ public class touchScreenInputManager  : streamedInputManager
          *  ... etc
          *  
          * */
+
 
         if (dataChunk == emptyByte)
             return;
@@ -225,37 +234,26 @@ public class touchScreenInputManager  : streamedInputManager
        
             interfaces[touchIdMap[id]].active = true;
 
-            interfaces[touchIdMap[id]].normalizedPos.x =
-                touchAspectX * ((x / screenResX)  //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
-                + (widthOffset/touchScreenWidth))  //physical offset between the center of the touchscreen and the projection
-                ;
-            interfaces[touchIdMap[id]].normalizedPos.y = 
-                ((y / screenResY) 
-                +(heightOffset / touchScreenHeight)) * touchAspectY
-                ;
+            interfaces[touchIdMap[id]].normalizedPos.x =  projectionAspectX * ((x + pixelOffsetX) / screenResX) ; //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
+            interfaces[touchIdMap[id]].normalizedPos.y = projectionAspectY * ((y + pixelOffsetY) / screenResY);
 
             interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
-
-            averageNormalizedX += interfaces[touchIdMap[id]].normalizedPos.x;
-            averageNormalizedY += interfaces[touchIdMap[id]].normalizedPos.y;
         }
 
+    }
+
+    void postProcessData()
+    {
         touchCount = 0;
         for (int k = 0; k < maxTouches; k++)
         {
             if (interfaces[touchIdMap[k]].active)
                 touchCount++;
         }
-    }
 
-    void postProcessData()
-    {
-        if (touchCount == 0)
-            averagePos = Vector2.zero;
-        else
-            averagePos = new Vector2(averageNormalizedX / (float)touchCount, averageNormalizedX / (float)touchCount);
-
+        float averageNormalizedX = 0f;
+        float averageNormalizedY = 0f;
         float averageDiffX = 0f;
         float averageDiffY = 0f;
         float averageDistX = 0f;
@@ -268,20 +266,22 @@ public class touchScreenInputManager  : streamedInputManager
 
         touches = new touch[touchCount];
 
+        //main touches are a way for us to stabilize the twist and scale outputs by not hopping around different touches, instead trying to calculate the values from the same touches if possible
         bool updateMainTouches = false;
         if (touchCount > 1 && (mainTouchA == null || mainTouchB == null || mainTouchA.active == false || mainTouchB.active == false))
-            updateMainTouches = true;
+            updateMainTouches = true; 
 
         int t = 0;
         for (int i = 0; i < touchPoolSize; i++)
         {
-
             touchPool[i]._interface(interfaces[i]); //update and apply our new info to each touch.     
             if (interfaces[i].active)
             {
                 touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches              
                 t++;
 
+                averageNormalizedX += touchPool[i].posX;
+                averageNormalizedY += touchPool[i].posY;
                 averageDiffX += touchPool[i].diffX;
                 averageDiffY += touchPool[i].diffY;
                 averageDistX += touchPool[i].distX;
@@ -309,15 +309,17 @@ public class touchScreenInputManager  : streamedInputManager
             lastTouchAngle = twist = 0f;
             mainTouchA = mainTouchB = null;
             if (touchCount == 0)
-                averageDiff = averageDist = Vector2.zero;
+                averagePos = averageDiff = averageDist = Vector2.zero;
             else //1 touch only.
             {
+                averagePos = new Vector2(touches[0].posX, touches[0].posY);
                 averageDiff = new Vector2(touches[0].diffX, touches[0].diffY);
                 averageDist = new Vector2(touches[0].distX, touches[0].distY);
             }          
         }
         else
         {
+            averagePos = new Vector2(averageNormalizedX / (float)touchCount, averageNormalizedX / (float)touchCount);
             averageDiff = new Vector2(averageDiffX / (float)touchCount, averageDiffY / (float)touchCount);
             averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
 
@@ -367,9 +369,10 @@ public class touchScreenInputManager  : streamedInputManager
         }
 
         //finally, send off the events to touchScreenTargets.
-        foreach (touch tch in touches)
+        for (int i = 0; i < touchPoolSize; i++)
         {
-            input._processTouchScreenEvent(tch);
+            if (touchPool[i].state != touch.activationState.DESTROYED)
+            input._processTouchScreenEvent(touchPool[i]);
         }
     }
 

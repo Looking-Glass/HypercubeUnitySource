@@ -2,7 +2,7 @@
 using System.Collections;
 
 //this class manages a constant stream of byte data input.
-//it will split the data up when the delimiter sequence is found, and then call 'processData' on the data.
+//it will split the data up when the delimiter sequence is found, and then call 'processData' on those chunks of data.
 
 //this class is a base class for each com port device on the Volume to inherit from  ie frontTouchscreen, backTouchcreen, and magicLeap
 namespace hypercube
