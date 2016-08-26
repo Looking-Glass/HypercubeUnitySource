@@ -47,11 +47,12 @@ public class touchScreenInputManager  : streamedInputManager
     //so in short: DON'T HOLD POINTERS TO THE TOUCHES FOR MORE THAN THE UPDATE
     const int touchPoolSize = 128; 
     touch[] touchPool = new touch[touchPoolSize];
-    int touchPoolItr = 0;
+    int touchPoolItr = 1; //index 0 is forever an inactive touch.
 
     touchInterface[] interfaces = new touchInterface[touchPoolSize]; //these are used to update the touches internally, allowing us to expose all data but not any controls to anything outside of this class or the touch class.
 
     const int maxTouches = 12;
+    //Dictionary<int, int> touchIdMap = new Dictionary<int, int>(); //dictionary instead of array prevents duplicate entries
     int[] touchIdMap = new int[maxTouches];  //this maps the touchId coming from hardware to its arrayPosition in the touchPool;
     System.UInt16 currentTouchID = 0; //strictly for external convenience
 
@@ -183,8 +184,7 @@ public class touchScreenInputManager  : streamedInputManager
 
         float x = 0;
         float y = 0;
-        
-        touchCount = 0; 
+
         for (int i = 1; i < dataChunk.Length; i= i + 5) //start at 1 and jump 5 each time.
         {
             int id = dataChunk[i];
@@ -202,7 +202,16 @@ public class touchScreenInputManager  : streamedInputManager
         
             //is this a new touch?  If so, assign it to a new item in the pool, and update our iterators.
             if (touchPool[touchIdMap[id]].state < touch.activationState.ACTIVE ) //a new touch!  Point it to a new element in our touchPool  (we know it is new because the place where the itr is pointing to is deactivated. Hence, it must have gone through at least 1 frame where no touch info was received for it.)
-            {             
+            {
+                //we can not allow either key duplicates or value duplicates in the map.
+                //key duplicates are already handled because an array index is by definition unique.
+                //however here, we have to make sure another id is not already pointing to our desired touchPoolItr.
+                for (int k = 0; k < maxTouches; k++ )
+                {
+                    if (touchIdMap[k] == touchPoolItr && k != id)  
+                        touchIdMap[k] = 0; //point it to our always defunct element.  Without this, we can cause our touchCount to be incorrect.
+                }
+
                 touchIdMap[id] = touchPoolItr; //point the id to the current iterator 
 
                 currentTouchID++;
@@ -210,10 +219,9 @@ public class touchScreenInputManager  : streamedInputManager
 
                 touchPoolItr++;
                 if (touchPoolItr >= touchPoolSize)
-                    touchPoolItr = 0;
+                    touchPoolItr = 1;  //we rely on element 0 always being inactive so we can use it to fix any duplicates.
             }
-
-            touchCount++;
+       
             interfaces[touchIdMap[id]].active = true;
 
             interfaces[touchIdMap[id]].normalizedPos.x =
@@ -230,6 +238,13 @@ public class touchScreenInputManager  : streamedInputManager
 
             averageNormalizedX += interfaces[touchIdMap[id]].normalizedPos.x;
             averageNormalizedY += interfaces[touchIdMap[id]].normalizedPos.y;
+        }
+
+        touchCount = 0;
+        for (int k = 0; k < maxTouches; k++)
+        {
+            if (interfaces[touchIdMap[k]].active)
+                touchCount++;
         }
     }
 
@@ -305,8 +320,12 @@ public class touchScreenInputManager  : streamedInputManager
             averageDiff = new Vector2(averageDiffX / (float)touchCount, averageDiffY / (float)touchCount);
             averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
 
-            //pinch and twist
+            if (averageDiff.x < -.3f || averageDiff.x > .3f || averageDiff.y < -.3f || averageDiff.y > .3) //this is too fast to be a real movement, its probably an artifact.
+            {
+                averageDiff = averageDist = Vector2.zero;
+            }
 
+            //pinch and twist
             if (updateMainTouches)
             {
                 if ((highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y))//use the bigger of the two differences, and then use the true distance

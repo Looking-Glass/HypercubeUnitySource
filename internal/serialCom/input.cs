@@ -95,6 +95,12 @@ namespace hypercube
 
         public static void _processTouchScreenEvent(touch t)
         {
+            if (t == null)
+            {
+                Debug.LogWarning("Please report a bug in hypercube input. A null touch event was sent for processing.");
+                return;
+            }
+
             if (t.state == touch.activationState.TOUCHDOWN)
             {
                     foreach(touchscreenTarget target in instance.eventTargets)

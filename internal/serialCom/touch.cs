@@ -126,10 +126,10 @@ namespace hypercube
             else
             {
                 state = activationState.ACTIVE;
-                _diffX = posX - i.normalizedPos.x;
-                _diffY = posY - i.normalizedPos.y;
-                _distX = physicalPos.x - i.physicalPos.x;
-                _distY = physicalPos.y - i.physicalPos.y;
+                _diffX = i.normalizedPos.x - posX;
+                _diffY = i.normalizedPos.y - posY;
+                _distX = i.physicalPos.x - physicalPos.x;
+                _distY = i.physicalPos.y - physicalPos.y;
             }
 
 
