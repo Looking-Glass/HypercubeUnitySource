@@ -72,7 +72,8 @@ public class touchScreenInputManager  : streamedInputManager
 
     static readonly byte[] emptyByte = new byte[] { 0 };
 
-
+    touchInterface mainTouchA = null; //instead of dynamically searching for touches with each update of data, we try to reuse the same ones across frames so that pinch and twist are less jittery
+    touchInterface mainTouchB = null;
 
     public touchScreenInputManager(string _deviceName, SerialController _serial, bool _isFrontTouchScreen) : base(_serial, new byte[]{255,255}, 1024)
     {
@@ -95,7 +96,6 @@ public class touchScreenInputManager  : streamedInputManager
         {
             touchIdMap[i] = 0;
         }
-
     }
 
     public void setTouchScreenDims(float _resX, float _resY, float _projectionWidth, float _projectionHeight, float _touchScreenWidth, float _touchScreenHeight, float _widthOffset, float _heightOffset)
@@ -250,13 +250,17 @@ public class touchScreenInputManager  : streamedInputManager
         touchInterface highY = null;
         touchInterface lowY = null;
 
-        //apply all,  notify touchScreenTargets, and do post processing on touches
         touches = new touch[touchCount];
+
+        bool updateMainTouches = false;
+        if (touchCount > 1 && (mainTouchA == null || mainTouchB == null || mainTouchA.active == false || mainTouchB.active == false))
+            updateMainTouches = true;
+
         int t = 0;
         for (int i = 0; i < touchPoolSize; i++)
         {
 
-            touchPool[i]._interface(interfaces[i]); //update the touch.      
+            touchPool[i]._interface(interfaces[i]); //update and apply our new info to each touch.     
             if (interfaces[i].active)
             {
                 touches[t] = touchPool[i];//these are the touches that can be queried from hypercube.input.front.touches              
@@ -267,14 +271,18 @@ public class touchScreenInputManager  : streamedInputManager
                 averageDistX += touchPool[i].distX;
                 averageDistY += touchPool[i].distY;
 
-                if (highX == null || interfaces[i].physicalPos.x > highX.physicalPos.x)
-                    highX = interfaces[i];
-                if (lowX == null || interfaces[i].physicalPos.x < lowX.physicalPos.x)
-                    lowX = interfaces[i];
-                if (highY == null || interfaces[i].physicalPos.y > highY.physicalPos.y)
-                    highY = interfaces[i];
-                if (lowY == null || interfaces[i].physicalPos.y < lowY.physicalPos.y)
-                    lowY = interfaces[i];
+                if (updateMainTouches)
+                {
+                    if (highX == null || interfaces[i].physicalPos.x > highX.physicalPos.x)
+                        highX = interfaces[i];
+                    if (lowX == null || interfaces[i].physicalPos.x < lowX.physicalPos.x)
+                        lowX = interfaces[i];
+                    if (highY == null || interfaces[i].physicalPos.y > highY.physicalPos.y)
+                        highY = interfaces[i];
+                    if (lowY == null || interfaces[i].physicalPos.y < lowY.physicalPos.y)
+                        lowY = interfaces[i];
+                }
+
             }
         }
         
@@ -283,6 +291,7 @@ public class touchScreenInputManager  : streamedInputManager
             touchSize = touchSizeCm = 0f;
             pinch = 1f;
             lastTouchAngle = twist = 0f;
+            mainTouchA = mainTouchB = null;
             if (touchCount == 0)
                 averageDiff = averageDist = Vector2.zero;
             else //1 touch only.
@@ -297,21 +306,24 @@ public class touchScreenInputManager  : streamedInputManager
             averageDist = new Vector2(averageDistX / (float)touchCount, averageDistY / (float)touchCount);
 
             //pinch and twist
-            float angle = 0f;
-            if ((highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y))//use the bigger of the two differences, and then use the true distance
-            {
-                touchSizeCm = highX.getPhysicalDistance(lowX);
-                touchSize = highX.getDistance(lowX);
 
-                angle = angleBetweenPoints(lowX.normalizedPos, highX.normalizedPos);
-            }
-            else
+            if (updateMainTouches)
             {
-                touchSizeCm = highY.getPhysicalDistance(lowY);
-                touchSize = highY.getDistance(lowY);
-
-                angle = angleBetweenPoints(highY.normalizedPos, lowY.normalizedPos);            
+                if ((highX.physicalPos.x - lowX.physicalPos.x) > (highY.physicalPos.y - lowY.physicalPos.y))//use the bigger of the two differences, and then use the true distance
+                {
+                    mainTouchA = highX; mainTouchB = lowX;
+                }
+                else
+                {
+                    mainTouchA = highY; mainTouchB = lowY;
+                }
             }
+
+            touchSizeCm = mainTouchA.getPhysicalDistance(mainTouchB);
+            touchSize = mainTouchA.getDistance(mainTouchB);
+
+            float angle = angleBetweenPoints(mainTouchA.normalizedPos, mainTouchB.normalizedPos);            
+
 
             //validate everything coming out of here... ignore crazy values that may come from hardware artifacts.
             if (lastTouchAngle == 0)
@@ -333,7 +345,6 @@ public class touchScreenInputManager  : streamedInputManager
             
              lastSize = touchSizeCm;
         }
-
 
         //finally, send off the events to touchScreenTargets.
         foreach (touch tch in touches)
