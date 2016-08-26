@@ -32,11 +32,6 @@ namespace hypercube
         public int maxAllowedFailure = 3;
         public bool debug = false;
 
-        private bool _useFrontScreen = true;
-        public bool useFrontScreen { get { return _useFrontScreen; } set { if (frontScreen != null) frontScreen.serial.enabled = value; _useFrontScreen = value; } }
-        private bool _useBackScreen = false;
-        public bool useBackScreen { get { return _useBackScreen; } set { if (backScreen != null) backScreen.serial.enabled = value; _useBackScreen = value; } }
-
         const int maxTouchesPerScreen = 9;
 
         public static touchScreenInputManager frontScreen = null;  //the front touchscreen
@@ -92,6 +87,12 @@ namespace hypercube
         }
 
 #if HYPERCUBE_INPUT
+
+        private bool _useFrontScreen = true;
+        public bool useFrontScreen { get { return _useFrontScreen; } set { if (frontScreen != null) frontScreen.serial.enabled = value; _useFrontScreen = value; } }
+        private bool _useBackScreen = false;
+        public bool useBackScreen { get { return _useBackScreen; } set { if (backScreen != null) backScreen.serial.enabled = value; _useBackScreen = value; } }
+
 
         public static void _processTouchScreenEvent(touch t)
         {

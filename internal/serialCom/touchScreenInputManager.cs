@@ -16,13 +16,16 @@ public class touchScreenInputManager  : streamedInputManager
     public Vector2 averageDiff { get; private set; } //0-1
     public Vector2 averageDist { get; private set; } //in centimeters
 
-    float lastTouchAngle = 0f; //used to calculate twist, this is the angle between the two farthest touches in the last frame
+
     public float twist { get; private set; }
     public float pinch { get; private set; }//0-1
     public float touchSize { get; private set; } //0-1
     public float touchSizeCm { get; private set; } //the ave distance between the farthest 2 touches in 1 axis, in centimeters
-    private float lastSize = 0f; //0-1
+    
 
+#if HYPERCUBE_INPUT
+    private float lastSize = 0f; //0-1
+    float lastTouchAngle = 0f; //used to calculate twist, this is the angle between the two farthest touches in the last frame
     public Vector3 getAverageTouchWorldPos(hypercubeCamera c) { return c.transform.TransformPoint(getAverageTouchLocalPos()); }
     public Vector3 getAverageTouchLocalPos()
     {
@@ -32,8 +35,6 @@ public class touchScreenInputManager  : streamedInputManager
             return new Vector3((1f - averagePos.x) + .5f, averagePos.y + .5f, .5f);
     }
 
-
-#if HYPERCUBE_INPUT
   public readonly string deviceName;
 
     //is this the front touch screen?
