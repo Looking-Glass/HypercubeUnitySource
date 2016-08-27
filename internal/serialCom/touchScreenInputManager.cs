@@ -70,8 +70,8 @@ public class touchScreenInputManager  : streamedInputManager
     int pixelOffsetX = 0; //the difference between the physical centers of the touchscreen and projection, in touchscreen pixels.
     int pixelOffsetY = 0;  
 
-    float projectionAspectX = 1f; //screenSizeX / touchScreenSizeX
-    float projectionAspectY = 1f;
+    float touchScreenAspectX = 1f; //screenSizeX / touchScreenSizeX
+    float touchScreenAspectY = 1f;
 
     static readonly byte[] emptyByte = new byte[] { 0 };
 
@@ -111,8 +111,8 @@ public class touchScreenInputManager  : streamedInputManager
             !d.hasKey("projectionCentimeterWidth") ||
             !d.hasKey("projectionCentimeterHeight") ||
             !d.hasKey("projectionCentimeterDepth") ||
-            !d.hasKey("projectionAspectX") ||
-            !d.hasKey("projectionAspectY") ||
+            !d.hasKey("touchScreenAspectX") ||
+            !d.hasKey("touchScreenAspectY") ||
             !d.hasKey("touchScreenResXOffset") ||
             !d.hasKey("touchScreenResYOffset")  //this one is necessary to keep the hypercube aspect ratio
             )
@@ -126,16 +126,19 @@ public class touchScreenInputManager  : streamedInputManager
         pixelOffsetX = d.getValueAsInt("touchScreenResXOffset", pixelOffsetX);
         pixelOffsetY = d.getValueAsInt("touchScreenResYOffset", pixelOffsetY);
 
-        projectionAspectX = d.getValueAsFloat("projectionAspectX", 1f); //   projectionWidth / touchScreenWidth;
-        projectionAspectY = d.getValueAsFloat("projectionAspectY", 1f);
+        touchScreenAspectX = d.getValueAsFloat("touchScreenAspectX", 1f); //   projectionWidth / touchScreenWidth;
+        touchScreenAspectY = d.getValueAsFloat("touchScreenAspectY", 1f);
 
-        touchScreenWidth = projectionWidth * (1/projectionAspectX);
-        touchScreenHeight = projectionHeight * (1/projectionAspectY);
+        touchScreenWidth = projectionWidth * touchScreenAspectX;
+        touchScreenHeight = projectionHeight * touchScreenAspectY;
 
     }
 
+
+
     public override void update(bool debug)
     {
+        
         string data = serial.ReadSerialMessage();
         while (data != null)
         {
@@ -177,7 +180,6 @@ public class touchScreenInputManager  : streamedInputManager
          *  
          * */
 
-
         if (dataChunk == emptyByte)
             return;
 
@@ -192,14 +194,19 @@ public class touchScreenInputManager  : streamedInputManager
             interfaces[i].active = false;
         }     
 
+
         float x = 0;
         float y = 0;
+        uint iX = 0;
+        uint iY = 0;
 
         for (int i = 1; i < dataChunk.Length; i= i + 5) //start at 1 and jump 5 each time.
         {
             int id = dataChunk[i];
-            x = (float)System.BitConverter.ToUInt16(dataChunk, i + 1);
-            y = (float)System.BitConverter.ToUInt16(dataChunk, i + 3);
+            iX = System.BitConverter.ToUInt16(dataChunk, i + 1);
+            iY = System.BitConverter.ToUInt16(dataChunk, i + 3);
+            x = (float)iX;
+            y = (float)iY;
 
             //sometimes the hardware sends us funky data.
             //if the stats are funky, throw it out.
@@ -234,8 +241,11 @@ public class touchScreenInputManager  : streamedInputManager
        
             interfaces[touchIdMap[id]].active = true;
 
-            interfaces[touchIdMap[id]].normalizedPos.x =  projectionAspectX * ((x + pixelOffsetX) / screenResX) ; //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
-            interfaces[touchIdMap[id]].normalizedPos.y = projectionAspectY * ((y + pixelOffsetY) / screenResY);
+            interfaces[touchIdMap[id]].rawTouchScreenX = (int)iX;
+            interfaces[touchIdMap[id]].rawTouchScreenY = (int)iY;
+
+            interfaces[touchIdMap[id]].normalizedPos.x =  touchScreenAspectX * ((x + pixelOffsetX) / screenResX) ; //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
+            interfaces[touchIdMap[id]].normalizedPos.y = touchScreenAspectY * ((y + pixelOffsetY) / screenResY);
 
             interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;

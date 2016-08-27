@@ -94,6 +94,16 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void OnDisable()
     {
+        disconnect();
+    }
+
+    void OnDestroy()
+    {
+        disconnect();
+    }
+
+    void disconnect()
+    {
         // The serialThread reference should never be null at this point,
         // unless an Exception happened in the OnEnable(), in which case I've
         // no idea what face Unity will make.

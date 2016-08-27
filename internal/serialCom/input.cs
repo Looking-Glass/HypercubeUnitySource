@@ -23,6 +23,8 @@ namespace hypercube
             DontDestroyOnLoad(this.gameObject);
             //end singleton
 
+            frontScreen = backScreen = null;
+
             setupSerialComs();
         }
       
@@ -34,8 +36,8 @@ namespace hypercube
 
         const int maxTouchesPerScreen = 9;
 
-        public static touchScreenInputManager frontScreen = null;  //the front touchscreen
-        public static touchScreenInputManager backScreen = null;  //the back touchscreen
+        public static touchScreenInputManager frontScreen { get; private set; }  //the front touchscreen
+        public static touchScreenInputManager backScreen {get; private set; } //the back touchscreen
 
         static HashSet<touchscreenTarget> eventTargets = new HashSet<touchscreenTarget>();
         public static void _setTouchScreenTarget(touchscreenTarget t, bool addRemove)

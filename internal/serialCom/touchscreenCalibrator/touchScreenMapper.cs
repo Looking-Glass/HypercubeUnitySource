@@ -73,7 +73,12 @@ public class touchScreenMapper : touchscreenTarget {
         if (stage == calibrationStage.STEP_save)
         {
             if (hypercube.input.frontScreen.touchCount > 0)
+            {
+                hypercube.touchInterface i = new hypercube.touchInterface();
+                hypercube.input.frontScreen.touches[0]._getInterface(ref i);
+                outputText.text = hypercube.input.frontScreen.touches[0].id + ":  " + hypercube.input.frontScreen.touches[0].posX + " - " + hypercube.input.frontScreen.touches[0].posY + "\n" + i.rawTouchScreenX + "  " + i.rawTouchScreenY;
                 circle.transform.position = hypercube.input.frontScreen.touches[0].getWorldPos(cam);
+            }
         }	
 	}
 
@@ -100,7 +105,7 @@ public class touchScreenMapper : touchscreenTarget {
             guiCanvas.SetActive(false);
             arrow.SetActive(false);
             circle.SetActive(false);
-            outputText.text = "To calibrate the touch screen ensure that your Volume is calibrated first.\nIt should not have any distortions.\nIf it needs calibration, do that first.\nIf your Volume is nice and rectangular, press ENTER to continue.";
+            outputText.text = "To configure the touch screen, Volume must be calibrated first.\nIt should not have any distortions.\nIf it needs calibration, do that first.\nIf Volume is nice and rectangular, press ENTER to continue.";
         }
         else if (stage == calibrationStage.STEP_settings)
         {
@@ -184,18 +189,18 @@ public class touchScreenMapper : touchscreenTarget {
         float resY = d.getValueAsFloat("touchScreenResY", 480f);
 
         //determine aspect ratios
-        float projectionSubRangeX = ((ULx - URx) + (LLx - LRx)) / 2f; //average the ranges to get our sub range that our projection takes up of the actual touchscreen
-        float projectionSubRangeY = ((ULy - LLy) + (URy - LRy)) / 2f;
-        d.setValue("projectionAspectX", projectionSubRangeX / resX); //   projectionWidth / touchScreenWidth;
-        d.setValue("projectionAspectY", projectionSubRangeY / resY);
+        float projectionSubRangeX = ((URx - ULx) + (LRx - LLx)) / 2f; //average the ranges to get our sub range that our projection takes up of the actual touchscreen
+        float projectionSubRangeY = ((LLy - ULy) + (LRy - URy)) / 2f;
+        d.setValue("touchScreenAspectX", resX / projectionSubRangeX); //   projectionWidth / touchScreenWidth;
+        d.setValue("touchScreenAspectY", resY / projectionSubRangeY);
 
         //determine offset
         float medianX = (float)(ULx + URx + LLx + LRx) / 4f;
         float medianY = (float)(ULy + URy + LLy + LRy) / 4f;
         float screenMedianX = resX / 2f;
         float screenMedianY = resY / 2f;
-        d.setValue("touchScreenResXOffset", screenMedianX - medianX);
-        d.setValue("touchScreenResYOffset", screenMedianY - medianY);
+        d.setValue("touchScreenResXOffset", medianX - screenMedianX);
+        d.setValue("touchScreenResYOffset", medianY - screenMedianY);
 
         hypercube.input.frontScreen.setTouchScreenDims(d);
     }
