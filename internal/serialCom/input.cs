@@ -116,7 +116,7 @@ namespace hypercube
 
             for (int i = 0; i < names.Length; i++)
             {
-                if (names[i].StartsWith("COM"))
+                if (names[i].StartsWith("COM") || names[i].Contains("usbmodem"))
                 {
                     frontComName = names[i];
                 }
@@ -149,15 +149,15 @@ namespace hypercube
             // Are we on Unix?
             if (p == 4 || p == 128 || p == 6)
             {
-                string[] ttys = System.IO.Directory.GetFiles("/dev/", "tty.*");  //In the GetPortNames function, it looks for ports that begin with "/dev/ttyS" or "/dev/ttyUSB" . However, OS X ports begin with "/dev/tty.".
+                string[] ttys = System.IO.Directory.GetFiles("/dev/", "tty.");  //In the GetPortNames function, it looks for ports that begin with "/dev/ttyS" or "/dev/ttyUSB" . However, OS X ports begin with "/dev/tty.".
                 foreach (string dev in ttys)
                 {
-                    if (dev.StartsWith("/dev/tty.*"))
+                    if (dev.StartsWith("/dev/tty."))
                         serial_ports.Add(dev);
                 }
             }
 
-            return serial_ports;
+            return serial_ports.ToArray();
 #endif
         }
        

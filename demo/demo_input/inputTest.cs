@@ -11,6 +11,9 @@ public class inputTest : MonoBehaviour
 
 	void Update () 
     {
+        if (hypercube.input.frontScreen == null) //Volume not connected via USB
+            return;  
+
         for (uint i = 0; i < fingerItems.Length; i++)
         {
             if (i < hypercube.input.frontScreen.touches.Length)
