@@ -8,13 +8,19 @@ using System.Collections.Generic;
 
 namespace hypercube
 {
-
-
     [ExecuteInEditMode]
     [RequireComponent(typeof(hypercube.calibrator))]
     [RequireComponent(typeof(dataFileDict))]
     public class castMesh : MonoBehaviour
     {
+        public string volumeModelName { get; private set; }
+        public float volumeHardwareVer { get; private set; }
+
+        //stored aspect ratio multipliers, each with the corresponding axis set to 0
+        public Vector3 aspectX { get; private set; }
+        public Vector3 aspectY { get; private set; }
+        public Vector3 aspectZ { get; private set; }
+
         public int slices = 12;
         public int getSliceCount() { return slices; } //a safe accessor, since its accessed constantly.
 
@@ -141,6 +147,9 @@ namespace hypercube
             if (!d.load()) //we failed to load the file!  ...use backup defaults.
                 Debug.LogWarning("Could not read calibration data from Volume!\nIs Volume connected via USB? Using defaults..."); //This will never be as good as using the config stored with the hardware and the view will have distortions in Volume's display.
 
+            volumeModelName = d.getValue("volumeModelName", "UNKNOWN!");
+            volumeHardwareVer = d.getValueAsFloat("volumeHardwareVersion", -9999f);
+
             slices = d.getValueAsInt("sliceCount", slices);
             sliceOffsetX = d.getValueAsFloat("offsetX", sliceOffsetX);
             sliceOffsetY = d.getValueAsFloat("offsetY", sliceOffsetY);
@@ -156,6 +165,14 @@ namespace hypercube
   
             //setup input to take into account touchscreen hardware config
             input.init(d);
+
+            //setup aspect ratios, for constraining cube scales
+            float xCm = d.getValueAsFloat("projectionCentimeterWidth", 10f);
+            float yCm = d.getValueAsFloat("projectionCentimeterHeight", 5f);
+            float zCm = d.getValueAsFloat("projectionCentimeterDepth", 7f);
+            aspectX = new Vector3(1f, yCm/xCm, zCm/xCm);
+            aspectY = new Vector3(xCm/yCm, 1f, zCm / yCm);
+            aspectZ = new Vector3(xCm/zCm, yCm / zCm, 1f);
         }
 
         //tweaks to the cube design to offset physical distortions
@@ -407,18 +424,8 @@ namespace hypercube
             sliceWidth -= 1f;
             updateMesh();
         }
-        public void setPreset1()
-        {
-            sliceHeight = 120f;
-            updateMesh();
-        }
-        public void setPreset2()
-        {
-            sliceHeight = 68f;
-            updateMesh();
-        }
 
-        public float getAspectRatio()
+        public float getScreenAspectRatio()
         {
             if (usingCustomDimensions && customWidth > 2 && customHeight > 2)
                 return customWidth / customHeight;
@@ -446,7 +453,7 @@ namespace hypercube
                 //          outWidth = customWidth; //used in horizontal slicer
             }
 
-            float aspectRatio = getAspectRatio();
+            float aspectRatio = getScreenAspectRatio();
             sliceMesh.transform.localScale = new Vector3(sliceWidth * xPixel * aspectRatio, (float)slices * sliceHeight * 2f * yPixel, 1f); //the *2 is because the view is 2 units tall
 
 

@@ -21,6 +21,8 @@ public class touchScreenInputManager  : streamedInputManager
     public float pinch { get; private set; }//0-1
     public float touchSize { get; private set; } //0-1
     public float touchSizeCm { get; private set; } //the ave distance between the farthest 2 touches in 1 axis, in centimeters
+
+    public float firmwareVersion { get; private set; }
     
 
 #if HYPERCUBE_INPUT
@@ -78,6 +80,7 @@ public class touchScreenInputManager  : streamedInputManager
 
     public touchScreenInputManager(string _deviceName, SerialController _serial, bool _isFrontTouchScreen) : base(_serial, new byte[]{255,255}, 1024)
     {
+        firmwareVersion = -9999f;
         touches = new touch[0];
         touchCount = 0;
         pinch = 1f;
@@ -147,6 +150,12 @@ public class touchScreenInputManager  : streamedInputManager
 
             if (serial.readDataAsString)
             {
+                if (data.StartsWith("firmwareVersion:"))
+                {
+                    string[] toks = data.Split(':');
+                    firmwareVersion = dataFileDict.stringToFloat(toks[1], firmwareVersion);
+                }
+
                 if (data == "init:done" || data.Contains("init:done"))
                 {
                     serial.readDataAsString = false; //start capturing data

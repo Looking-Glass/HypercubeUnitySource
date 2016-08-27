@@ -4,17 +4,15 @@ using System.Collections.Generic;
 
 
 
-
-    public enum softSliceMode
-    {
-        HARD = 0,
-        SOFT,
-        SOFT_CUSTOM
-    }
-
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
     {
+        public enum softSliceMode
+        {
+            HARD = 0,
+            SOFT,
+            SOFT_CUSTOM
+        }
         [Tooltip("HARD = no slice blending (also no blackPoint modification)\nSOFT = autocalculate softness based on the overlap\nSOFT_CUSTOM = manage your own overlap and softness")]
         public softSliceMode slicing;
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
@@ -22,6 +20,16 @@ using System.Collections.Generic;
         [Tooltip("Softness is calculated for you to blend only overlapping areas. It can be set manually if Slicing is set to SOFT_CUSTOM.")]
         [Range(0.001f, .5f)]
         public float softness = .5f;
+
+        public enum scaleConstraintType
+        {
+            NONE = 0,
+            X_RELATIVE,
+            Y_RELATIVE,
+            Z_RELATIVE
+        }
+        [Tooltip("This will ensure your Hypercube scale always matches the aspect ratios inside Volume 1:1.\nChoose which axis to leave free. The others will be constrained to match the value of that axis.")]
+        public scaleConstraintType scaleConstraint = scaleConstraintType.NONE;
 
         [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.")]
         public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
@@ -36,7 +44,6 @@ using System.Collections.Generic;
         public hypercube.castMesh castMeshPrefab;
         public hypercube.castMesh localCastMesh = null;
        
-
         //store our camera values here.
         float[] nearValues;
         float[] farValues;
@@ -80,6 +87,16 @@ using System.Collections.Generic;
 
             if (!localCastMesh)
                 localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
+
+            //maintain scale aspect ratio if desired.
+            if (scaleConstraint == scaleConstraintType.NONE) 
+            { }
+            else if (scaleConstraint == scaleConstraintType.X_RELATIVE)
+                transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x * localCastMesh.aspectX.y, transform.localScale.x * localCastMesh.aspectX.z);
+            else if (scaleConstraint == scaleConstraintType.Y_RELATIVE)
+                transform.localScale = new Vector3(transform.localScale.y * localCastMesh.aspectY.x, transform.localScale.y, transform.localScale.y * localCastMesh.aspectY.z);
+            else if (scaleConstraint == scaleConstraintType.Z_RELATIVE)
+                transform.localScale = new Vector3(transform.localScale.z * localCastMesh.aspectZ.x, transform.localScale.z * localCastMesh.aspectZ.y, transform.localScale.z);
 
             if (transform.hasChanged)
             {

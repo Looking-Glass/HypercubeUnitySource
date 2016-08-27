@@ -10,6 +10,8 @@ public class touchScreenMapper : touchscreenTarget {
     public hypercubeCamera cam;
 
     public GameObject guiCanvas;
+    public UnityEngine.UI.InputField volName;
+    public UnityEngine.UI.InputField volVer;
     public UnityEngine.UI.InputField resXInput;
     public UnityEngine.UI.InputField resYInput;
     public UnityEngine.UI.InputField sizeWInput;
@@ -93,6 +95,9 @@ public class touchScreenMapper : touchscreenTarget {
             sizeWInput.text = d.getValue("projectionCentimeterWidth", "20");
             sizeHInput.text = d.getValue("projectionCentimeterHeight", "12");
             sizeDInput.text = d.getValue("projectionCentimeterDepth", "20");
+
+            volName.text = d.getValue("volumeModelName", "UNKNOWN!");
+            volVer.text = d.getValue("volumeHardwareVersion", "-9999");
         }
  
         stage++;
@@ -106,7 +111,7 @@ public class touchScreenMapper : touchscreenTarget {
             guiCanvas.SetActive(false);
             arrow.SetActive(false);
             circle.SetActive(false);
-            outputText.text = "To configure the touch screen, Volume must be calibrated first.\nIt should not have any distortions.\nIf it needs calibration, do that first.\nIf Volume is nice and rectangular, press ENTER to continue.";
+            outputText.text = "To configure the touch screen, Volume must be calibrated first.\nIt should not have any distortions.\nIf it needs calibration, do that first.\n\nIf Volume is nice and rectangular, press <color=green>ENTER</color> to continue.";
         }
         else if (stage == calibrationStage.STEP_settings)
         {
@@ -204,6 +209,10 @@ public class touchScreenMapper : touchscreenTarget {
         d.setValue("touchScreenMapBottom", bottom);
         d.setValue("touchScreenMapLeft", left);
         d.setValue("touchScreenMapRight", right);
+
+        //incidental
+        d.setValue("volumeModelName", volName.text);
+        d.setValue("volumeHardwareVersion", volVer.text);
 
         hypercube.input.frontScreen.setTouchScreenDims(d);
     }
