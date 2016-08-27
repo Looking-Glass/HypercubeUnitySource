@@ -186,15 +186,12 @@ namespace hypercube
         }
         public Vector2 mapToRange(float top, float right, float bottom, float left)
         {
-            Vector2 position = new Vector2();
-            position.x = map(_posX, 0, 1.0f, left, right);
-            position.y = map(_posY, 0.0f, 1.0f, bottom, top);
-            return position;
+            float outX;
+            float outY;
+            touchScreenInputManager.mapToRange(_posX, _posY, top, right, bottom, left, out outX, out outY);
+            return new Vector2(outX, outY);
         }
-        static float map(float s, float a1, float a2, float b1, float b2)
-        {
-            return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-        }
+
 
     }
 

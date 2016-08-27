@@ -74,9 +74,10 @@ public class touchScreenMapper : touchscreenTarget {
         {
             if (hypercube.input.frontScreen.touchCount > 0)
             {
-                hypercube.touchInterface i = new hypercube.touchInterface();
-                hypercube.input.frontScreen.touches[0]._getInterface(ref i);
-                outputText.text = hypercube.input.frontScreen.touches[0].id + ":  " + hypercube.input.frontScreen.touches[0].posX + " - " + hypercube.input.frontScreen.touches[0].posY + "\n" + i.rawTouchScreenX + "  " + i.rawTouchScreenY;
+                //debug info
+                //hypercube.touchInterface i = new hypercube.touchInterface();
+                //hypercube.input.frontScreen.touches[0]._getInterface(ref i);
+                //outputText.text = hypercube.input.frontScreen.touches[0].id + ":  " + hypercube.input.frontScreen.touches[0].posX + " - " + hypercube.input.frontScreen.touches[0].posY + "\n" + i.rawTouchScreenX + "  " + i.rawTouchScreenY;
                 circle.transform.position = hypercube.input.frontScreen.touches[0].getWorldPos(cam);
             }
         }	
@@ -185,22 +186,24 @@ public class touchScreenMapper : touchscreenTarget {
         d.setValue("projectionCentimeterHeight", sizeHInput.text);
         d.setValue("projectionCentimeterDepth", sizeDInput.text);
 
+        //gather normalized limits
         float resX = d.getValueAsFloat("touchScreenResX", 800f);
         float resY = d.getValueAsFloat("touchScreenResY", 480f);
 
-        //determine aspect ratios
-        float projectionSubRangeX = ((URx - ULx) + (LRx - LLx)) / 2f; //average the ranges to get our sub range that our projection takes up of the actual touchscreen
-        float projectionSubRangeY = ((LLy - ULy) + (LRy - URy)) / 2f;
-        d.setValue("touchScreenAspectX", resX / projectionSubRangeX); //   projectionWidth / touchScreenWidth;
-        d.setValue("touchScreenAspectY", resY / projectionSubRangeY);
+        float top = (float)(ULy + URy) / 2f;//use averages.
+        float bottom = (float)(LLy + LRy) / 2f;
+        float left = (float)(ULx + LLx) / 2f;
+        float right = (float)(URx + LRx) / 2f;
 
-        //determine offset
-        float medianX = (float)(ULx + URx + LLx + LRx) / 4f;
-        float medianY = (float)(ULy + URy + LLy + LRy) / 4f;
-        float screenMedianX = resX / 2f;
-        float screenMedianY = resY / 2f;
-        d.setValue("touchScreenResXOffset", medianX - screenMedianX);
-        d.setValue("touchScreenResYOffset", medianY - screenMedianY);
+        top /= resY; //normalize the raw averages
+        bottom /= resY;
+        left /= resX;
+        right /= resX;
+
+        d.setValue("touchScreenMapTop", top); 
+        d.setValue("touchScreenMapBottom", bottom);
+        d.setValue("touchScreenMapLeft", left);
+        d.setValue("touchScreenMapRight", right);
 
         hypercube.input.frontScreen.setTouchScreenDims(d);
     }
@@ -209,7 +212,7 @@ public class touchScreenMapper : touchscreenTarget {
     {
         dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
         d.save();
-        outputText.text = "\n\n\nSAVED!";
+        outputText.text = "\n\n\nSAVED!\n\nPress ESCAPE to exit.";
     }
     void quit()
     {

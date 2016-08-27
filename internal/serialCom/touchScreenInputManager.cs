@@ -66,12 +66,10 @@ public class touchScreenInputManager  : streamedInputManager
     float projectionDepth = 20f;
     float touchScreenWidth = 20f; // physical size of the touchscreen, in centimeters
     float touchScreenHeight = 12f;
-
-    int pixelOffsetX = 0; //the difference between the physical centers of the touchscreen and projection, in touchscreen pixels.
-    int pixelOffsetY = 0;  
-
-    float touchScreenAspectX = 1f; //screenSizeX / touchScreenSizeX
-    float touchScreenAspectY = 1f;
+    float topLimit = 0f;
+    float bottomLimit = 1f;
+    float leftLimit = 0f;
+    float rightLimit = 1f;
 
     static readonly byte[] emptyByte = new byte[] { 0 };
 
@@ -101,6 +99,8 @@ public class touchScreenInputManager  : streamedInputManager
         }
     }
 
+
+
     public void setTouchScreenDims(dataFileDict d)
     {
         if (d == null)
@@ -111,10 +111,10 @@ public class touchScreenInputManager  : streamedInputManager
             !d.hasKey("projectionCentimeterWidth") ||
             !d.hasKey("projectionCentimeterHeight") ||
             !d.hasKey("projectionCentimeterDepth") ||
-            !d.hasKey("touchScreenAspectX") ||
-            !d.hasKey("touchScreenAspectY") ||
-            !d.hasKey("touchScreenResXOffset") ||
-            !d.hasKey("touchScreenResYOffset")  //this one is necessary to keep the hypercube aspect ratio
+            !d.hasKey("touchScreenMapTop") ||
+            !d.hasKey("touchScreenMapBottom") ||
+            !d.hasKey("touchScreenMapLeft") ||
+            !d.hasKey("touchScreenMapRight")  //this one is necessary to keep the hypercube aspect ratio
             )
             Debug.LogWarning("Volume config file lacks touch screen hardware specs!"); //these must be manually entered, so we should warn if they are missing.
 
@@ -123,15 +123,14 @@ public class touchScreenInputManager  : streamedInputManager
         projectionWidth = d.getValueAsFloat("projectionCentimeterWidth", projectionWidth);
         projectionHeight = d.getValueAsFloat("projectionCentimeterHeight", projectionHeight);
         projectionDepth = d.getValueAsFloat("projectionCentimeterDepth", projectionDepth);
-        pixelOffsetX = d.getValueAsInt("touchScreenResXOffset", pixelOffsetX);
-        pixelOffsetY = d.getValueAsInt("touchScreenResYOffset", pixelOffsetY);
 
-        touchScreenAspectX = d.getValueAsFloat("touchScreenAspectX", 1f); //   projectionWidth / touchScreenWidth;
-        touchScreenAspectY = d.getValueAsFloat("touchScreenAspectY", 1f);
+        topLimit = d.getValueAsFloat("touchScreenMapTop", topLimit); //use averages.
+        bottomLimit = d.getValueAsFloat("touchScreenMapBottom", bottomLimit);
+        leftLimit = d.getValueAsFloat("touchScreenMapLeft", leftLimit);
+        rightLimit = d.getValueAsFloat("touchScreenMapRight", rightLimit);
 
-        touchScreenWidth = projectionWidth * touchScreenAspectX;
-        touchScreenHeight = projectionHeight * touchScreenAspectY;
-
+        touchScreenWidth = projectionWidth * (1f/(rightLimit - leftLimit));
+        touchScreenHeight = projectionHeight * (1f/(topLimit - bottomLimit));
     }
 
 
@@ -244,8 +243,9 @@ public class touchScreenInputManager  : streamedInputManager
             interfaces[touchIdMap[id]].rawTouchScreenX = (int)iX;
             interfaces[touchIdMap[id]].rawTouchScreenY = (int)iY;
 
-            interfaces[touchIdMap[id]].normalizedPos.x =  touchScreenAspectX * ((x + pixelOffsetX) / screenResX) ; //mapping if the projection is centered with the touchscreen (including the * touchAspectX)
-            interfaces[touchIdMap[id]].normalizedPos.y = touchScreenAspectY * ((y + pixelOffsetY) / screenResY);
+            //set the normalized x/y to the touchscreen limits
+            mapToRange(x/screenResX, y/screenResY, topLimit, rightLimit, bottomLimit, leftLimit, 
+                out interfaces[touchIdMap[id]].normalizedPos.x, out interfaces[touchIdMap[id]].normalizedPos.y); 
 
             interfaces[touchIdMap[id]].physicalPos.x = (x / screenResX) * touchScreenWidth;
             interfaces[touchIdMap[id]].physicalPos.y = (y / screenResY) * touchScreenHeight;
@@ -390,6 +390,16 @@ public class touchScreenInputManager  : streamedInputManager
     {      
         return Mathf.Atan2(v1.x - v2.x, v1.y - v2.y) * Mathf.Rad2Deg;
     }
+
+     public static void mapToRange(float x, float y, float top, float right, float bottom, float left, out float outX, out float outY)
+     {
+         outX = map(x, left, right, 0f, 1.0f);
+         outY = map(y, bottom, top, 0f, 1.0f);
+     }
+     static float map(float s, float a1, float a2, float b1, float b2)
+     {
+         return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+     }
 
 #endif
 }
