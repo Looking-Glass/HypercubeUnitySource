@@ -394,8 +394,9 @@ public class touchScreenInputManager  : streamedInputManager
             input._processTouchScreenEvent(touchPool[i]);
         }
     }
+#endif
 
-     static float angleBetweenPoints(Vector2 v1, Vector2 v2)
+    static float angleBetweenPoints(Vector2 v1, Vector2 v2)
     {      
         return Mathf.Atan2(v1.x - v2.x, v1.y - v2.y) * Mathf.Rad2Deg;
     }
@@ -410,7 +411,6 @@ public class touchScreenInputManager  : streamedInputManager
          return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
      }
 
-#endif
 }
 
 

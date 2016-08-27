@@ -50,6 +50,12 @@ public class touchScreenMapper : touchscreenTarget {
 	// Update is called once per frame
 	void Update () 
     {
+#if !HYPERCUBE_INPUT
+        outputText.text = "<color=red>Can't SET or SAVE! Hypercube input is not enabled!</color>";
+        Debug.LogWarning("Can't SET or SAVE! Hypercube input is not enabled!  ");
+        enabled = false;
+#else
+
         if (stage == calibrationStage.STEP_INVALID) //do this here to ensure that our datafiledict and all regular hypercube stuff has time to load
             goToNextStage();
 
@@ -83,6 +89,7 @@ public class touchScreenMapper : touchscreenTarget {
                 circle.transform.position = hypercube.input.frontScreen.touches[0].getWorldPos(cam);
             }
         }	
+#endif
 	}
 
     void goToNextStage()
@@ -183,6 +190,7 @@ public class touchScreenMapper : touchscreenTarget {
 
     void set()
     {
+
         //save the settings...
         dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
         d.setValue("touchScreenResX", resXInput.text);
@@ -214,7 +222,9 @@ public class touchScreenMapper : touchscreenTarget {
         d.setValue("volumeModelName", volName.text);
         d.setValue("volumeHardwareVersion", volVer.text);
 
+#if HYPERCUBE_INPUT
         hypercube.input.frontScreen.setTouchScreenDims(d);
+#endif
     }
 
     void save()
