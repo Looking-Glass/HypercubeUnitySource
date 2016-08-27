@@ -12,9 +12,9 @@ public class touchScreenInputManager  : streamedInputManager
     public uint touchCount { get; private set; }
 
     //external interface..
-    public Vector2 averagePos { get; private set; } //0-1
-    public Vector2 averageDiff { get; private set; } //0-1
-    public Vector2 averageDist { get; private set; } //in centimeters
+    public Vector2 averagePos { get; private set; } //The 0-1 normalized average position of all touches
+    public Vector2 averageDiff { get; private set; } //The normalized distance the touch moved 0-1
+    public Vector2 averageDist { get; private set; } //The distance the touch moved, in Centimeters
 
 
     public float twist { get; private set; }
