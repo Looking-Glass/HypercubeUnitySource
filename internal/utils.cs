@@ -13,7 +13,7 @@ namespace hypercube
             relativePathToConfig = relativePathToConfig.Replace('\\', Path.DirectorySeparatorChar);
             relativePathToConfig = relativePathToConfig.Replace('/', Path.DirectorySeparatorChar);
 
-            string[] drives = Directory.GetLogicalDrives();
+            string[] drives = System.Environment.GetLogicalDrives();
             foreach (string drive in drives)
             {
                 if (File.Exists(drive + relativePathToConfig))

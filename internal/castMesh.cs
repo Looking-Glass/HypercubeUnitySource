@@ -16,7 +16,7 @@ namespace hypercube
         public string volumeModelName { get; private set; }
         public float volumeHardwareVer { get; private set; }
 
-        //stored aspect ratio multipliers, each with the corresponding axis set to 0
+        //stored aspect ratio multipliers, each with the corresponding axis set to 1
         public Vector3 aspectX { get; private set; }
         public Vector3 aspectY { get; private set; }
         public Vector3 aspectZ { get; private set; }

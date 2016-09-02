@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class touchScreenMapper : touchscreenTarget {
+public class touchScreenMapper : hypercube.touchScreenTarget {
 
     public TextMesh outputText;
     public GameObject arrow;
@@ -159,6 +159,7 @@ public class touchScreenMapper : touchscreenTarget {
     {
         hypercube.touchInterface i = new hypercube.touchInterface();
         touch._getInterface(ref i);
+        outputText.text = i.rawTouchScreenX + "  " + i.rawTouchScreenY;
          if (stage == calibrationStage.STEP_touchCorner1)
         {
             ULx = i.rawTouchScreenX;
@@ -187,6 +188,7 @@ public class touchScreenMapper : touchscreenTarget {
 
          
     }
+
 
     void set()
     {

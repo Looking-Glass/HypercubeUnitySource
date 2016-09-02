@@ -205,11 +205,11 @@ Prefab:
       objectReference: {fileID: 1322974451}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: near clip plane
-      value: 0.91530186
+      value: 0.64071125
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: far clip plane
-      value: 1.2477249
+      value: 0.8734074
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_TargetTexture
@@ -221,15 +221,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.y
-      value: 0.6830611
+      value: 0.56921756
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: orthographic size
-      value: 0.34153056
+      value: 0.28460878
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.z
-      value: 1.1384351
+      value: 0.79690456
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: scaleConstraint
@@ -1027,43 +1027,43 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.39645162
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: -0.9542456
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 1.8947369
+      value: 2.5958948
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 3.7894738
+      value: 3.7052631
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: flipY
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: sliceWidth
-      value: 1080
+      value: 1479.66
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: sliceOffsetX
-      value: 0
+      value: 122.9
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: sliceOffsetY
-      value: 0
+      value: 13.04
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: sliceHeight
-      value: 108
+      value: 105.6
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: sliceGap
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_Materials.Array.data[0]

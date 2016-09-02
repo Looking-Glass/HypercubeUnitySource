@@ -39,8 +39,8 @@ namespace hypercube
         public static touchScreenInputManager frontScreen { get; private set; }  //the front touchscreen
         public static touchScreenInputManager backScreen {get; private set; } //the back touchscreen
 
-        static HashSet<touchscreenTarget> eventTargets = new HashSet<touchscreenTarget>();
-        public static void _setTouchScreenTarget(touchscreenTarget t, bool addRemove)
+        static HashSet<touchScreenTarget> eventTargets = new HashSet<touchScreenTarget>();
+        public static void _setTouchScreenTarget(touchScreenTarget t, bool addRemove)
         {
             if (addRemove)
                 eventTargets.Add(t);
@@ -88,17 +88,17 @@ namespace hypercube
 
             if (t.state == touch.activationState.TOUCHDOWN)
             {
-                    foreach(touchscreenTarget target in eventTargets)
+                    foreach(touchScreenTarget target in eventTargets)
                         target.onTouchDown(t);
             }
             else if (t.state == touch.activationState.ACTIVE)
             {
-                foreach (touchscreenTarget target in eventTargets)
+                foreach (touchScreenTarget target in eventTargets)
                     target.onTouchMoved(t);
             }
             else if (t.state == touch.activationState.TOUCHUP)
             {
-                foreach (touchscreenTarget target in eventTargets)
+                foreach (touchScreenTarget target in eventTargets)
                     target.onTouchUp(t);
             }               
         }
