@@ -8,7 +8,7 @@ namespace hypercube
     {
         //this method is used to figure out which drive is the usb flash drive attached to Volume, and then returns that path so that our settings can load normally from there.
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        public static string getConfigPath(string relativePathToConfig)
+        public static bool getConfigPath(string relativePathToConfig, out string fullPath)
         {
             relativePathToConfig = relativePathToConfig.Replace('\\', Path.DirectorySeparatorChar);
             relativePathToConfig = relativePathToConfig.Replace('/', Path.DirectorySeparatorChar);
@@ -18,14 +18,16 @@ namespace hypercube
             {
                 if (File.Exists(drive + relativePathToConfig))
                 {
-                    return drive + relativePathToConfig;
+                    fullPath = drive + relativePathToConfig;
+                    return true;
                 }
             }
             Debug.LogWarning("Could not locate Volume calibration file!\nIs Volume connected via USB?");
-            return Path.GetFileName(relativePathToConfig); //return the base name of the file only.
+            fullPath = Path.GetFileName(relativePathToConfig); //return the base name of the file only.
+            return false;
         }
 #else  //osx,  TODO: linux untested in standalone
-        public static string getConfigPath(string relativePathToConfig)        
+        public static bool getConfigPath(string relativePathToConfig, out string fullPath)        
         {                        
             string[] directories = Directory.GetDirectories("/Volumes/");
             foreach (string d in directories)
@@ -37,10 +39,12 @@ namespace hypercube
                 FileInfo f = new FileInfo (fixedPath);
                 if (f.Exists)                
                 {                    
-                    return f.FullName;                
+                    fullPath = f.FullName;      
+                    return true;  
                 }            
             }            
-            return Path.GetFileName(relativePathToConfig); //return the base name of the file only.        
+            fullPath = Path.GetFileName(relativePathToConfig); //return the base name of the file only.        
+            return false;
         }
 #endif
 

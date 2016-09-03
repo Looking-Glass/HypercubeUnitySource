@@ -1,31 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &125916
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 451902}
-  - 114: {fileID: 11400782}
-  - 114: {fileID: 11471294}
-  - 114: {fileID: 11464750}
-  - 114: {fileID: 11491406}
-  - 114: {fileID: 11465920}
-  - 114: {fileID: 11433372}
-  - 114: {fileID: 11411278}
-  - 114: {fileID: 11489406}
-  - 114: {fileID: 11412860}
-  - 114: {fileID: 11433310}
-  - 114: {fileID: 11468286}
-  m_Layer: 9
-  m_Name: adjustmentControls
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
 --- !u!1 &148522
 GameObject:
   m_ObjectHideFlags: 0
@@ -36,8 +10,6 @@ GameObject:
   - 4: {fileID: 466588}
   - 20: {fileID: 2009672}
   - 114: {fileID: 11467166}
-  - 114: {fileID: 11493886}
-  - 114: {fileID: 11493960}
   - 114: {fileID: 11482954}
   m_Layer: 9
   m_Name: HypercubeCastMesh
@@ -63,18 +35,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &451902
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 466588}
-  m_RootOrder: 0
 --- !u!4 &465140
 Transform:
   m_ObjectHideFlags: 1
@@ -82,11 +42,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19203125, y: -0.9456667, z: 0.24}
-  m_LocalScale: {x: 2.8875, y: 4.4, z: 1}
+  m_LocalPosition: {x: 0.375841, y: -0.9549568, z: 0.24}
+  m_LocalScale: {x: 2.3937824, y: 3.6476684, z: 1}
   m_Children: []
   m_Father: {fileID: 466588}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!4 &466588
 Transform:
   m_ObjectHideFlags: 1
@@ -97,7 +57,6 @@ Transform:
   m_LocalPosition: {x: 50, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 451902}
   - {fileID: 465140}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -177,202 +136,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_Mesh: {fileID: 4300002, guid: c8d501f98b45cbd41a06ea219da9acb6, type: 3}
---- !u!114 &11400782
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 102
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: flip
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11411278
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 113
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: sliceHeightDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11412860
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 122
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: widthDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11433310
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 49
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: setPreset1
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11433372
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 101
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: sliceHeightUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11464750
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 115
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: nudgeDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11465920
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 100
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: nudgeRight
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &11467166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -429,64 +192,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
   preview: {fileID: 0}
+  calibrator: {fileID: 0}
   casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
   relativeSettingsPath: volumeCalibrationData\hardwareCalibration.txt
---- !u!114 &11468286
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 50
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: setPreset2
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11471294
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 119
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: nudgeUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &11482954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -498,118 +206,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ff99fc26316fc47ac9b7fd9f166420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: hardwareCalibration.txt
+  fileName: 
   readOnly: 0
   loadOnAwake: 0
---- !u!114 &11489406
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 120
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: widthUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11491406
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 125916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede4e0225a0b87f4a82630c28a22f1b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 97
-  eventTriggered:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11467166}
-        m_MethodName: nudgeLeft
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &11493886
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d517016184638f4396a5a0f6d06e333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 8
-  toggle: {fileID: 125916}
-  toggleUp: {fileID: 125916}
---- !u!114 &11493960
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 148522}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54a8df1d96bede848a06a5e5055f13b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  current: 
-  canvas: {fileID: 11467166}
-  brightness: 3
-  interval: 1
-  relativeTo: 1
-  nextSlice: 114
-  prevSlice: 102
-  highlightUL: 122
-  highlightUR: 99
-  highlightLL: 113
-  highlightLR: 101
-  highlightM: 115
-  up: 120
-  down: 119
-  left: 97
-  right: 100
-  skewXUp: 276
-  skewXDn: 275
-  skewYUp: 273
-  skewYDn: 274
-  bowXUp: 108
-  bowXDn: 111
-  bowYUp: 107
-  bowYDn: 59
-  calibrationCorner: {fileID: 2800000, guid: 0f31d70bfbd59404794c51f8bc5467ec, type: 3}
-  calibrationCenter: {fileID: 2800000, guid: 13af63765e4e8744ea5303d7181eb438, type: 3}
-  selectedMat: {fileID: 2100000, guid: 0d696eb534f2c164b952580b3df414d0, type: 2}
-  offMat: {fileID: 2100000, guid: 99b45b85227481b4c8b92e0cf48403e1, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

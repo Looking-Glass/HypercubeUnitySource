@@ -15,7 +15,7 @@ public class casterWindowPrefs : EditorWindow
     [MenuItem("Hypercube/Caster Window Prefs", false, 1)]  //1 is prio
     public static void openCubeWindowPrefs()
     {
-        EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Volume Prefs");
+        EditorWindow.GetWindow(typeof(casterWindowPrefs), false, "Caster Prefs");
     }
 
 
@@ -27,9 +27,9 @@ public class casterWindowPrefs : EditorWindow
         EditorGUILayout.HelpBox("Use this tool to align a Volume Caster Window to the Volume display.\n\n" +
         	
 		#if UNITY_STANDALONE_OSX 
-		"TIP:\nIf it ever blocks important screen elements, the window can be closed with ⌘E", MessageType.Info);
-		#else
-		"TIP:\nIf it ever blocks important screen elements, the window can be closed with Ctrl+E", MessageType.Info);
+            "TO OPEN THE WINDOW:\nmouse over Volume's display, then ⌘E", MessageType.Info);
+#else
+            "Toggle the Caster window with Ctrl+E", MessageType.Info);
 		#endif
 
 
@@ -56,22 +56,20 @@ public class casterWindowPrefs : EditorWindow
 
 
 
-		#if UNITY_EDITOR_WIN
+#if UNITY_EDITOR_WIN
 		EditorGUILayout.HelpBox("TIPS:\nUnity prefers if the cube monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
-		#elif UNITY_STANDALONE_OSX
-
-		EditorGUILayout.HelpBox("TO OPEN THE WINDOW:\nmouse over the desired display, then ⌘E", MessageType.Info);
 #endif
 
-        if (GUILayout.Button("- SAVE -"))
+        //if (GUILayout.Button("- SAVE -"))
+        if (GUI.changed)
         {
             EditorPrefs.SetInt("V_windowOffsetX", posX);
             EditorPrefs.SetInt("V_windowOffsetY", posY);
             EditorPrefs.SetInt("V_windowWidth", width);
             EditorPrefs.SetInt("V_windowHeight", height);
 
-            hypercube.casterWindow.closeWindow();
+         //   hypercube.casterWindow.closeWindow();
         }
     }
 

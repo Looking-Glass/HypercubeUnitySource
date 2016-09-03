@@ -28,8 +28,6 @@ GameObject:
   - 114: {fileID: 11483894}
   - 33: {fileID: 3327710}
   - 23: {fileID: 2348930}
-  - 114: {fileID: 11414210}
-  - 114: {fileID: 11438496}
   m_Layer: 9
   m_Name: HYPERCUBE
   m_TagString: Untagged
@@ -284,34 +282,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 11483894}
---- !u!114 &11414210
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d517016184638f4396a5a0f6d06e333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: 0
-  toggle: {fileID: 0}
-  toggleUp: {fileID: 0}
---- !u!114 &11438496
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2ff99fc26316fc47ac9b7fd9f166420, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fileName: cubePrefs.txt
-  readOnly: 1
-  loadOnAwake: 0
 --- !u!114 &11483894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -326,6 +296,7 @@ MonoBehaviour:
   slicing: 1
   overlap: 0.96
   softness: 0.32876712
+  scaleConstraint: 0
   forcedPerspective: 0
   brightness: 1
   blackPoint: {r: 0.053026035, g: 0.018382356, b: 0.14705884, a: 0}

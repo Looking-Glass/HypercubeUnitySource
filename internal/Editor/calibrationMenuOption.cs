@@ -23,7 +23,10 @@ namespace hypercube
         {
             hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
             if (c)
-                c.loadSettings();
+            {
+                if (c.loadSettings()) //to prevent spamming, this does not provide feedback when settings are loaded
+                    Debug.Log("Hypercube settings loaded.");
+            }
             else
                 Debug.LogWarning("No castMesh was found, and therefore no loading occurred.");
         }
@@ -78,6 +81,12 @@ namespace hypercube
                 EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneOSXUniversal);
 #endif
         }
-       
+
+
+        [MenuItem("Hypercube/About Hypercube", false, 601)]
+        public static void aboutHypercube()
+        {
+            Debug.Log("Hypercube: Volume Plugin  -  Version: " + hypercubeCamera.version + "  -  by Looking Glass Factory, Inc.  Visit lookingglassfactory.com to learn more!");
+        }
     }
 }

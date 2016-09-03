@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-
+  
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
     {
+         public const float version = 1.01f;
+
         public enum softSliceMode
         {
             HARD = 0,

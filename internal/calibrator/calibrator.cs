@@ -53,7 +53,8 @@ namespace hypercube
 
         public string current;
         public castMesh canvas;
-        public float brightness = 3f;
+        public bool pauseInput = false;
+        public float brightness = 3f;      
 
         [Tooltip("How sensitive do you want your calibrations to be.")]
         public float interval = 1f;
@@ -108,6 +109,9 @@ namespace hypercube
         void Update()
         {
             if (!canvas)
+                return;
+
+            if (pauseInput)
                 return;
 
             canvasEditMode oldMode = m;
@@ -234,7 +238,10 @@ namespace hypercube
                 //thats weird... this should already be set in the prefab, try to automagically fix...
                 canvas = GetComponent<castMesh>();
                 if (!canvas)
-                    Debug.LogError("The calibration tool has no hypercubeCanvas to calibrate!");
+                {
+                 //   Debug.LogWarning("The calibration tool has no hypercubeCanvas to calibrate!");
+                    return;
+                }
             }
 
             selectedMat.SetFloat("_Mod", brightness);

@@ -65,16 +65,6 @@ public class touchScreenMapper : hypercube.touchScreenTarget {
                 save();
             return;
         }
-        if (Input.GetKeyDown(KeyCode.Return)) //go to next stage
-        {
-            goToNextStage();
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Escape)) //go to next stage
-        {
-            quit();
-            return;
-        }
 
 
 
@@ -235,13 +225,6 @@ public class touchScreenMapper : hypercube.touchScreenTarget {
         d.save();
         outputText.text = "\n\n\nSAVED!\n\nPress ESCAPE to exit.";
     }
-    void quit()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-    }
+
 
 }
