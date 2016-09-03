@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-//This script manages the canvas surface
-//the canvas surface translates the rendered slices into a form that the Volume can display properly.
+//This script manages the final mesh that is displayed on Volume (the castMesh)
+//the surface of the castMesh translates the rendered slices into a form that the Volume can display properly.
 
 namespace hypercube
 {
+
     [ExecuteInEditMode]
-    [RequireComponent(typeof(hypercube.calibrator))]
     [RequireComponent(typeof(dataFileDict))]
     public class castMesh : MonoBehaviour
     {
@@ -21,18 +21,39 @@ namespace hypercube
         public Vector3 aspectY { get; private set; }
         public Vector3 aspectZ { get; private set; }
 
+        public bool foundConfigFile { get; private set; }
+
         public int slices = 12;
         public int getSliceCount() { return slices; } //a safe accessor, since its accessed constantly.
 
-        public bool flipX = false;
+        public bool flipX = false;  //modifier values, by the user.
         public bool flipY = false;
         public bool flipZ = false;
 
+        public bool _flipX { get; private set; } //true  values, coming from the config file.
+        public bool _flipY { get; private set; }
+        public bool _flipZ { get; private set; }
+
+#if HYPERCUBE_DEV     //these shouldn't be exposed unless someone is interested in mucking with the inner workings of hypercube
         public float sliceOffsetX;
         public float sliceOffsetY;    
         public float sliceWidth;
         public float sliceHeight;
         public float sliceGap;
+#else
+        [HideInInspector]
+        public float sliceOffsetX;
+        [HideInInspector]
+        public float sliceOffsetY;
+        [HideInInspector]
+        public float sliceWidth;
+        [HideInInspector]
+        public float sliceHeight;
+        [HideInInspector]
+        public float sliceGap;
+#endif
+
+
         public float zPos = .01f;
         [Range(1, 20)]
         public int tesselation = 8;
@@ -57,16 +78,23 @@ namespace hypercube
         Vector2[] bows = null;
 
         public hypercubePreview preview = null;
-        calibrator calibrator = null;
+
+#if HYPERCUBE_DEV
+        public calibrator calibrator = null;
+#endif
+
         public Material casterMaterial;
 
         [Tooltip("This path is how we find the calibration and system settings in the internal drive for the Volume in use. Don't change unless you know what you are changing.")]
-        public string relativeSettingsPath;  
+        public string relativeSettingsPath;
+
+        void Awake()
+        {
+            foundConfigFile = false;
+        }
 
         void Start()
         {
-            calibrator = GetComponent<calibrator>();
-
             if (!preview)
                 preview = GameObject.FindObjectOfType<hypercubePreview>();
 
@@ -106,7 +134,7 @@ namespace hypercube
             if (!d)
                 return;
 
-            d.fileName = hypercube.utils.getConfigPath(relativeSettingsPath);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
+            hypercube.utils.getConfigPath(relativeSettingsPath, out d.fileName);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
        
 
             d.setValue("sliceCount", slices);
@@ -115,9 +143,9 @@ namespace hypercube
             d.setValue("sliceWidth", sliceWidth);
             d.setValue("pixelsPerSlice", sliceHeight);
             d.setValue("sliceGap", sliceGap);
-            d.setValue("flipX", flipX);
-            d.setValue("flipY", flipY);
-            d.setValue("flipZ", flipZ);
+            d.setValue("flipX", _flipX);
+            d.setValue("flipY", _flipY);
+            d.setValue("flipZ", _flipZ);
 
             saveCalibrationOffsets(d);
 
@@ -130,13 +158,13 @@ namespace hypercube
         } 
 #endif
 
-        public void loadSettings()
+        public bool loadSettings()
         {
-            
+
             dataFileDict d = GetComponent<dataFileDict>();
 
             //use this path as a base path to search for the drive provided with Volume.
-            d.fileName = hypercube.utils.getConfigPath(relativeSettingsPath);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
+             foundConfigFile = hypercube.utils.getConfigPath(relativeSettingsPath, out d.fileName);    //return it to the dataFileDict as an absolute path within that drive if we find it  (ie   G:/volumeConfigurationData/prefs.txt).
             
             d.clear();
 
@@ -145,8 +173,11 @@ namespace hypercube
 #endif
 
             if (!d.load()) //we failed to load the file!  ...use backup defaults.
+            {
                 Debug.LogWarning("Could not read calibration data from Volume!\nIs Volume connected via USB? Using defaults..."); //This will never be as good as using the config stored with the hardware and the view will have distortions in Volume's display.
-
+                foundConfigFile = false;
+            }
+                
             volumeModelName = d.getValue("volumeModelName", "UNKNOWN!");
             volumeHardwareVer = d.getValueAsFloat("volumeHardwareVersion", -9999f);
 
@@ -156,9 +187,9 @@ namespace hypercube
             sliceWidth = d.getValueAsFloat("sliceWidth", sliceWidth);
             sliceHeight = d.getValueAsFloat("pixelsPerSlice", sliceHeight);
             sliceGap = d.getValueAsFloat("sliceGap", sliceGap);
-            flipX = d.getValueAsBool("flipX", flipX);
-            flipY = d.getValueAsBool("flipY", flipY);
-            flipZ = d.getValueAsBool("flipZ", flipZ);
+            _flipX = d.getValueAsBool("flipX", _flipX);
+            _flipY = d.getValueAsBool("flipY", _flipY);
+            _flipZ = d.getValueAsBool("flipZ", _flipZ);
 
             setCalibrationOffsets(d, slices);
             updateMesh();       
@@ -173,6 +204,8 @@ namespace hypercube
             aspectX = new Vector3(1f, yCm/xCm, zCm/xCm);
             aspectY = new Vector3(xCm/yCm, 1f, zCm / yCm);
             aspectZ = new Vector3(xCm/zCm, yCm / zCm, 1f);
+
+            return foundConfigFile;
         }
 
         //tweaks to the cube design to offset physical distortions
@@ -309,7 +342,7 @@ namespace hypercube
                 return false;
 
             //flip it to keep things intuitive
-            if (flipX)
+            if (_flipX)
             {
                 if (x)
                     amount = -amount;
@@ -322,7 +355,7 @@ namespace hypercube
                 else if (m == canvasEditMode.LR)
                     m = canvasEditMode.LL;
             }
-            if (flipY)
+            if (_flipY)
             {
                 if (!x)
                     amount = -amount;
@@ -379,51 +412,22 @@ namespace hypercube
         }
 #endif
 
-        public void flip()
+        public void toggleFlipX()
         {
-            flipX = !flipX;
+            _flipX = !_flipX;
             updateMesh();
         }
-        public void sliceHeightUp()
+        public void toggleFlipY()
         {
-            sliceHeight += .2f;
+            _flipY = !_flipY;
             updateMesh();
         }
-        public void sliceHeightDown()
+        public void toggleFlipZ()
         {
-            sliceHeight -= .2f;
+            _flipZ = !_flipZ;
             updateMesh();
         }
-        public void nudgeUp()
-        {
-            sliceOffsetY += .2f;
-            updateMesh();
-        }
-        public void nudgeDown()
-        {
-            sliceOffsetY -= .2f;
-            updateMesh();
-        }
-        public void nudgeLeft()
-        {
-            sliceOffsetX -= 1f;
-            updateMesh();
-        }
-        public void nudgeRight()
-        {
-            sliceOffsetX += 1f;
-            updateMesh();
-        }
-        public void widthUp()
-        {
-            sliceWidth += 1f;
-            updateMesh();
-        }
-        public void widthDown()
-        {
-            sliceWidth -= 1f;
-            updateMesh();
-        }
+
 
         public float getScreenAspectRatio()
         {
@@ -556,6 +560,18 @@ namespace hypercube
             List<int[]> submeshes = new List<int[]>(); //the triangle list(s)
             Material[] faceMaterials = new Material[slices];
 
+            bool outFlipX = _flipX; //true values
+            bool outFlipY = _flipY;
+            bool outFlipZ = _flipZ;
+            //modifiers
+            if (flipX)
+                outFlipX = !outFlipX;
+            if (flipY)
+                outFlipY = !outFlipY;
+            if (flipZ)
+                outFlipZ = !outFlipZ;
+
+
             //create the mesh
             float size = 1f / (float)slices;
             int vertCount = 0;
@@ -596,21 +612,21 @@ namespace hypercube
                 Vector2 UV_top = new Vector2(.5f, 0f);
                 Vector2 UV_right = new Vector2(1f, .5f);
 
-                if (flipX && !flipY)
+                if (outFlipX && !outFlipY)
                 {
                     UV_ul.Set(1f, 0f);
                     UV_br.Set(0f, 1f);
                     UV_left.Set(1f, .5f);
                     UV_right.Set(0f, .5f);
                 }
-                else if (!flipX && flipY)
+                else if (!outFlipX && outFlipY)
                 {
                     UV_ul.Set(0f, 1f);
                     UV_br.Set(1f, 0f);
                     UV_bottom.Set(.5f, 0f);
                     UV_top.Set(.5f, 1f);
                 }
-                else if (flipX && flipY)
+                else if (outFlipX && outFlipY)
                 {
                     UV_ul.Set(1f, 1f);
                     UV_br.Set(0f, 0f);
@@ -631,7 +647,7 @@ namespace hypercube
                 submeshes.Add(tris.ToArray());
 
                 //every face has a separate material/texture   
-                if (!flipZ)
+                if (!outFlipZ)
                     faceMaterials[s] = canvasMaterials[s];
                 else
                     faceMaterials[s] = canvasMaterials[slices - s - 1];
@@ -667,11 +683,11 @@ namespace hypercube
 
             m.normals = normals;
 
+#if HYPERCUBE_DEV
             if (!calibrator)
                 calibrator = GetComponent<calibrator>();
 
-#if HYPERCUBE_DEV
-            if (calibrator.enabled)
+            if (calibrator && calibrator.gameObject.activeSelf && calibrator.enabled)
                 r.materials = calibrator.getMaterials();
             else
 #endif
