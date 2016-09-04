@@ -1,230 +1,197 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class touchScreenMapper : hypercube.touchScreenTarget {
-
-    public TextMesh outputText;
-    public GameObject arrow;
-    public GameObject circle;
-
-    public hypercubeCamera cam;
-
-    public GameObject guiCanvas;
-    public UnityEngine.UI.InputField volName;
-    public UnityEngine.UI.InputField volVer;
-    public UnityEngine.UI.InputField resXInput;
-    public UnityEngine.UI.InputField resYInput;
-    public UnityEngine.UI.InputField sizeWInput;
-    public UnityEngine.UI.InputField sizeHInput;
-    public UnityEngine.UI.InputField sizeDInput;
-
-    enum calibrationStage
+namespace hypercube
+{
+    public class touchScreenMapper : hypercube.touchScreenTarget
     {
-        STEP_INVALID = -1,
-        STEP_calibrate = 0,
-        STEP_settings,
-        STEP_touchCorner1,
-        STEP_touchCorner2,
-        STEP_touchCorner3,
-        STEP_touchCorner4,
-        STEP_save
-    }
 
-    calibrationStage stage;
+        public TextMesh outputText;
+        public GameObject arrow;
+        public GameObject circle;
 
-    int ULx = 0;
-    int ULy = 0;
-    int URx = 0;
-    int URy = 0;
-    int LRx = 0;
-    int LRy = 0;
-    int LLx= 0;
-    int LLy = 0;
+        public hypercubeCamera cam;
 
-	// Use this for initialization
-	void Awake () 
-    {
-        stage = calibrationStage.STEP_INVALID;
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-#if !HYPERCUBE_INPUT
-        outputText.text = "<color=red>Can't SET or SAVE! Hypercube input is not enabled!</color>";
-        Debug.LogWarning("Can't SET or SAVE! Hypercube input is not enabled!  ");
-        enabled = false;
-#else
-
-        if (stage == calibrationStage.STEP_INVALID) //do this here to ensure that our datafiledict and all regular hypercube stuff has time to load
-            goToNextStage();
-
-        if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift)) //quit
+        enum calibrationStage
         {
-            if (stage == calibrationStage.STEP_save)
-                save();
-            return;
+            STEP_INVALID = -1,
+            STEP_touchCorner1 = 0,
+            STEP_touchCorner2,
+            STEP_touchCorner3,
+            STEP_touchCorner4,
+            STEP_save
         }
 
+        calibrationStage stage;
 
+        int ULx = 0;
+        int ULy = 0;
+        int URx = 0;
+        int URy = 0;
+        int LRx = 0;
+        int LRy = 0;
+        int LLx = 0;
+        int LLy = 0;
 
-        if (stage == calibrationStage.STEP_save)
+        // Use this for initialization
+        void OnEnable()
         {
-            if (hypercube.input.frontScreen.touchCount > 0)
-            {
-                //debug info
-                //hypercube.touchInterface i = new hypercube.touchInterface();
-                //hypercube.input.frontScreen.touches[0]._getInterface(ref i);
-                //outputText.text = hypercube.input.frontScreen.touches[0].id + ":  " + hypercube.input.frontScreen.touches[0].posX + " - " + hypercube.input.frontScreen.touches[0].posY + "\n" + i.rawTouchScreenX + "  " + i.rawTouchScreenY;
-                circle.transform.position = hypercube.input.frontScreen.touches[0].getWorldPos(cam);
-            }
-        }	
-#endif
-	}
-
-    void goToNextStage()
-    {
-        if (stage == calibrationStage.STEP_INVALID) //first time through. try to put decent defaults.
-        {
-            dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
-            resXInput.text = d.getValue("touchScreenResX", "800");
-            resYInput.text = d.getValue("touchScreenResY", "480");
-            sizeWInput.text = d.getValue("projectionCentimeterWidth", "20");
-            sizeHInput.text = d.getValue("projectionCentimeterHeight", "12");
-            sizeDInput.text = d.getValue("projectionCentimeterDepth", "20");
-
-            volName.text = d.getValue("volumeModelName", "UNKNOWN!");
-            volVer.text = d.getValue("volumeHardwareVersion", "-9999");
+            stage = calibrationStage.STEP_touchCorner1;
+            resetStage();
         }
- 
-        stage++;
 
-        if (stage > calibrationStage.STEP_save)
-            stage = calibrationStage.STEP_calibrate;
-
-
-        if (stage == calibrationStage.STEP_calibrate)
+        void OnDisable()
         {
-            guiCanvas.SetActive(false);
             arrow.SetActive(false);
             circle.SetActive(false);
-            outputText.text = "To configure the touch screen, Volume must be calibrated first.\nIt should not have any distortions.\nIf it needs calibration, do that first.\n\nIf Volume is nice and rectangular, press <color=green>ENTER</color> to continue.";
         }
-        else if (stage == calibrationStage.STEP_settings)
+
+
+        // Update is called once per frame
+        void Update()
         {
-            guiCanvas.SetActive(true);
+
+            if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift))
+            {
+                if (stage == calibrationStage.STEP_save)
+                    save();
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                goToNextStage();
+                return;
+            }
+
+            if (stage == calibrationStage.STEP_save)
+            {
+                if (hypercube.input.frontScreen.touchCount > 0)
+                {
+                    //debug info
+                    //hypercube.touchInterface i = new hypercube.touchInterface();
+                    //hypercube.input.frontScreen.touches[0]._getInterface(ref i);
+                    //outputText.text = hypercube.input.frontScreen.touches[0].id + ":  " + hypercube.input.frontScreen.touches[0].posX + " - " + hypercube.input.frontScreen.touches[0].posY + "\n" + i.rawTouchScreenX + "  " + i.rawTouchScreenY;
+                    circle.transform.position = hypercube.input.frontScreen.touches[0].getWorldPos(cam);
+                }
+            }
         }
-        else if (stage == calibrationStage.STEP_touchCorner1)
+
+        void goToNextStage()
         {
-            guiCanvas.SetActive(false);
+
+            stage++;
+
+            if (stage > calibrationStage.STEP_save)
+                stage = calibrationStage.STEP_touchCorner1;
+
+            resetStage();
+        }
+
+        void resetStage()
+        {
             arrow.SetActive(true);
-            outputText.text = "\n\n\nAlign your finger to the arrow corner.\nThen lift your finger.";
-            arrow.transform.localRotation = Quaternion.identity;
-            arrow.transform.localPosition = cam.transform.TransformPoint(-.5f, .5f, -.5f);
+            circle.SetActive(false);
+            outputText.text = "Align finger to corner.\nThen lift.";
+
+            if (stage == calibrationStage.STEP_touchCorner1)
+            {
+                arrow.transform.localRotation = Quaternion.identity;
+                arrow.transform.localPosition = cam.transform.TransformPoint(-.5f, .5f, -.5f);
+            }
+            else if (stage == calibrationStage.STEP_touchCorner2)
+            {
+                arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
+                arrow.transform.localPosition = cam.transform.TransformPoint(.5f, .5f, -.5f);
+            }
+            else if (stage == calibrationStage.STEP_touchCorner3)
+            {
+                arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+                arrow.transform.localPosition = cam.transform.TransformPoint(.5f, -.5f, -.5f);
+            }
+            else if (stage == calibrationStage.STEP_touchCorner4)
+            {
+                arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                arrow.transform.localPosition = cam.transform.TransformPoint(-.5f, -.5f, -.5f);
+            }
+            else if (stage == calibrationStage.STEP_save)
+            {
+                arrow.SetActive(false);
+                circle.SetActive(true);
+                outputText.text = "Make sure the circle aligns.\nIf <color=00ff00>YES</color>, press Lshift + S to save.\nIf NO press ENTER to try again.";
+            }
         }
-        else if (stage == calibrationStage.STEP_touchCorner2)
+
+        public override void onTouchUp(hypercube.touch touch)
         {
-            arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
-            arrow.transform.localPosition = cam.transform.TransformPoint(.5f, .5f, -.5f);
+            hypercube.touchInterface i = new hypercube.touchInterface();
+            touch._getInterface(ref i);
+            outputText.text = i.rawTouchScreenX + "  " + i.rawTouchScreenY;
+            if (stage == calibrationStage.STEP_touchCorner1)
+            {
+                ULx = i.rawTouchScreenX;
+                ULy = i.rawTouchScreenY;
+                goToNextStage();
+            }
+            else if (stage == calibrationStage.STEP_touchCorner2)
+            {
+                URx = i.rawTouchScreenX;
+                URy = i.rawTouchScreenY;
+                goToNextStage();
+            }
+            else if (stage == calibrationStage.STEP_touchCorner3)
+            {
+                LRx = i.rawTouchScreenX;
+                LRy = i.rawTouchScreenY;
+                goToNextStage();
+            }
+            else if (stage == calibrationStage.STEP_touchCorner4)
+            {
+                LLx = i.rawTouchScreenX;
+                LLy = i.rawTouchScreenY;
+                set();
+                goToNextStage();
+            }
         }
-        else if (stage == calibrationStage.STEP_touchCorner3)
+
+
+        void set()
         {
-            arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
-            arrow.transform.localPosition = cam.transform.TransformPoint(.5f, -.5f, -.5f);
-        }
-        else if (stage == calibrationStage.STEP_touchCorner4)
-        {
-            arrow.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
-            arrow.transform.localPosition = cam.transform.TransformPoint(-.5f, -.5f, -.5f);
-        }
-        else if (stage == calibrationStage.STEP_save)
-        {
-            arrow.SetActive(false);
-            circle.SetActive(true);
-            outputText.text = "\nMake sure that the circle is aligned with your finger.\nIf it is, press Lshift + S to save.\nOtherwise press ENTER to try again.";
-        }
-    }
+            //save the settings...
+            dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
 
-    public override void onTouchUp(hypercube.touch touch)
-    {
-        hypercube.touchInterface i = new hypercube.touchInterface();
-        touch._getInterface(ref i);
-        outputText.text = i.rawTouchScreenX + "  " + i.rawTouchScreenY;
-         if (stage == calibrationStage.STEP_touchCorner1)
-        {
-            ULx = i.rawTouchScreenX;
-            ULy = i.rawTouchScreenY;
-            goToNextStage();
-        }
-        else if (stage == calibrationStage.STEP_touchCorner2)
-        {
-            URx = i.rawTouchScreenX;
-            URy = i.rawTouchScreenY;
-            goToNextStage();
-        }
-        else if (stage == calibrationStage.STEP_touchCorner3)
-        {
-            LRx = i.rawTouchScreenX;
-            LRy = i.rawTouchScreenY;
-            goToNextStage();
-        }
-        else if (stage == calibrationStage.STEP_touchCorner4)
-        {
-            LLx = i.rawTouchScreenX;
-            LLy = i.rawTouchScreenY;
-            set();
-            goToNextStage();
-        }
+            //gather normalized limits
+            float resX = d.getValueAsFloat("touchScreenResX", 800f);
+            float resY = d.getValueAsFloat("touchScreenResY", 480f);
 
-         
-    }
+            float top = (float)(ULy + URy) / 2f;//use averages.
+            float bottom = (float)(LLy + LRy) / 2f;
+            float left = (float)(ULx + LLx) / 2f;
+            float right = (float)(URx + LRx) / 2f;
 
+            top /= resY; //normalize the raw averages
+            bottom /= resY;
+            left /= resX;
+            right /= resX;
 
-    void set()
-    {
-
-        //save the settings...
-        dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
-        d.setValue("touchScreenResX", resXInput.text);
-        d.setValue("touchScreenResY", resYInput.text);
-        d.setValue("projectionCentimeterWidth", sizeWInput.text);
-        d.setValue("projectionCentimeterHeight", sizeHInput.text);
-        d.setValue("projectionCentimeterDepth", sizeDInput.text);
-
-        //gather normalized limits
-        float resX = d.getValueAsFloat("touchScreenResX", 800f);
-        float resY = d.getValueAsFloat("touchScreenResY", 480f);
-
-        float top = (float)(ULy + URy) / 2f;//use averages.
-        float bottom = (float)(LLy + LRy) / 2f;
-        float left = (float)(ULx + LLx) / 2f;
-        float right = (float)(URx + LRx) / 2f;
-
-        top /= resY; //normalize the raw averages
-        bottom /= resY;
-        left /= resX;
-        right /= resX;
-
-        d.setValue("touchScreenMapTop", top); 
-        d.setValue("touchScreenMapBottom", bottom);
-        d.setValue("touchScreenMapLeft", left);
-        d.setValue("touchScreenMapRight", right);
-
-        //incidental
-        d.setValue("volumeModelName", volName.text);
-        d.setValue("volumeHardwareVersion", volVer.text);
+            d.setValue("touchScreenMapTop", top);
+            d.setValue("touchScreenMapBottom", bottom);
+            d.setValue("touchScreenMapLeft", left);
+            d.setValue("touchScreenMapRight", right);
 
 #if HYPERCUBE_INPUT
-        hypercube.input.frontScreen.setTouchScreenDims(d);
+            hypercube.input.frontScreen.setTouchScreenDims(d);
 #endif
-    }
+        }
 
-    void save()
-    {
-        dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
-        d.save();
-        outputText.text = "\n\n\nSAVED!\n\nPress ESCAPE to exit.";
-    }
+        void save()
+        {
+            dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
+            d.save();
+            outputText.text = "SAVED!\n\nPress ESCAPE to exit.";
+        }
 
+
+    }
 
 }

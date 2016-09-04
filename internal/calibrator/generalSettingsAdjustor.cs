@@ -26,7 +26,7 @@ namespace hypercube
 
         public castMesh canvas;
 
-        void OnEnabled()
+        void OnEnable()
         {
             refreshTexts();
         }
