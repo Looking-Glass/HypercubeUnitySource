@@ -743,61 +743,49 @@ namespace hypercube
                     //now get the final lerped vector
                     Vector2 lerpedVector = Vector2.Lerp(newLeftEndpoint, newRightEndpoint, columnLerpValue);
 
+
                     //add bow distortion compensation
                     //bow is stored as top,bottom,left,right  = x y z w
                     float bowX = 0f;
                     float bowY = 0f;
+                    float xBowAmount = 0f;
+                    float yBowAmount = 0f;
+                    float averageBowX = (bow.z + bow.w) / 2f;
+                    float averageBowY = (bow.x + bow.y) / 2f;
                     if (o == shardOrientation.UL)//phase: 1 1
                     {
-                        float xBowAmount = bow.z;// *rowLerpValue; //left
-                        float yBowAmount = bow.x;// *columnLerpValue; //top
-
-                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        xBowAmount = Mathf.Lerp(bow.z, averageBowX, columnLerpValue); //left
+                        yBowAmount = Mathf.Lerp(bow.x, averageBowY, rowLerpValue);  //top
+                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount;
                         bowY = (1f - Mathf.Cos(1f - columnLerpValue)) * yBowAmount;
-                        bowX -= xBowAmount * .5f;
-                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
-
-
-                        //    lerpedVector.x += Mathf.Lerp(bowX, 0,  rowLerpValue);   //these lines make the center bow at an average
-                        //   lerpedVector.y += Mathf.Lerp(bowY, 0, columnLerpValue);
                     }
                     else if (o == shardOrientation.UR)//phase: 1 0
                     {
-                        float xBowAmount = bow.w;// *rowLerpValue; //right
-                        float yBowAmount = bow.x;// *columnLerpValue; //top
-
-                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        xBowAmount = Mathf.Lerp(bow.w, averageBowX, 1f - columnLerpValue); //right
+                        yBowAmount = Mathf.Lerp(bow.x, averageBowY, rowLerpValue);  //top
+                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount; 
                         bowY = (1f - Mathf.Cos(0f - columnLerpValue)) * yBowAmount;
-                        bowX -= xBowAmount * .5f;
-                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
-
                     }
                     else if (o == shardOrientation.LL)//phase: 0 1
                     {
-                        float xBowAmount = bow.z;// *rowLerpValue; //left
-                        float yBowAmount = bow.y;// *columnLerpValue; //bottom
-
-                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        xBowAmount = Mathf.Lerp(bow.z, averageBowX, columnLerpValue); // *rowLerpValue; //left
+                        yBowAmount = Mathf.Lerp(bow.y, averageBowY, 1f - rowLerpValue);  //bottom
+                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount;
                         bowY = (1f - Mathf.Cos(1f - columnLerpValue)) * yBowAmount;
-                        bowX -= xBowAmount * .5f;
-                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
-
                     }
                     else if (o == shardOrientation.LR)//phase: 0 0
                     {
-                        float xBowAmount = bow.w;// *rowLerpValue; //right
-                        float yBowAmount = bow.y;// *columnLerpValue; //bottom
-
-                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        xBowAmount = Mathf.Lerp(bow.w, averageBowX, 1f - columnLerpValue);//right
+                        yBowAmount = Mathf.Lerp(bow.y, averageBowY, 1f - rowLerpValue);  //bottom
+                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount;
                         bowY = (1f - Mathf.Cos(0f - columnLerpValue)) * yBowAmount;
-                        bowX -= xBowAmount * .5f;
-                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
-
                     }
 
-                    lerpedVector.x += bowX; //TODO lerp this to bowRatio as it gets  closer to the origin.  bowRatio.y = topBow / bottomBowop-
+                    bowX -= xBowAmount * .5f; //the lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
+                    bowY -= yBowAmount * .5f; 
+                    lerpedVector.x += bowX; 
                     lerpedVector.y += bowY;
-
+                    //end bow distortion compensation
 
                     //add it
                     verts.Add(new Vector3(lerpedVector.x, lerpedVector.y, 0f));
