@@ -15,7 +15,7 @@ namespace hypercube
 
         public hypercubeCamera cam;
 
-        void OnEnable()
+        protected override void OnEnable()
         {
             dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
 
@@ -25,11 +25,11 @@ namespace hypercube
             sizeHInput.text = d.getValue("projectionCentimeterHeight", "12");
             sizeDInput.text = d.getValue("projectionCentimeterDepth", "20");
 
-            input._setTouchScreenTarget(this, true);
+            base.OnEnable();
         }
 
 
-        void OnDisable()
+        protected override void OnDisable()
         {
             dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
 
@@ -39,7 +39,7 @@ namespace hypercube
             d.setValue("projectionCentimeterHeight", sizeHInput.text);
             d.setValue("projectionCentimeterDepth", sizeDInput.text);
 
-            input._setTouchScreenTarget(this, false);
+            base.OnDisable();
         }
 
         public override void onTouchMoved(touch touch)
