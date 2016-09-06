@@ -33,17 +33,21 @@ namespace hypercube
         int LLx = 0;
         int LLy = 0;
 
-        // Use this for initialization
-        void OnEnable()
+
+        protected override void OnEnable()
         {
             stage = calibrationStage.STEP_touchCorner1;
             resetStage();
+
+ 	        base.OnEnable();
         }
 
-        void OnDisable()
+        protected override void OnDisable()
         {
             arrow.SetActive(false);
             circle.SetActive(false);
+
+            base.OnDisable();
         }
 
 
@@ -186,8 +190,7 @@ namespace hypercube
 
         void save()
         {
-            dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
-            d.save();
+            cam.localCastMesh.saveConfigSettings();
             outputText.text = "SAVED!\n\nPress ESCAPE to exit.";
         }
 

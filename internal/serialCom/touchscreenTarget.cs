@@ -8,15 +8,15 @@ namespace hypercube
 {
     public class touchScreenTarget : MonoBehaviour
     {
-        void OnEnable()
+        protected virtual void OnEnable()   //to use your own OnEnable use:   protected override void OnEnable()  {base.OnEnable()}
         {
             input._setTouchScreenTarget(this, true);
         }
-        void OnDisable()
+        protected virtual void OnDisable() //to use your own OnDisable use:   protected override void OnDisable()  {base.OnDisable()}
         {
             input._setTouchScreenTarget(this, false);
         }
-        void OnDestroy()
+        protected virtual void OnDestroy() //to use your own OnDestroy use:   protected override void OnDestroy()  {base.OnDestroy()}
         {
             input._setTouchScreenTarget(this, false);
         }

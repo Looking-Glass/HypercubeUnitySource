@@ -77,12 +77,12 @@ namespace hypercube
             }
             else if (UnityEngine.Input.GetKeyDown(nudgeLeft))
             {
-                canvas.sliceOffsetX -= sensitivity;
+                canvas.sliceOffsetX -= sensitivity * canvas.getSliceCount();
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(nudgeRight))
             {
-                canvas.sliceOffsetX += sensitivity;
+                canvas.sliceOffsetX += sensitivity * canvas.getSliceCount();
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(sliceHeightUp))
@@ -120,8 +120,8 @@ namespace hypercube
 
             if (didSomething)
             {
-                canvas.updateMesh();
                 refreshTexts();
+                canvas.updateMesh();            
             }
 	
 	    }

@@ -32,7 +32,7 @@ namespace hypercube
 
         public bool _flipX { get; private set; } //true  values, coming from the config file.
         public bool _flipY { get; private set; }
-        public bool _flipZ { get; private set; }
+        public bool _flipZ { get; private set; }      
 
 #if HYPERCUBE_DEV     //these shouldn't be exposed unless someone is interested in mucking with the inner workings of hypercube
         public float sliceOffsetX;
@@ -75,7 +75,7 @@ namespace hypercube
         Vector2[] LROffsets = null;
         Vector2[] MOffsets = null;
         Vector2[] skews = null;
-        Vector2[] bows = null;
+        Vector4[] bows = null; //top, bottom, left, right
 
         public hypercubePreview preview = null;
 
@@ -217,7 +217,7 @@ namespace hypercube
             LROffsets = new Vector2[maxSlices];
             MOffsets = new Vector2[maxSlices];
             skews = new Vector2[maxSlices];
-            bows = new Vector2[maxSlices];
+            bows = new Vector4[maxSlices];
 
             for (int s = 0; s < maxSlices; s++)
             {
@@ -234,13 +234,15 @@ namespace hypercube
                 d.getValueAsFloat("s" + s + "_My", 0f),
                 d.getValueAsFloat("s" + s + "_Sx", 0f),
                 d.getValueAsFloat("s" + s + "_Sy", 0f),
-                d.getValueAsFloat("s" + s + "_Bx", 0f),
-                d.getValueAsFloat("s" + s + "_By", 0f)
+                d.getValueAsFloat("s" + s + "_Bt", 0f),
+                d.getValueAsFloat("s" + s + "_Bb", 0f),
+                d.getValueAsFloat("s" + s + "_Bl", 0f),
+                d.getValueAsFloat("s" + s + "_Br", 0f)
                     );
             }
         } 
         //this call is separate, so it can be flexible enough to accept different ways of storing the calibration data
-        public void setCalibrationOffset(int slice, float _ULx, float _ULy, float _URx, float _URy, float _LLx, float _LLy, float _LRx, float _LRy, float _Mx, float _My, float _Sx, float _Sy, float _Bx, float _By)
+        public void setCalibrationOffset(int slice, float _ULx, float _ULy, float _URx, float _URy, float _LLx, float _LLy, float _LRx, float _LRy, float _Mx, float _My, float _Sx, float _Sy, float _Bt, float _Bb, float _Bl, float _Br)
         {
             if (slice < 0 || slice >= bows.Length)
                 return;
@@ -257,8 +259,10 @@ namespace hypercube
             MOffsets[slice].y = _My;
             skews[slice].x = _Sx;
             skews[slice].y = _Sy;
-            bows[slice].x = _Bx;
-            bows[slice].y = _By;
+            bows[slice].x = _Bt;
+            bows[slice].y = _Bb;
+            bows[slice].z = _Bl;
+            bows[slice].w = _Br;
         }
         public void saveCalibrationOffsets(dataFileDict d)
         {
@@ -276,8 +280,10 @@ namespace hypercube
                 d.setValue("s" + s + "_My", MOffsets[s].y);
                 d.setValue("s" + s + "_Sx", skews[s].x);
                 d.setValue("s" + s + "_Sy", skews[s].y);
-                d.setValue("s" + s + "_Bx", bows[s].x);
-                d.setValue("s" + s + "_By", bows[s].y);
+                d.setValue("s" + s + "_Bt", bows[s].x);
+                d.setValue("s" + s + "_Bb", bows[s].y);
+                d.setValue("s" + s + "_Bl", bows[s].z);
+                d.setValue("s" + s + "_Br", bows[s].w);
             }
 
             d.save();
@@ -311,14 +317,22 @@ namespace hypercube
             }
         }
 
-
-        public void makeBowAdjustment(int slice, bool x, float amount)
+        public enum bowEdge { top, bottom, left, right };
+        public void makeBowAdjustment(int slice, bowEdge e, float amount)
         {
+            if (_flipY && (e == bowEdge.top || e == bowEdge.bottom))
+                amount = -amount;
+            else if (_flipX && (e == bowEdge.left || e == bowEdge.right))
+                amount = -amount;
 
-            if (x)
+            if (e == bowEdge.top)
                 bows[slice].x += amount;
-            else
+            else if (e == bowEdge.bottom)
                 bows[slice].y += amount;
+            else if (e == bowEdge.left)
+                bows[slice].z += amount;
+            else if (e == bowEdge.right)
+                bows[slice].w += amount;
         
             updateMesh();
         }
@@ -507,7 +521,7 @@ namespace hypercube
                 LROffsets = new Vector2[slices];
                 MOffsets = new Vector2[slices];
                 skews = new Vector2[slices];
-                bows = new Vector2[slices];
+                bows = new Vector4[slices];
                 for (int s = 0; s < slices; s++)
                 {
                     ULOffsets[s] = new Vector2(0f, 0f);
@@ -516,7 +530,7 @@ namespace hypercube
                     LROffsets[s] = new Vector2(0f, 0f);
                     MOffsets[s] = new Vector2(0f, 0f);
                     skews[s] = new Vector2(0f, 0f);
-                    bows[s] = new Vector2(0f, 0f);
+                    bows[s] = new Vector4(0f, 0f, 0f, 0f);
                 }
             }
 
@@ -639,10 +653,10 @@ namespace hypercube
                 //we generate each slice mesh out of 4 interpolated parts.
                 List<int> tris = new List<int>();
 
-                vertCount += generateSliceShard(topL, topM, midL, middle, UV_ul, UV_mid, bows[s], 1f, 1f, vertCount, ref verts, ref tris, ref uvs); //top left shard
-                vertCount += generateSliceShard(topM, topR, middle, midR, UV_top, UV_right, bows[s], 1f, 0f, vertCount, ref verts, ref tris, ref uvs); //top right shard
-                vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, bows[s], 0f, 1f, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
-                vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br, bows[s], 0f, 0f, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
+                vertCount += generateSliceShard(topL, topM, midL, middle, UV_ul, UV_mid, bows[s], shardOrientation.UL, vertCount, ref verts, ref tris, ref uvs); //top left shard
+                vertCount += generateSliceShard(topM, topR, middle, midR, UV_top, UV_right, bows[s], shardOrientation.UR, vertCount, ref verts, ref tris, ref uvs); //top right shard
+                vertCount += generateSliceShard(midL, middle, lowL, lowM, UV_left, UV_bottom, bows[s], shardOrientation.LL, vertCount, ref verts, ref tris, ref uvs); //bottom left shard
+                vertCount += generateSliceShard(middle, midR, lowM, lowR, UV_mid, UV_br,  bows[s], shardOrientation.LR, vertCount, ref verts, ref tris, ref uvs); //bottom right shard
 
                 submeshes.Add(tris.ToArray());
 
@@ -697,10 +711,18 @@ namespace hypercube
         }
 
 
+        enum shardOrientation
+        {
+            UL = 0,
+            UR,
+            LL,
+            LR
+        }
+
         //this is used to generate each of 4 sections of every slice.
         //therefore 1 central column and 1 central row of verts are overlapping per slice, but that is OK.  Keeping the interpolation isolated to this function helps readability a lot
         //returns amount of verts created
-        int generateSliceShard(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector2 topLeftUV, Vector2 bottomRightUV, Vector2 bow, float xBowPhase, float yBowPhase, int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
+        int generateSliceShard(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight, Vector2 topLeftUV, Vector2 bottomRightUV, Vector4 bow, shardOrientation o, int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
         {
             int vertCount = 0;
             for (var i = 0; i <= tesselation; i++)
@@ -722,10 +744,60 @@ namespace hypercube
                     Vector2 lerpedVector = Vector2.Lerp(newLeftEndpoint, newRightEndpoint, columnLerpValue);
 
                     //add bow distortion compensation
-                    lerpedVector.x += (1f - Mathf.Cos(xBowPhase - rowLerpValue)) * bow.y;
-                    lerpedVector.y += (1f - Mathf.Cos(yBowPhase - columnLerpValue)) * bow.x;
-                    lerpedVector.x -= bow.y * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
-                    lerpedVector.y -= bow.x * .5f;
+                    //bow is stored as top,bottom,left,right  = x y z w
+                    float bowX = 0f;
+                    float bowY = 0f;
+                    if (o == shardOrientation.UL)//phase: 1 1
+                    {
+                        float xBowAmount = bow.z;// *rowLerpValue; //left
+                        float yBowAmount = bow.x;// *columnLerpValue; //top
+
+                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        bowY = (1f - Mathf.Cos(1f - columnLerpValue)) * yBowAmount;
+                        bowX -= xBowAmount * .5f;
+                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
+
+
+                        //    lerpedVector.x += Mathf.Lerp(bowX, 0,  rowLerpValue);   //these lines make the center bow at an average
+                        //   lerpedVector.y += Mathf.Lerp(bowY, 0, columnLerpValue);
+                    }
+                    else if (o == shardOrientation.UR)//phase: 1 0
+                    {
+                        float xBowAmount = bow.w;// *rowLerpValue; //right
+                        float yBowAmount = bow.x;// *columnLerpValue; //top
+
+                        bowX = (1f - Mathf.Cos(1f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        bowY = (1f - Mathf.Cos(0f - columnLerpValue)) * yBowAmount;
+                        bowX -= xBowAmount * .5f;
+                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
+
+                    }
+                    else if (o == shardOrientation.LL)//phase: 0 1
+                    {
+                        float xBowAmount = bow.z;// *rowLerpValue; //left
+                        float yBowAmount = bow.y;// *columnLerpValue; //bottom
+
+                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        bowY = (1f - Mathf.Cos(1f - columnLerpValue)) * yBowAmount;
+                        bowX -= xBowAmount * .5f;
+                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
+
+                    }
+                    else if (o == shardOrientation.LR)//phase: 0 0
+                    {
+                        float xBowAmount = bow.w;// *rowLerpValue; //right
+                        float yBowAmount = bow.y;// *columnLerpValue; //bottom
+
+                        bowX = (1f - Mathf.Cos(0f - rowLerpValue)) * xBowAmount; //bow.y here is the AMOUNT of bowing.
+                        bowY = (1f - Mathf.Cos(0f - columnLerpValue)) * yBowAmount;
+                        bowX -= xBowAmount * .5f;
+                        bowY -= yBowAmount * .5f; //the two lines above pivot the bowing on the centerpoint of the slice. The two following lines change the pivot to the corner points of articulation so that the center is what moves.
+
+                    }
+
+                    lerpedVector.x += bowX; //TODO lerp this to bowRatio as it gets  closer to the origin.  bowRatio.y = topBow / bottomBowop-
+                    lerpedVector.y += bowY;
+
 
                     //add it
                     verts.Add(new Vector3(lerpedVector.x, lerpedVector.y, 0f));

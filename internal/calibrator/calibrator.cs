@@ -78,10 +78,14 @@ namespace hypercube
         public KeyCode skewXDn = KeyCode.RightArrow;
         public KeyCode skewYUp = KeyCode.UpArrow;
         public KeyCode skewYDn = KeyCode.DownArrow;
-        public KeyCode bowXUp = KeyCode.L;
-        public KeyCode bowXDn = KeyCode.O;
-        public KeyCode bowYUp = KeyCode.K;
-        public KeyCode bowYDn = KeyCode.Semicolon;
+        public KeyCode bowTopUp = KeyCode.Alpha9;
+        public KeyCode bowTopDn = KeyCode.O;
+        public KeyCode bowBotUp = KeyCode.L;
+        public KeyCode bowBotDn = KeyCode.Period;
+        public KeyCode bowLLeft = KeyCode.J;
+        public KeyCode bowLRight = KeyCode.K;
+        public KeyCode bowRLeft = KeyCode.Semicolon;
+        public KeyCode bowRRight = KeyCode.Quote;
 
         public Texture2D calibrationCorner;
         public Texture2D calibrationCenter;
@@ -154,30 +158,58 @@ namespace hypercube
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
                 canvas.makeSkewAdjustment(currentSlice, false, -interval * yPixel);
             }
-            else if (Input.GetKeyDown(bowXUp))
+
+
+            else if (Input.GetKeyDown(bowTopUp))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, true, -interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, interval * yPixel);
             }
-            else if (Input.GetKeyDown(bowXDn))
+            else if (Input.GetKeyDown(bowTopDn))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, true, interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, -interval * yPixel);
             }
-            else if (Input.GetKeyDown(bowYUp))
+            else if (Input.GetKeyDown(bowBotUp))
+            {
+                float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, interval * yPixel);
+            }
+            else if (Input.GetKeyDown(bowBotDn))
+            {
+                float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, -interval * yPixel);
+            }
+            else if (Input.GetKeyDown(bowLLeft))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
                     xPixel *= canvas.getSliceCount();
-                canvas.makeBowAdjustment(currentSlice, false, interval * xPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, interval * xPixel);
             }
-            else if (Input.GetKeyDown(bowYDn))
+            else if (Input.GetKeyDown(bowLRight))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
                     xPixel *= canvas.getSliceCount();
-                canvas.makeBowAdjustment(currentSlice, false, -interval * xPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, -interval * xPixel);
             }
+            else if (Input.GetKeyDown(bowRLeft))
+            {
+                float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
+                if (relativeTo == distortionCompensationType.SPATIAL)
+                    xPixel *= canvas.getSliceCount();
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, interval * xPixel);
+            }
+            else if (Input.GetKeyDown(bowRRight))
+            {
+                float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
+                if (relativeTo == distortionCompensationType.SPATIAL)
+                    xPixel *= canvas.getSliceCount();
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, -interval * xPixel);
+            }
+
+
             else if (Input.GetKeyDown(highlightUL))
             {
                 m = canvasEditMode.UL;

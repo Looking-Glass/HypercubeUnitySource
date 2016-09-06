@@ -25,6 +25,7 @@ namespace hypercube
             sizeHInput.text = d.getValue("projectionCentimeterHeight", "12");
             sizeDInput.text = d.getValue("projectionCentimeterDepth", "20");
 
+            input._setTouchScreenTarget(this, true);
         }
 
 
@@ -37,6 +38,8 @@ namespace hypercube
             d.setValue("projectionCentimeterWidth", sizeWInput.text);
             d.setValue("projectionCentimeterHeight", sizeHInput.text);
             d.setValue("projectionCentimeterDepth", sizeDInput.text);
+
+            input._setTouchScreenTarget(this, false);
         }
 
         public override void onTouchMoved(touch touch)
@@ -44,7 +47,7 @@ namespace hypercube
             touchInterface i = new touchInterface();
             touch._getInterface(ref i);
 
-            display.text = "Current Values:\nx: " + i.rawTouchScreenX + "\ny: " + i.rawTouchScreenY;
+            display.text = "Latest Values:\nx: " + i.rawTouchScreenX + "\ny: " + i.rawTouchScreenY;
         }
     }
 }
