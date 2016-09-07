@@ -608,18 +608,18 @@ namespace hypercube
             for (int s = 0; s < slices; s++)
             {
                 float yPos = ((float)s * size) + (s * pixelSliceGap);
-                Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + ULOffsets[s].y); //top left          
-                Vector2 topM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
+				Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y); //top left          
+                Vector2 topM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
 
-                Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos  + UROffsets[s].y); //top right
+                Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos + size + UROffsets[s].y); //top right
 
                 Vector2 midL = new Vector2(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle left
                 Vector2 middle = new Vector2(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y); //center
                 Vector2 midR = new Vector2(1f + Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle right
 
-                Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + size + LLOffsets[s].y); //bottom left
-                Vector2 lowM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
-                Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + size + LROffsets[s].y); //bottom right      
+                Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y); //bottom left
+                Vector2 lowM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
+                Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right      
 
                 //skews
                 topM.x += skews[s].x;
