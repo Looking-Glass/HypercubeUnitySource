@@ -67,22 +67,34 @@ namespace hypercube
 
             if (UnityEngine.Input.GetKeyDown(nudgeUp))
             {
-                canvas.sliceOffsetY += sensitivity;
+                float v = sensitivity;
+                if (canvas._flipY)
+                    v = -v;
+                canvas.sliceOffsetY += v;
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(nudgeDown))
             {
-                canvas.sliceOffsetY -= sensitivity;
+                float v = sensitivity;
+                if (canvas._flipY)
+                    v = -v;
+                canvas.sliceOffsetY -= v;
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(nudgeLeft))
             {
-                canvas.sliceOffsetX -= sensitivity * canvas.getSliceCount();
+                float v = sensitivity;
+                if (canvas._flipX)
+                    v = -v;
+                canvas.sliceOffsetX -= v * canvas.getSliceCount() * canvas.aspectY.x;
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(nudgeRight))
             {
-                canvas.sliceOffsetX += sensitivity * canvas.getSliceCount();
+                float v = sensitivity;
+                if (canvas._flipX)
+                    v = -v;
+                canvas.sliceOffsetX += v * canvas.getSliceCount() * canvas.aspectY.x;
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(sliceHeightUp))

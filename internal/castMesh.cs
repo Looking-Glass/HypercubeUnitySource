@@ -320,10 +320,22 @@ namespace hypercube
         public enum bowEdge { top, bottom, left, right };
         public void makeBowAdjustment(int slice, bowEdge e, float amount)
         {
-            if (_flipY && (e == bowEdge.top || e == bowEdge.bottom))
+            if (_flipY && (e == bowEdge.top || e == bowEdge.bottom))  //keep things intuitive if the view is flipped
+            {
+                if (e == bowEdge.top)
+                    e = bowEdge.bottom;
+                else 
+                    e = bowEdge.top;
                 amount = -amount;
-            else if (_flipX && (e == bowEdge.left || e == bowEdge.right))
+            }
+            else if (_flipX && (e == bowEdge.left || e == bowEdge.right)) //keep things intuitive if the view is flipped
+            {
+                if (e == bowEdge.left)
+                    e = bowEdge.right;
+                else 
+                    e = bowEdge.left;
                 amount = -amount;
+            }
 
             if (e == bowEdge.top)
                 bows[slice].x += amount;
@@ -510,6 +522,9 @@ namespace hypercube
 
         public void updateMesh()
         {
+            if (!sliceMesh)
+                return;
+
             if (slices < 1)
                 slices = 1;
 
@@ -593,18 +608,18 @@ namespace hypercube
             for (int s = 0; s < slices; s++)
             {
                 float yPos = ((float)s * size) + (s * pixelSliceGap);
-                Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + size + ULOffsets[s].y); //top left          
-                Vector2 topM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
+                Vector2 topL = new Vector2(-1f + ULOffsets[s].x, yPos + ULOffsets[s].y); //top left          
+                Vector2 topM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(ULOffsets[s].y, UROffsets[s].y, Mathf.InverseLerp(-1f + ULOffsets[s].x, 1f + UROffsets[s].x, MOffsets[s].x))); //top middle
 
-                Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos + size + UROffsets[s].y); //top right
+                Vector2 topR = new Vector2(1f + UROffsets[s].x, yPos  + UROffsets[s].y); //top right
 
                 Vector2 midL = new Vector2(-1f + Mathf.Lerp(ULOffsets[s].x, LLOffsets[s].x, Mathf.InverseLerp(size + ULOffsets[s].y, LLOffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle left
                 Vector2 middle = new Vector2(MOffsets[s].x, yPos + (size / 2) + MOffsets[s].y); //center
                 Vector2 midR = new Vector2(1f + Mathf.Lerp(UROffsets[s].x, LROffsets[s].x, Mathf.InverseLerp(size + UROffsets[s].y, LROffsets[s].y, (size / 2) + MOffsets[s].y)), yPos + (size / 2) + MOffsets[s].y); //middle right
 
-                Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + LLOffsets[s].y); //bottom left
-                Vector2 lowM = new Vector2(MOffsets[s].x, yPos + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
-                Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + LROffsets[s].y); //bottom right      
+                Vector2 lowL = new Vector2(-1f + LLOffsets[s].x, yPos + size + LLOffsets[s].y); //bottom left
+                Vector2 lowM = new Vector2(MOffsets[s].x, yPos + size + Mathf.Lerp(LLOffsets[s].y, LROffsets[s].y, Mathf.InverseLerp(-1f + LLOffsets[s].x, 1f + LROffsets[s].x, MOffsets[s].x))); //bottom middle
+                Vector2 lowR = new Vector2(1f + LROffsets[s].x, yPos + size + LROffsets[s].y); //bottom right      
 
                 //skews
                 topM.x += skews[s].x;
@@ -626,21 +641,21 @@ namespace hypercube
                 Vector2 UV_top = new Vector2(.5f, 0f);
                 Vector2 UV_right = new Vector2(1f, .5f);
 
-                if (outFlipX && !outFlipY)
+                if (outFlipX && outFlipY)
                 {
                     UV_ul.Set(1f, 0f);
                     UV_br.Set(0f, 1f);
                     UV_left.Set(1f, .5f);
                     UV_right.Set(0f, .5f);
                 }
-                else if (!outFlipX && outFlipY)
+                else if (!outFlipX && !outFlipY)
                 {
                     UV_ul.Set(0f, 1f);
                     UV_br.Set(1f, 0f);
                     UV_bottom.Set(.5f, 0f);
                     UV_top.Set(.5f, 1f);
                 }
-                else if (outFlipX && outFlipY)
+                else if (outFlipX && !outFlipY)
                 {
                     UV_ul.Set(1f, 1f);
                     UV_br.Set(0f, 0f);

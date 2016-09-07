@@ -15,6 +15,9 @@ namespace hypercube
 
      void OnEnable()
     {
+        if (!canvas)
+            return;
+
         dataFileDict d = canvas.GetComponent<dataFileDict>();
 
         modelName.text = d.getValue("volumeModelName", "UNKNOWN!");
@@ -25,6 +28,9 @@ namespace hypercube
 
     void OnDisable()
     {
+        if (!canvas)
+            return;
+
         dataFileDict d = canvas.GetComponent<dataFileDict>();
 
         d.setValue("volumeModelName", modelName.text);

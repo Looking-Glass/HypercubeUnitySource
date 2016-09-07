@@ -65,10 +65,10 @@ namespace hypercube
         //this may sound strange, but it keeps the most difficult code inside castMesh more readable and corresponding to intuition.
         public KeyCode nextSlice = KeyCode.R;
         public KeyCode prevSlice = KeyCode.F;
-        public KeyCode highlightUL = KeyCode.Z;
-        public KeyCode highlightUR = KeyCode.C;
-        public KeyCode highlightLL = KeyCode.Q;
-        public KeyCode highlightLR = KeyCode.E;
+        public KeyCode highlightUL = KeyCode.Q;
+        public KeyCode highlightUR = KeyCode.E;
+        public KeyCode highlightLL = KeyCode.Z;
+        public KeyCode highlightLR = KeyCode.C;
         public KeyCode highlightM = KeyCode.S;
         public KeyCode up = KeyCode.X;
         public KeyCode down = KeyCode.W;
@@ -86,11 +86,16 @@ namespace hypercube
         public KeyCode bowLRight = KeyCode.K;
         public KeyCode bowRLeft = KeyCode.Semicolon;
         public KeyCode bowRRight = KeyCode.Quote;
+        public KeyCode testKey = KeyCode.KeypadEnter;
 
         public Texture2D calibrationCorner;
         public Texture2D calibrationCenter;
         public Material selectedMat;
         public Material offMat;
+
+        bool testing = false; //show the test material instead of the normal calibrating images
+        public Material blackMat;
+        public Material testMat; //the TEST words
 
         canvasEditMode m;
         int currentSlice;
@@ -109,6 +114,19 @@ namespace hypercube
             canvas.copyCurrentSliceCalibration(currentSlice);
         }
 
+        void sliceUp()
+        {
+            currentSlice++;
+            if (currentSlice >= canvas.getSliceCount())
+                currentSlice = 0;
+        }
+        void sliceDn()
+        {
+            currentSlice--;
+            if (currentSlice < 0)
+                currentSlice = canvas.getSliceCount() - 1;
+        }
+
         // Update is called once per frame
         void Update()
         {
@@ -121,31 +139,32 @@ namespace hypercube
             canvasEditMode oldMode = m;
             int oldSelection = currentSlice;
 
-
             if (Input.GetKeyDown(nextSlice))
             {
-                currentSlice++;
-                if (currentSlice >= canvas.getSliceCount())
-                    currentSlice = 0;
+                if (canvas._flipZ)
+                    sliceDn();
+                else
+                    sliceUp();
             }
             if (Input.GetKeyDown(prevSlice))
             {
-                currentSlice--;
-                if (currentSlice < 0)
-                    currentSlice = canvas.getSliceCount() - 1;
+                if (canvas._flipZ)
+                    sliceUp();
+                else
+                    sliceDn();
             }
             else if (Input.GetKeyDown(skewXDn))
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeSkewAdjustment(currentSlice, true, interval * xPixel);
             }
             else if (Input.GetKeyDown(skewXUp))
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeSkewAdjustment(currentSlice, true, -interval * xPixel);
             }
             else if (Input.GetKeyDown(skewYUp))
@@ -163,49 +182,49 @@ namespace hypercube
             else if (Input.GetKeyDown(bowTopUp))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, -interval * yPixel);
             }
             else if (Input.GetKeyDown(bowTopDn))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, -interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.top, interval * yPixel);
             }
             else if (Input.GetKeyDown(bowBotUp))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, -interval * yPixel);
             }
             else if (Input.GetKeyDown(bowBotDn))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, -interval * yPixel);
+                canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.bottom, interval * yPixel);
             }
             else if (Input.GetKeyDown(bowLLeft))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, interval * xPixel);
             }
             else if (Input.GetKeyDown(bowLRight))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, -interval * xPixel);
             }
             else if (Input.GetKeyDown(bowRLeft))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, interval * xPixel);
             }
             else if (Input.GetKeyDown(bowRRight))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, -interval * xPixel);
             }
 
@@ -234,25 +253,25 @@ namespace hypercube
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
             }
             else if (Input.GetKeyDown(right))
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount();
+                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
                 canvas.makeAdjustment(currentSlice, m, true, interval * xPixel);
             }
             else if (Input.GetKeyDown(down))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
+                canvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
             }
             else if (Input.GetKeyDown(up))
             {
                 float yPixel = 1f / ((float)canvas.sliceHeight * canvas.getSliceCount());
-                canvas.makeAdjustment(currentSlice, m, false, interval * yPixel);
+                canvas.makeAdjustment(currentSlice, m, false, -interval * yPixel);
             }
 
             if (currentSlice != oldSelection || m != oldMode)
@@ -260,6 +279,14 @@ namespace hypercube
                 current = "s" + currentSlice + "  " + m.ToString();
                 canvas.updateMesh();
             }
+
+            //testing
+            if (Input.GetKeyDown(testKey))
+            {
+                testing = !testing;
+                canvas.updateMesh();
+            }
+
         }
 
         void OnValidate()
@@ -286,7 +313,7 @@ namespace hypercube
 
         public Material[] getMaterials()
         {
-
+            
             if (m == canvasEditMode.M)
             {
                 selectedMat.SetTexture("_MainTex", calibrationCenter);
@@ -296,23 +323,36 @@ namespace hypercube
             {
                 selectedMat.SetTexture("_MainTex", calibrationCorner);
                 if (m == canvasEditMode.UL)
-                    selectedMat.SetTextureScale("_MainTex", new Vector2(1f, -1f));
-                else if (m == canvasEditMode.UR)
-                    selectedMat.SetTextureScale("_MainTex", new Vector2(-1f, -1f));
-                else if (m == canvasEditMode.LL)
                     selectedMat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-                else if (m == canvasEditMode.LR)
+                else if (m == canvasEditMode.UR)
                     selectedMat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
+                else if (m == canvasEditMode.LL)
+                    selectedMat.SetTextureScale("_MainTex", new Vector2(1f, -1f));
+                else if (m == canvasEditMode.LR)
+                    selectedMat.SetTextureScale("_MainTex", new Vector2(-1f, -1f));
             }
 
             Material[] outMats = new Material[canvas.getSliceCount()];
+
             for (int i = 0; i < canvas.getSliceCount(); i++)
             {
-                if (i == currentSlice)
-                    outMats[i] = selectedMat;
-                else
-                    outMats[i] = offMat;
+                if (testing)
+                {
+                    if (i == currentSlice)
+                        outMats[i] = testMat;
+                    else
+                        outMats[i] = blackMat;
+                }
+                else //normal path
+                {
+                    if (i == currentSlice)
+                        outMats[i] = selectedMat;
+                    else
+                        outMats[i] = offMat;
+                }
             }
+
+
             return outMats;
         }
 #endif

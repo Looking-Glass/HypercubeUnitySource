@@ -44,8 +44,10 @@ namespace hypercube
 
         protected override void OnDisable()
         {
-            arrow.SetActive(false);
-            circle.SetActive(false);
+            if (arrow)
+                arrow.SetActive(false);
+            if (circle)
+                circle.SetActive(false);
 
             base.OnDisable();
         }
@@ -122,7 +124,8 @@ namespace hypercube
             {
                 arrow.SetActive(false);
                 circle.SetActive(true);
-                outputText.text = "Make sure the circle aligns.\nIf <color=00ff00>YES</color>, press Lshift + S to save.\nIf NO press ENTER to try again.";
+
+                outputText.text = "<color=#00ffff>Is the circle aligned?</color>\nIf <color=#00ff00>YES</color>,  Lshift + S to save.\nIf <color=#ff0000>NO</color> press ENTER\n to try again.";
             }
         }
 
@@ -130,7 +133,6 @@ namespace hypercube
         {
             hypercube.touchInterface i = new hypercube.touchInterface();
             touch._getInterface(ref i);
-            outputText.text = i.rawTouchScreenX + "  " + i.rawTouchScreenY;
             if (stage == calibrationStage.STEP_touchCorner1)
             {
                 ULx = i.rawTouchScreenX;
