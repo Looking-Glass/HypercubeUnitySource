@@ -157,14 +157,14 @@ namespace hypercube
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeSkewAdjustment(currentSlice, true, interval * xPixel);
             }
             else if (Input.GetKeyDown(skewXUp))
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeSkewAdjustment(currentSlice, true, -interval * xPixel);
             }
             else if (Input.GetKeyDown(skewYUp))
@@ -203,28 +203,28 @@ namespace hypercube
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, interval * xPixel);
             }
             else if (Input.GetKeyDown(bowLRight))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.left, -interval * xPixel);
             }
             else if (Input.GetKeyDown(bowRLeft))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, interval * xPixel);
             }
             else if (Input.GetKeyDown(bowRRight))
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeBowAdjustment(currentSlice, castMesh.bowEdge.right, -interval * xPixel);
             }
 
@@ -253,14 +253,14 @@ namespace hypercube
             {
                 float xPixel = 2f / canvas.sliceWidth; //the xpixel makes the movement distance between x/y equivalent (instead of just a local transform)
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *= (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeAdjustment(currentSlice, m, true, -interval * xPixel);
             }
             else if (Input.GetKeyDown(right))
             {
                 float xPixel = 2f / canvas.sliceWidth;  //here it is 2 instead of 1 because x raw positions correspond from -1 to 1, while y raw positions correspond from 0 to 1
                 if (relativeTo == distortionCompensationType.SPATIAL)
-                    xPixel *= canvas.getSliceCount() * canvas.aspectY.x;
+					xPixel *=  (canvas.sliceWidth/ canvas.sliceHeight) * canvas.aspectX.y;
                 canvas.makeAdjustment(currentSlice, m, true, interval * xPixel);
             }
             else if (Input.GetKeyDown(down))
