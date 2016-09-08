@@ -86,16 +86,31 @@ namespace hypercube
         public KeyCode bowLRight = KeyCode.K;
         public KeyCode bowRLeft = KeyCode.Semicolon;
         public KeyCode bowRRight = KeyCode.Quote;
-        public KeyCode testKey = KeyCode.KeypadEnter;
+		public KeyCode testKey1 = KeyCode.F1;
+		public KeyCode testKey2 = KeyCode.F2;
+		public KeyCode testKey3 = KeyCode.F3;
+		public KeyCode testKey4 = KeyCode.F4;
+		public KeyCode testKey5 = KeyCode.F5;
+		public KeyCode testKey6 = KeyCode.F6;
 
         public Texture2D calibrationCorner;
         public Texture2D calibrationCenter;
         public Material selectedMat;
         public Material offMat;
 
-        bool testing = false; //show the test material instead of the normal calibrating images
+		enum testingMode
+		{
+			OFF = 0,
+			TEST1,
+			TEST1_ALL,
+			TEST2,
+			TEST2_ALL
+		}
+
+		testingMode testState = testingMode.OFF; //show the test material instead of the normal calibrating images
         public Material blackMat;
-        public Material testMat; //the TEST words
+        public Material testMat1; //the TEST words
+		public Material testMat2; //checkerboard test
 
         canvasEditMode m;
         int currentSlice;
@@ -281,11 +296,36 @@ namespace hypercube
             }
 
             //testing
-            if (Input.GetKeyDown(testKey))
+            if (Input.GetKeyDown(testKey1))
             {
-                testing = !testing;
+				testState = testingMode.OFF;
                 canvas.updateMesh();
             }
+			else if (Input.GetKeyDown(testKey2))
+			{
+				testState = testingMode.TEST1;
+				canvas.updateMesh();
+			}
+			else if (Input.GetKeyDown(testKey3))
+			{
+				testState = testingMode.TEST1_ALL;
+				canvas.updateMesh();
+			}
+			else if (Input.GetKeyDown(testKey4))
+			{
+				testState = testingMode.TEST2;
+				canvas.updateMesh();
+			}
+			else if (Input.GetKeyDown(testKey5))
+			{
+				testState = testingMode.TEST2_ALL;
+				canvas.updateMesh();
+			}
+			else if (Input.GetKeyDown(testKey6))
+			{
+				testState = testingMode.OFF;
+				canvas.updateMesh();
+			}
 
         }
 
@@ -336,20 +376,35 @@ namespace hypercube
 
             for (int i = 0; i < canvas.getSliceCount(); i++)
             {
-                if (testing)
+				if (testState == testingMode.OFF) //normal path
+				{
+					if (i == currentSlice)
+						outMats[i] = selectedMat;
+					else
+						outMats[i] = offMat;
+				}
+				else if (testState == testingMode.TEST1)
                 {
                     if (i == currentSlice)
-                        outMats[i] = testMat;
+                        outMats[i] = testMat1;
                     else
                         outMats[i] = blackMat;
                 }
-                else //normal path
+				else if (testState == testingMode.TEST1_ALL)
                 {
-                    if (i == currentSlice)
-                        outMats[i] = selectedMat;
-                    else
-                        outMats[i] = offMat;
+					outMats[i] = testMat1;
                 }
+				else if (testState == testingMode.TEST2)
+				{
+					if (i == currentSlice)
+						outMats[i] = testMat2;
+					else
+						outMats[i] = blackMat;
+				}
+				else if (testState == testingMode.TEST2_ALL)
+				{
+					outMats[i] = testMat2;
+				}
             }
 
 
