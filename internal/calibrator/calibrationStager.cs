@@ -7,7 +7,7 @@ namespace hypercube
     public class calibrationStage
     {
         public string name;  //not functional, just for inspector convenience
-        public Texture infoTexture;
+		public Texture infoTexture;
         public GameObject[] activeObjects;
        
     }
@@ -17,7 +17,9 @@ namespace hypercube
         protected int stage = 0;
 
         public castMesh canvas;
+		public UnityEngine.UI.Image helpImage;
         public calibrationStage[] stages;
+
 
         
        // public GameObject infoScreen;
@@ -55,7 +57,12 @@ namespace hypercube
             else if (Input.GetKeyDown(KeyCode.LeftBracket))
                 prevStage();
 
-            if (Input.GetKeyDown(KeyCode.Escape)) //go to next stage
+			if (Input.GetKeyDown (KeyCode.Space)) //toggle help
+			{
+				helpImage.gameObject.SetActive(!helpImage.gameObject.activeSelf);
+			}
+
+            if (Input.GetKeyDown(KeyCode.Escape)) 
             {
                 quit();
                 return;
@@ -96,6 +103,13 @@ namespace hypercube
             {
                 o.SetActive(true);
             }
+
+			helpImage.material.mainTexture = stages[stage].infoTexture;
+			if (helpImage.gameObject.activeSelf) //if it is active, toggle it to update it.
+			{
+				helpImage.gameObject.SetActive (false);
+				helpImage.gameObject.SetActive (true);
+			}
 
         }
 
