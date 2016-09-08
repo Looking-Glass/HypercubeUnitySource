@@ -15,8 +15,15 @@ namespace hypercube
 
         public hypercubeCamera cam;
 
+		Vector3 originalScale;  //this is used so the aspect ratios can be tested in situ
+
         protected override void OnEnable()
         {
+			originalScale = cam.transform.localScale;
+			cam.scaleConstraint = hypercubeCamera.scaleConstraintType.X_RELATIVE;
+			cam.slicing = hypercubeCamera.softSliceMode.SOFT;
+			cam.overlap = 1f;
+
             dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
 
             resXInput.text = d.getValue("touchScreenResX", "800");
@@ -31,6 +38,14 @@ namespace hypercube
 
         protected override void OnDisable()
         {
+			if (cam) 
+			{
+				cam.scaleConstraint = hypercubeCamera.scaleConstraintType.NONE;
+				cam.transform.localScale = originalScale;
+				cam.slicing = hypercubeCamera.softSliceMode.HARD;
+				cam.overlap = 0f;
+			}
+
             dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
 
             d.setValue("touchScreenResX", resXInput.text);
@@ -49,5 +64,19 @@ namespace hypercube
 
             display.text = "Latest Values:\nx: " + i.rawTouchScreenX + "\ny: " + i.rawTouchScreenY;
         }
+
+		public void onTextUpdate()
+		{
+			#if HYPERCUBE_DEV
+			float x = dataFileDict.stringToFloat(sizeWInput.text, -1f);
+			float y = dataFileDict.stringToFloat(sizeHInput.text, -1f);
+			float z = dataFileDict.stringToFloat(sizeDInput.text, -1f);
+
+			if (x <= 0f || y <= 0f || z <= 0f)
+				return;
+			
+			cam.localCastMesh.setProjectionAspectRatios(x,y,z);
+			#endif
+		}
     }
 }

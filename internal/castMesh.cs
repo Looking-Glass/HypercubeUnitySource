@@ -198,15 +198,24 @@ namespace hypercube
             input.init(d);
 
             //setup aspect ratios, for constraining cube scales
-            float xCm = d.getValueAsFloat("projectionCentimeterWidth", 10f);
-            float yCm = d.getValueAsFloat("projectionCentimeterHeight", 5f);
-            float zCm = d.getValueAsFloat("projectionCentimeterDepth", 7f);
-            aspectX = new Vector3(1f, yCm/xCm, zCm/xCm);
-            aspectY = new Vector3(xCm/yCm, 1f, zCm / yCm);
-            aspectZ = new Vector3(xCm/zCm, yCm / zCm, 1f);
+			setProjectionAspectRatios (
+				d.getValueAsFloat ("projectionCentimeterWidth", 10f),
+				d.getValueAsFloat ("projectionCentimeterHeight", 5f),
+				d.getValueAsFloat ("projectionCentimeterDepth", 7f));
 
             return foundConfigFile;
         }
+
+		//requires the physical dimensions of the projection, in Centimeters. Should not be public except for use by calibration tools or similar. 
+		#if HYPERCUBE_DEV
+		public 
+		#endif
+		void setProjectionAspectRatios(float xCm, float yCm, float zCm) 
+		{
+			aspectX = new Vector3(1f, yCm/xCm, zCm/xCm);
+			aspectY = new Vector3(xCm/yCm, 1f, zCm / yCm);
+			aspectZ = new Vector3(xCm/zCm, yCm / zCm, 1f);
+		}
 
         //tweaks to the cube design to offset physical distortions
         public void setCalibrationOffsets(dataFileDict d, int maxSlices)
