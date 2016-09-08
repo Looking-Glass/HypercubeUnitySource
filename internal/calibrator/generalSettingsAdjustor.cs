@@ -99,12 +99,12 @@ namespace hypercube
             }
             else if (UnityEngine.Input.GetKeyDown(sliceHeightUp))
             {
-                canvas.sliceHeight += sensitivity;
+                canvas.sliceHeight += sensitivity * .5f; //this setting affects the output very strongly compared to the others, so just half it.
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(sliceHeightDown))
             {
-                canvas.sliceHeight -= sensitivity;
+                canvas.sliceHeight -= sensitivity * .5f;
                 didSomething = true;
             }
             else if (UnityEngine.Input.GetKeyDown(sliceWidthUp))
@@ -135,6 +135,32 @@ namespace hypercube
                 refreshTexts();
                 canvas.updateMesh();            
             }
+
+			if (UnityEngine.Input.GetKeyDown (KeyCode.Alpha1)) 
+			{
+				sensitivity = .1f;
+				Debug.Log ("Set sensitivity to: " + sensitivity);
+			}
+			else if (UnityEngine.Input.GetKeyDown (KeyCode.Alpha2)) 
+			{
+				sensitivity = .5f;
+				Debug.Log ("Set sensitivity to: " + sensitivity);
+			}
+			else if (UnityEngine.Input.GetKeyDown (KeyCode.Alpha3)) 
+			{
+				sensitivity = 1f;
+				Debug.Log ("Set sensitivity to: " + sensitivity);
+			}
+			else if (UnityEngine.Input.GetKeyDown (KeyCode.Alpha4)) 
+			{
+				sensitivity = 2f;
+				Debug.Log ("Set sensitivity to: " + sensitivity);
+			}
+			else if (UnityEngine.Input.GetKeyDown (KeyCode.Alpha5)) 
+			{
+				sensitivity = 4f;
+				Debug.Log ("Set sensitivity to: " + sensitivity);
+			}
 	
 	    }
 

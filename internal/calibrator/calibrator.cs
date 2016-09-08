@@ -86,12 +86,6 @@ namespace hypercube
         public KeyCode bowLRight = KeyCode.K;
         public KeyCode bowRLeft = KeyCode.Semicolon;
         public KeyCode bowRRight = KeyCode.Quote;
-		public KeyCode testKey1 = KeyCode.F1;
-		public KeyCode testKey2 = KeyCode.F2;
-		public KeyCode testKey3 = KeyCode.F3;
-		public KeyCode testKey4 = KeyCode.F4;
-		public KeyCode testKey5 = KeyCode.F5;
-		public KeyCode testKey6 = KeyCode.F6;
 
         public Texture2D calibrationCorner;
         public Texture2D calibrationCenter;
@@ -296,35 +290,56 @@ namespace hypercube
             }
 
             //testing
-            if (Input.GetKeyDown(testKey1))
+			if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.Alpha1))
             {
 				testState = testingMode.OFF;
                 canvas.updateMesh();
             }
-			else if (Input.GetKeyDown(testKey2))
+			else if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.Alpha2))
 			{
 				testState = testingMode.TEST1;
 				canvas.updateMesh();
 			}
-			else if (Input.GetKeyDown(testKey3))
+			else if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.Alpha3))
 			{
 				testState = testingMode.TEST1_ALL;
 				canvas.updateMesh();
 			}
-			else if (Input.GetKeyDown(testKey4))
+			else if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.Alpha4))
 			{
 				testState = testingMode.TEST2;
 				canvas.updateMesh();
 			}
-			else if (Input.GetKeyDown(testKey5))
+			else if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKeyDown(KeyCode.Alpha5))
 			{
 				testState = testingMode.TEST2_ALL;
 				canvas.updateMesh();
 			}
-			else if (Input.GetKeyDown(testKey6))
+
+			if (Input.GetKeyDown (KeyCode.Alpha1)) 
 			{
-				testState = testingMode.OFF;
-				canvas.updateMesh();
+				interval = .1f;
+				Debug.Log ("Set sensitivity to: " + interval);
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha2)) 
+			{
+				interval = .5f;
+				Debug.Log ("Set sensitivity to: " + interval);
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha3)) 
+			{
+				interval = 1f;
+				Debug.Log ("Set sensitivity to: " + interval);
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha4)) 
+			{
+				interval = 2f;
+				Debug.Log ("Set sensitivity to: " + interval);
+			}
+			else if (Input.GetKeyDown (KeyCode.Alpha5)) 
+			{
+				interval = 4f;
+				Debug.Log ("Set sensitivity to: " + interval);
 			}
 
         }
