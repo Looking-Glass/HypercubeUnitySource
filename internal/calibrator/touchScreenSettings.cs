@@ -38,23 +38,24 @@ namespace hypercube
 
         protected override void OnDisable()
         {
-			if (cam) 
-			{
-				cam.scaleConstraint = hypercubeCamera.scaleConstraintType.NONE;
-				cam.transform.localScale = originalScale;
-				cam.slicing = hypercubeCamera.softSliceMode.HARD;
-				cam.overlap = 0f;
-			}
+			base.OnDisable();
 
-            dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict>();
+			if (!cam)
+				return;
+			
+			cam.scaleConstraint = hypercubeCamera.scaleConstraintType.NONE;
+			cam.transform.localScale = originalScale;
+			cam.slicing = hypercubeCamera.softSliceMode.HARD;
+			cam.overlap = 0f;
 
-            d.setValue("touchScreenResX", resXInput.text);
-            d.setValue("touchScreenResY", resYInput.text);
-            d.setValue("projectionCentimeterWidth", sizeWInput.text);
-            d.setValue("projectionCentimeterHeight", sizeHInput.text);
-            d.setValue("projectionCentimeterDepth", sizeDInput.text);
 
-            base.OnDisable();
+			dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict> ();
+
+			d.setValue ("touchScreenResX", resXInput.text);
+			d.setValue ("touchScreenResY", resYInput.text);
+			d.setValue ("projectionCentimeterWidth", sizeWInput.text);
+			d.setValue ("projectionCentimeterHeight", sizeHInput.text);
+			d.setValue ("projectionCentimeterDepth", sizeDInput.text);          
         }
 
         public override void onTouchMoved(touch touch)
