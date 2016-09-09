@@ -145,6 +145,13 @@ namespace hypercube
             if (pauseInput)
                 return;
 
+            //copy slice calibration
+            if (Input.GetKeyDown(KeyCode.C) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+            {
+                copyCurrentSliceCalibration();
+                return;
+            }
+
             canvasEditMode oldMode = m;
             int oldSelection = currentSlice;
 
@@ -341,6 +348,8 @@ namespace hypercube
 				interval = 4f;
 				Debug.Log ("Set sensitivity to: " + interval);
 			}
+
+          
 
         }
 
