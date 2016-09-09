@@ -17,6 +17,7 @@ namespace hypercube
         protected int stage = 0;
 
         public castMesh canvas;
+		public UnityEngine.UI.InputField[] fullTextInputs; //these are used to prevent space bar from triggering help if we are actually typing something.
 		public UnityEngine.UI.Image helpImage;
         public calibrationStage[] stages;
 
@@ -59,6 +60,11 @@ namespace hypercube
 
 			if (Input.GetKeyDown (KeyCode.Space)) //toggle help
 			{
+				foreach (UnityEngine.UI.InputField f in fullTextInputs) //don't allow help to toggle if an input is focused.
+				{
+					if (f.isFocused)
+						return;
+				}
 				helpImage.gameObject.SetActive(!helpImage.gameObject.activeSelf);
 			}
 
