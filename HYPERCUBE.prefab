@@ -28,7 +28,7 @@ GameObject:
   - 114: {fileID: 11483894}
   - 33: {fileID: 3327710}
   - 23: {fileID: 2348930}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: HYPERCUBE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294964479
+    m_Bits: 4294967263
   m_RenderingPath: 3
   m_TargetTexture: {fileID: 8400000, guid: 340cc3aeb2104984d98853ebf810f8d5, type: 2}
   m_TargetDisplay: 0
@@ -294,8 +294,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slicing: 1
-  overlap: 0.96
-  softness: 0.32876712
+  overlap: 1
+  softness: 0.33333334
   scaleConstraint: 0
   forcedPerspective: 0
   brightness: 1
