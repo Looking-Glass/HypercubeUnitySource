@@ -48,7 +48,9 @@ namespace hypercube
 			cam.slicing = hypercubeCamera.softSliceMode.HARD;
 			cam.overlap = 0f;
 
-
+			if (!cam.localCastMesh)
+				return;
+			
 			dataFileDict d = cam.localCastMesh.gameObject.GetComponent<dataFileDict> ();
 
 			d.setValue ("touchScreenResX", resXInput.text);
