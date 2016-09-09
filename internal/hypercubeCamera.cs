@@ -7,7 +7,7 @@ using System.Collections.Generic;
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
     {
-         public const float version = 1.01f;
+         public const float version = 1.1f;
 
         public enum softSliceMode
         {

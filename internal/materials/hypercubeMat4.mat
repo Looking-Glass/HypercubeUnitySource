@@ -141,7 +141,7 @@ Material:
       data:
         first:
           name: _Mod
-        second: 1
+        second: 1.3
       data:
         first:
           name: _Stencil
