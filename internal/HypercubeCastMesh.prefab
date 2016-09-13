@@ -192,7 +192,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
   usingCustomDimensions: 1
   preview: {fileID: 0}
-  calibrator: {fileID: 0}
   casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
   relativeSettingsPath: volumeCalibrationData\hardwareCalibration.txt
 --- !u!114 &11482954

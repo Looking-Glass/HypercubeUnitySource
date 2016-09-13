@@ -301,6 +301,7 @@ MonoBehaviour:
   brightness: 1
   blackPoint: {r: 0.053026035, g: 0.018382356, b: 0.14705884, a: 0}
   autoHideMouse: 1
+  passes: []
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
   renderCam: {fileID: 2083526}
   sliceTextures:

@@ -2,7 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 
+namespace hypercube
+{
+    [System.Serializable]
+    public class drawingPass
+    {
+        public enum blendOp
+        {
+            Opaque = 0,
+            Add,
+            Multiply,
+            AlphaBlend
+        }
 
+        public LayerMask negativeMask;
+        public blendOp blend;     
+        public LayerMask drawMask;
+        public bool allowSoftSlicing;
+    }
+}
   
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
@@ -40,6 +58,7 @@ using System.Collections.Generic;
         [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
         public bool autoHideMouse = true;
+        public hypercube.drawingPass[] passes;
         public Shader softSliceShader;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
