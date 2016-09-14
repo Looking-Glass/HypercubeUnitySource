@@ -57,7 +57,7 @@ public class casterWindowPrefs : EditorWindow
 
 
 #if UNITY_EDITOR_WIN
-		EditorGUILayout.HelpBox("TIPS:\nUnity prefers if the cube monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
+		EditorGUILayout.HelpBox("TIPS:\nUnity prefers if the Volume monitor is left of the main monitor (don't ask me why). \n\nIf any changes are made to the monitor setup, Unity must be off or restarted for this tool to work properly.", MessageType.Info);
 
 #endif
 

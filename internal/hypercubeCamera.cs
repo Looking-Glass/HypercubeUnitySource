@@ -15,17 +15,22 @@ namespace hypercube
             AlphaBlend
         }
 
-        public LayerMask negativeMask;
+        public string passName;  //purely convenience
         public blendOp blend;     
         public LayerMask drawMask;
+        public bool occlusion; //should opaque objects occlude what is being rendered?  ie should we draw opaque objects as black in this pass
         public bool allowSoftSlicing;
     }
+
 }
   
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
     {
          public const float version = 1.11f;
+
+         //a static pointer to the last activated hypercubeCameraZ
+         public static hypercubeCamera mainCam = null;  
 
         public enum softSliceMode
         {
@@ -58,7 +63,8 @@ namespace hypercube
         [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
         public bool autoHideMouse = true;
-        public hypercube.drawingPass[] passes;
+        [Tooltip("Because many types of effects do not draw to the depth buffer, they can not be used together with soft slicing. Use fxPasses to draw additional effects passes over the Volumetric scene.")]
+        public hypercube.drawingPass[] fxPasses;
         public Shader softSliceShader;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
@@ -68,6 +74,11 @@ namespace hypercube
         //store our camera values here.
         float[] nearValues;
         float[] farValues;
+
+        void OnEnable()
+        {
+            hypercubeCamera.mainCam = this;
+        }
 
         void Start()
         {
@@ -94,6 +105,12 @@ namespace hypercube
 
         void Update()
         {
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+                Shader.EnableKeyword("SOFT_SLICING");
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+                Shader.DisableKeyword("SOFT_SLICING");
+
             if (autoHideMouse)
             {
 #if !UNITY_EDITOR
@@ -154,23 +171,26 @@ namespace hypercube
             if (overlap < 0)
                 overlap = 0;
 
-            hypercube.softOverlap o = renderCam.GetComponent<hypercube.softOverlap>();
             if (slicing != softSliceMode.HARD)
             {
                 if (slicing == softSliceMode.SOFT)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area
 
-                o.enabled = true;
-                o.setShaderProperties(softness, blackPoint);
+
+                Shader.SetGlobalFloat("_softPercent", softness);
+         //       o.enabled = true;
+         //       o.setShaderProperties(softness, blackPoint);
             }
-            else
-                o.enabled = false;
         }
 
         public void render()
         {
+            Shader.EnableKeyword("SOFT_SLICING");
             if (overlap > 0f && slicing != softSliceMode.HARD)
+            {
                 renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
+                Shader.EnableKeyword("SOFT_SLICING");
+            }
 
             float baseViewAngle = renderCam.fieldOfView;
 
@@ -190,24 +210,11 @@ namespace hypercube
             renderCam.fieldOfView = baseViewAngle;
 
             if (overlap > 0f && slicing != softSliceMode.HARD)
+            {
                 renderCam.gameObject.SetActive(false);
-        }
-
-        //prefs input
-        public void softSliceToggle()
-        {
-            if (slicing == softSliceMode.HARD)
-                slicing = softSliceMode.SOFT;
-            else
-                slicing = softSliceMode.HARD;
-        }
-        public void overlapUp()
-        {
-            overlap += .05f;
-        }
-        public void overlapDown()
-        {
-            overlap -= .05f;
+                Shader.DisableKeyword("SOFT_SLICING");
+            }
+            Shader.DisableKeyword("SOFT_SLICING");
         }
 
 
