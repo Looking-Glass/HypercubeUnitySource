@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: hypercubeMat2
-  m_Shader: {fileID: 4800000, guid: 9fe3568f1d8f52e4993db9c0f91e17e9, type: 3}
+  m_Shader: {fileID: 4800000, guid: 976d5ed39838a7b4c8a4de268472fa36, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -167,6 +167,18 @@ Material:
         first:
           name: _softSlicingToggle
         second: 1
+      data:
+        first:
+          name: _brightnessR
+        second: 0
+      data:
+        first:
+          name: _brightnessG
+        second: 0
+      data:
+        first:
+          name: _brightnessB
+        second: 0
     m_Colors:
       data:
         first:

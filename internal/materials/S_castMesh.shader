@@ -1,12 +1,15 @@
-﻿Shader "Hypercube/Cast Mesh"
+﻿//Shader "Hypercube/Internal/Cast Mesh"
+Shader "Hidden/Cast Mesh"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-		_brightnessR ("R Offset", Range (-2, 2)) = 1
-		_brightnessG ("G Offset", Range (-2, 2)) = 1
-		_brightnessB ("B Offset", Range (-2, 2)) = 1
-        _Mod ("Contrast Mod", Range (0, 100)) = 1
+
+		_sliceBrightnessR ("R Offset", Range (-2, 2)) = 1  //TODO remove these lines, they shouldn't be public
+		_sliceBrightnessG ("G Offset", Range (-2, 2)) = 1
+		_sliceBrightnessB ("B Offset", Range (-2, 2)) = 1
+        _hypercubeBrightnessMod ("Contrast Mod", Range (0, 100)) = 1
+		_hardwareContrastMod ("Contrast Mod", Range (0, 100)) = 1
     }
     SubShader
     {
@@ -36,10 +39,14 @@
  
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float _Mod;
-			float _brightnessR;
-			float _brightnessG;
-			float _brightnessB;
+
+
+			float _hypercubeBrightnessMod;
+			//TODO should be set globally from settings
+            float _hardwareContrastMod = 1;
+			float _sliceBrightnessR;
+			float _sliceBrightnessG;
+			float _sliceBrightnessB;
          
             v2f vert (appdata v)
             {
@@ -51,11 +58,11 @@
          
             fixed4 frag (v2f i) : SV_Target
             {
-				float4 output = tex2D(_MainTex, i.uv) * _Mod;
-				output.r += _brightnessR;
-				output.g += _brightnessG;
-				output.b += _brightnessB;
-                return output;
+				float4 output = tex2D(_MainTex, i.uv) * _hardwareContrastMod;
+				output.r *= _sliceBrightnessR;
+				output.g *= _sliceBrightnessG;
+				output.b *= _sliceBrightnessB;
+                return output * _hypercubeBrightnessMod;
             }
             ENDCG
         }
