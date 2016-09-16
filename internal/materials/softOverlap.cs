@@ -55,10 +55,8 @@ namespace hypercube
         public void setShaderProperties(float p, Color blackPoint)
         {
             p = Mathf.Clamp(p, 0f, .5f);
-          //  material.SetFloat("_softPercent", p);
-            material.SetColor("_blackPoint", blackPoint);
-
-            Shader.SetGlobalFloat("_softPercent", p);
+            material.SetFloat("_softPercent", p);
+            material.SetColor("_blackPoint", blackPoint);           
         }
 
         protected virtual void OnDestroy()

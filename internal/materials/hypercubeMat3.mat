@@ -163,6 +163,10 @@ Material:
         first:
           name: _UseUIAlphaClip
         second: 0
+      data:
+        first:
+          name: _softSlicingToggle
+        second: 1
     m_Colors:
       data:
         first:

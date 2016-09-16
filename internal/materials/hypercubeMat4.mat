@@ -178,6 +178,10 @@ Material:
         first:
           name: _Offset
         second: 1
+      data:
+        first:
+          name: _softSlicingToggle
+        second: 1
     m_Colors:
       data:
         first:

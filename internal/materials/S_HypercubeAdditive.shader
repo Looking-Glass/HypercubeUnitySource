@@ -1,4 +1,4 @@
-﻿Shader "Hypercube/Unlit"
+﻿Shader "Hypercube/Additive"
 {
     Properties
     {
@@ -9,9 +9,12 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque"  "Queue" = "Geometry"  }
+        Tags { "RenderType"="Transparent"  }
         Cull [_Cull]
-        ZWrite On
+        ZWrite On 
+		ZTest Always
+		Lighting Off 
+		Blend SrcAlpha One
  
         Pass
         {    
@@ -41,10 +44,9 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 			fixed4 _Color;		
-
 			sampler2D _CameraDepthTexture;
+
 			float _softPercent;
-			half4 _blackPoint;
          
             v2f vert (appdata v)
             {
@@ -63,7 +65,7 @@
 				float d = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r;
 				//return d; //uncomment this to show the raw depth
 
-				//note: if _softPercent == 0  that is the same as hard slice.
+				//note that if _softPercent == 0, that is the same as having Soft Slicing off.
 
 				float mask = 1;	
 									
@@ -73,11 +75,10 @@
 					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
 
 				//return mask;
-				return ((tex2D(_MainTex, i.uv) * _Color) + _blackPoint) * mask;  //multiply mask after everything because _blackPoint must be included in there or we will get 'hardness' from non-black blackpoints
-//end soft slicing----------------------------------------			
+				_Color *= mask;
 #endif
-                return (tex2D(_MainTex, i.uv) * _Color) + _blackPoint;
 
+                return (tex2D(_MainTex, i.uv) * _Color);
 
             }
             ENDCG
@@ -89,7 +90,8 @@
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			ZWrite On ZTest LEqual
+			ZWrite On 
+			ZTest LEqual
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -108,6 +110,8 @@
 
 			ENDCG
 		}
+		
     }
 	Fallback "Diffuse"
+	
 }

@@ -60,7 +60,7 @@ namespace hypercube
         public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
         [Tooltip("Brightness is a final modifier on the output to Volume.\nCalculated value * Brightness = output")]
         public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
-        [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: Black Point can only be used if when soft slicing is being used.\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
+        [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
         public bool autoHideMouse = true;
         [Tooltip("Because many types of effects do not draw to the depth buffer, they can not be used together with soft slicing. Use fxPasses to draw additional effects passes over the Volumetric scene.")]
@@ -105,11 +105,6 @@ namespace hypercube
 
         void Update()
         {
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-                Shader.EnableKeyword("SOFT_SLICING");
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-                Shader.DisableKeyword("SOFT_SLICING");
 
             if (autoHideMouse)
             {
@@ -161,34 +156,31 @@ namespace hypercube
                 localCastMesh.updateMesh();
             }
 
+
+            Shader.SetGlobalColor("_blackPoint", blackPoint);
+
             updateOverlap();
         }
 
-
-        //let the slice image filter shader know how much 'softness' they should apply to the soft overlap
-        void updateOverlap()
+        public void updateOverlap()
         {
             if (overlap < 0)
                 overlap = 0;
-
             if (slicing != softSliceMode.HARD)
             {
                 if (slicing == softSliceMode.SOFT)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area
 
-
                 Shader.SetGlobalFloat("_softPercent", softness);
-         //       o.enabled = true;
-         //       o.setShaderProperties(softness, blackPoint);
             }
         }
 
+
         public void render()
         {
-            Shader.EnableKeyword("SOFT_SLICING");
             if (overlap > 0f && slicing != softSliceMode.HARD)
             {
-                renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
+               // renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
                 Shader.EnableKeyword("SOFT_SLICING");
             }
 
@@ -211,10 +203,9 @@ namespace hypercube
 
             if (overlap > 0f && slicing != softSliceMode.HARD)
             {
-                renderCam.gameObject.SetActive(false);
+              //  renderCam.gameObject.SetActive(false);
                 Shader.DisableKeyword("SOFT_SLICING");
             }
-            Shader.DisableKeyword("SOFT_SLICING");
         }
 
 

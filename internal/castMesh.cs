@@ -91,6 +91,9 @@ namespace hypercube
         void Awake()
         {
             foundConfigFile = false;
+#if !UNITY_EDITOR
+            Debug.Log("Loading Hypercube Tools v" + hypercubeCamera.version + " on  Unity v" + Application.unityVersion);
+#endif
         }
 
         void Start()
