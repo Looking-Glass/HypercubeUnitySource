@@ -134,7 +134,7 @@ Material:
       data:
         first:
           name: _Mod
-        second: 1
+        second: 1.3
       data:
         first:
           name: _Stencil
@@ -170,15 +170,35 @@ Material:
       data:
         first:
           name: _brightnessR
-        second: 0
+        second: 0.52
       data:
         first:
           name: _brightnessG
-        second: 0
+        second: 1.01
       data:
         first:
           name: _brightnessB
-        second: 0
+        second: 0.85
+      data:
+        first:
+          name: _sliceBrightnessR
+        second: 1
+      data:
+        first:
+          name: _sliceBrightnessG
+        second: 1
+      data:
+        first:
+          name: _sliceBrightnessB
+        second: 1
+      data:
+        first:
+          name: _hardwareContrastMod
+        second: 1
+      data:
+        first:
+          name: _hypercubeBrightnessMod
+        second: 1
     m_Colors:
       data:
         first:

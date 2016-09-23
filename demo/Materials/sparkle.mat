@@ -7,12 +7,12 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: sparkle
-  m_Shader: {fileID: 4800000, guid: d88cf0c8740d04e46830253683ba4f3b, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON
+  m_Shader: {fileID: 4800000, guid: 8dcd40e11891c504f912ecdcb43b9e4a, type: 3}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
   stringTagMap:
-    RenderType: TransparentCutout
+    RenderType: Transparent
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -94,27 +94,27 @@ Material:
       data:
         first:
           name: _DstBlend
-        second: 0
+        second: 10
       data:
         first:
           name: _Cutoff
         second: 0.148
       data:
         first:
-          name: _Parallax
-        second: 0.02
-      data:
-        first:
           name: _ZWrite
-        second: 1
+        second: 0
       data:
         first:
           name: _Glossiness
-        second: 0.5
+        second: 0
       data:
         first:
           name: _BumpScale
         second: 1
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
       data:
         first:
           name: _OcclusionStrength
@@ -130,15 +130,19 @@ Material:
       data:
         first:
           name: _Mode
-        second: 1
-      data:
-        first:
-          name: _Metallic
-        second: 0
+        second: 3
       data:
         first:
           name: _Cull
-        second: 2
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0.323
+      data:
+        first:
+          name: _softSlicingToggle
+        second: 0
     m_Colors:
       data:
         first:

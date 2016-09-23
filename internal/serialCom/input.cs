@@ -129,6 +129,7 @@ namespace hypercube
                 backScreen = new touchScreenInputManager("Back Touch Screen", addSerialPortInput(frontComName), false);
         }
 
+
         void Update()
         {
             if (frontScreen != null && frontScreen.serial.enabled)

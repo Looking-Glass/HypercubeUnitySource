@@ -31,6 +31,7 @@ namespace hypercube
             delimiter = _delimiter;
         }
 #endif
+
         public void addData(byte[] bytes)
         {
 

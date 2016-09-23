@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: hypercube_OBEY
-  m_Shader: {fileID: 4800000, guid: 6649366152de1de4d8525dc73ae5f4be, type: 3}
-  m_ShaderKeywords: _OVERLAY_BACK
+  m_Shader: {fileID: 4800000, guid: 9fe3568f1d8f52e4993db9c0f91e17e9, type: 3}
+  m_ShaderKeywords: ENABLE_SOFTSLICING _OVERLAY_BACK
   m_LightmapFlags: 0
   m_CustomRenderQueue: 2000
   stringTagMap: {}
@@ -133,10 +133,6 @@ Material:
         second: 0
       data:
         first:
-          name: _Parallax
-        second: 0.02
-      data:
-        first:
           name: _ZWrite
         second: 1
       data:
@@ -147,6 +143,10 @@ Material:
         first:
           name: _BumpScale
         second: 1
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
       data:
         first:
           name: _OcclusionStrength
@@ -165,11 +165,11 @@ Material:
         second: 0
       data:
         first:
-          name: _Metallic
+          name: _Cull
         second: 0
       data:
         first:
-          name: _Cull
+          name: _Metallic
         second: 0
       data:
         first:
@@ -205,12 +205,16 @@ Material:
         second: 0
       data:
         first:
-          name: _Overlay
-        second: 0
+          name: _softSlicingToggle
+        second: 1
       data:
         first:
           name: _Occlusion
         second: 7.5
+      data:
+        first:
+          name: _Overlay
+        second: 0
       data:
         first:
           name: _SquashAmount

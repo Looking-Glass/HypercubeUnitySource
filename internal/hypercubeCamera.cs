@@ -80,6 +80,11 @@ namespace hypercube
             hypercubeCamera.mainCam = this;
         }
 
+        void Awake()
+        {
+            renderCam.depthTextureMode = DepthTextureMode.Depth;
+        }
+
         void Start()
         {
             if (!localCastMesh)

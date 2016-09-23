@@ -29,6 +29,7 @@
 		struct Input {
 			float2 uv_MainTex;
 			float4 screenPos;
+            float eyeDepth;
 		};
 
 		half _Glossiness;
@@ -41,12 +42,9 @@
 
 		void depthVert (inout appdata_full v, out Input data) 
 		{
-			data.screenPos = ComputeScreenPos(v.vertex);
-			  UNITY_INITIALIZE_OUTPUT(Input,data);
-		//	  float pos = length(UnityObjectToViewPos(v.vertex).xyz);
-		//	  float diff = unity_FogEnd.x - unity_FogStart.x;
-		//	  float invDiff = 1.0f / diff;
-		//	  data.depth = clamp ((unity_FogEnd.x - pos) * invDiff, 0.0, 1.0);
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+			//data.screenPos = ComputeScreenPos(v.vertex);
+			COMPUTE_EYEDEPTH(data.eyeDepth); 
 	 }
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
@@ -55,10 +53,21 @@
 			fixed4 c = (tex2D (_MainTex, IN.uv_MainTex) * _Color) + _blackPoint;
 
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
-				//float d = Linear01Depth (tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r);
-				float d = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.screenPos)).r;
-				//float d =  IN.depth;
-				//return d; //uncomment this to show the raw depth
+				//float d = Linear01Depth (tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.screenPos)).r);
+				//float rawZ = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.screenPos)).r;
+
+				//get depth
+				float rawZ = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(IN.screenPos));
+				float sceneZ = LinearEyeDepth(rawZ);
+				float partZ = IN.eyeDepth;
+ 
+			float d = 1.0;
+         //   if ( rawZ > 0.0 ) // Make sure the depth texture exists
+                //d =  saturate((sceneZ - partZ));
+				d = sceneZ - partZ;
+
+
+				o.Albedo = d; return; //uncomment this to show the raw depth
 
 				//note: if _softPercent == 0  that is the same as hard slice.
 
@@ -69,7 +78,7 @@
 				else if (d > 1 - _softPercent)
 					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
 
-				//return mask;
+				//o.Albedo = mask; return; 
 
 				c *= mask;  //multiply mask after everything because _blackPoint must be included in the color or we will get 'hardness' from non-black blackpoints	
 #endif
@@ -82,7 +91,7 @@
 		}
 		ENDCG
 
-
+/*
 				//  Shadow rendering pass
 		Pass {
 			Name "ShadowCaster"
@@ -108,7 +117,7 @@
 
 			ENDCG
 		}
-
+		*/
 	}
-	FallBack "Diffuse"
+//	FallBack "Diffuse"
 }

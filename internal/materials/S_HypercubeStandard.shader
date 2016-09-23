@@ -31,7 +31,7 @@ Shader "Hypercube/Standard"
 		_DetailNormalMap("Normal Map", 2D) = "bump" {}
 
 		[Enum(UV0,0,UV1,1)] _UVSec ("UV Set for secondary textures", Float) = 0
-		//[Enum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 2
+		[Enum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 2
 
 		// Blending state
 		[HideInInspector] _Mode ("__mode", Float) = 0.0
@@ -48,7 +48,7 @@ Shader "Hypercube/Standard"
 	{
 		Tags { "RenderType"="Opaque" "PerformanceChecks"="False" }
 		LOD 300
-		Cull Off
+		Cull [_Cull]
 
 		// ------------------------------------------------------------------
 		//  Base forward pass (directional light, emission, lightmaps, ...)
@@ -80,6 +80,13 @@ Shader "Hypercube/Standard"
 			#pragma vertex vertBase
 			#pragma fragment fragBase
 			#include "UnityStandardCoreForward.cginc"
+
+
+			///HYPERCUBE CUSTOM
+
+
+			///END HYPERCUBE CUSTOM
+
 
 			ENDCG
 		}
@@ -123,7 +130,9 @@ Shader "Hypercube/Standard"
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			ZWrite On ZTest LEqual
+			Cull [_Cull]
+			ZWrite On 
+			ZTest LEqual
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -149,6 +158,8 @@ Shader "Hypercube/Standard"
 		{
 			Name "DEFERRED"
 			Tags { "LightMode" = "Deferred" }
+
+			Cull [_Cull]
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -274,7 +285,8 @@ Shader "Hypercube/Standard"
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			ZWrite On ZTest LEqual
+			ZWrite On 
+			ZTest LEqual
 
 			CGPROGRAM
 			#pragma target 2.0
@@ -316,5 +328,5 @@ Shader "Hypercube/Standard"
 
 
 	FallBack "VertexLit"
-	CustomEditor "StandardShaderGUI"
+//	CustomEditor "StandardShaderGUI"
 }

@@ -90,11 +90,7 @@ Material:
       data:
         first:
           name: _Cutoff
-        second: 0.494
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
+        second: 0.43
       data:
         first:
           name: _ZWrite
@@ -107,6 +103,10 @@ Material:
         first:
           name: _BumpScale
         second: 1
+      data:
+        first:
+          name: _Parallax
+        second: 0.02
       data:
         first:
           name: _OcclusionStrength
@@ -125,16 +125,20 @@ Material:
         second: 0
       data:
         first:
+          name: _Cull
+        second: 0
+      data:
+        first:
           name: _Metallic
         second: 0
       data:
         first:
-          name: _Cull
-        second: 2
-      data:
-        first:
           name: _Mod
         second: 1
+      data:
+        first:
+          name: _softSlicingToggle
+        second: 0
       data:
         first:
           name: _InvFade

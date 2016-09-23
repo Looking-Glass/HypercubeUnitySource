@@ -11,8 +11,8 @@
     {
         Tags { "RenderType"="Transparent"  }
         Cull [_Cull]
-        ZWrite On 
-		ZTest Always
+        ZWrite Off
+		//ZTest Always
 		Lighting Off 
 		Blend SrcAlpha One
  
@@ -90,7 +90,7 @@
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			ZWrite On 
+			ZWrite Off
 			ZTest LEqual
 
 			CGPROGRAM

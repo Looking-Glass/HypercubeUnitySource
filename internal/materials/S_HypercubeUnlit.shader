@@ -23,6 +23,7 @@
 
 			#pragma shader_feature ENABLE_SOFTSLICING
 			#pragma multi_compile __ SOFT_SLICING 
+
  
             struct appdata
             {
@@ -59,7 +60,6 @@
             {
 
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
-				//float d = Linear01Depth (tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r);
 				float d = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r;
 				//return d; //uncomment this to show the raw depth
 
@@ -73,8 +73,7 @@
 					mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
 
 				//return mask;
-				return ((tex2D(_MainTex, i.uv) * _Color) + _blackPoint) * mask;  //multiply mask after everything because _blackPoint must be included in there or we will get 'hardness' from non-black blackpoints
-//end soft slicing----------------------------------------			
+				return ((tex2D(_MainTex, i.uv) * _Color) + _blackPoint) * mask;  //multiply mask after everything because _blackPoint must be included in there or we will get 'hardness' from non-black blackpoints		
 #endif
                 return (tex2D(_MainTex, i.uv) * _Color) + _blackPoint;
 
