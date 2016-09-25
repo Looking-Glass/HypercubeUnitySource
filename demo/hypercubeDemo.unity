@@ -355,7 +355,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: softness
-      value: 0.367
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: slices
@@ -1055,19 +1055,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.32258064
+      value: -0.43668124
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.9495413
+      value: -0.9400545
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 3.5160549
+      value: 4.1771116
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 4.178899
+      value: 4.9645777
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: preview

@@ -43,7 +43,6 @@
             float4 _MainTex_ST;
 			fixed4 _Color;		
 
-			sampler2D _CameraDepthTexture;
 			float _softPercent;
 			half4 _blackPoint;
          
@@ -60,8 +59,8 @@
             {
 
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
-				float d = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r;
-				//return d; //uncomment this to show the raw depth
+				float d = i.projPos.z;
+				return d; //uncomment this to show the raw depth
 
 				//note: if _softPercent == 0  that is the same as hard slice.
 
