@@ -51,7 +51,8 @@
                 v2f o;
                 o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.projPos = ComputeScreenPos(o.vertex);
+				//o.projPos = ComputeScreenPos(o.vertex);
+				o.projPos = o.vertex;
                 return o;
             }
          
@@ -59,8 +60,17 @@
             {
 
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
+				//float d = i.projPos.z;
 				float d = i.projPos.z;
-				return d; //uncomment this to show the raw depth
+
+				if (UNITY_NEAR_CLIP_VALUE == -1) //OGL will use this.
+				{
+					d = (d*.5) + .5;  //map  -1 to 1   into  0 to 1
+				}
+
+
+				//return d; //uncomment this to show the raw depth
+
 
 				//note: if _softPercent == 0  that is the same as hard slice.
 
