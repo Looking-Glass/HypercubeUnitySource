@@ -116,7 +116,7 @@ namespace hypercube
 
             for (int i = 0; i < names.Length; i++)
             {
-                if (names[i].StartsWith("COM") || names[i].Contains("usbmodem"))
+                if (names[i].StartsWith("COM") || names[i].Contains("usbserial"))
                 {
                     frontComName = names[i];
                 }

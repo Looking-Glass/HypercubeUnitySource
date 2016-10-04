@@ -208,6 +208,33 @@ inline FragmentCommonData FragmentSetup (float4 i_tex, half3 i_eyeVec, half3 i_n
 	return o;
 }
 
+inline half3 HypercubeSoftSlicing(float d)
+{
+	if (UNITY_NEAR_CLIP_VALUE == -1) //OGL will use this.
+	{
+		d = (d * .5) + .5;  //map  -1 to 1   into  0 to 1
+	}
+	
+	//note: if _softPercent == 0  that is the same as hard slice.
+	float mask = 1;				
+	if (d < _softPercent)
+		mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
+	else if (d > 1 - _softPercent)
+		mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
+	
+	return mask;
+}
+
+inline half3 HypercubeBlinnPhong (half3 normalWorld, half3 viewDir, UnityLight light)
+{
+	half3 h = normalize (light.dir + viewDir);
+	
+	float nh = max (0, dot (normalWorld, h));
+	float spec = pow (nh, _Shininess*128.0);
+	
+	return light.color * spec;
+}
+
 inline UnityGI FragmentGI (
 	float3 posWorld, 
 	half occlusion, half4 i_ambientOrLightmapUV, half atten, half oneMinusRoughness, half3 normalWorld, half3 eyeVec,
@@ -305,17 +332,7 @@ inline UnityGI FragmentGI (
 		#endif
 		o_gi.indirect.diffuse *= occlusion;
 		
-		{
-			//BlinnPhongLight
-			half3 h = normalize (light.dir + d.worldViewDir);
-			
-			float nh = max (0, dot (normalWorld, h));
-			float spec = pow (nh, _Shininess*128.0);
-			
-			o_gi.indirect.specular = light.color * spec;
-		}
-		
-		o_gi.indirect.specular *= occlusion;
+		o_gi.indirect.specular = HypercubeBlinnPhong (normalWorld, d.worldViewDir, light) * occlusion * d.atten;
 
 		return o_gi;
 	}
@@ -434,16 +451,7 @@ half4 fragForwardBase (VertexOutputForwardBase i) : SV_Target
 	UNITY_APPLY_FOG(i.fogCoord, c.rgb);
 	c.rgb += _blackPoint.rgb;
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
-		float d = i.eyeVec.w;
-		
-		//note: if _softPercent == 0  that is the same as hard slice.
-		float mask = 1;				
-		if (d < _softPercent)
-			mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
-		else if (d > 1 - _softPercent)
-			mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
-		
-		c.rgb *= mask;
+		c.rgb *= HypercubeSoftSlicing(i.eyeVec.w);
 	#endif
 	return OutputForward (c, s.alpha);
 }
@@ -516,18 +524,11 @@ half4 fragForwardAdd (VertexOutputForwardAdd i) : SV_Target
 
 	half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, light, noIndirect);
 	
+	c.rgb += HypercubeBlinnPhong (s.normalWorld, -s.eyeVec, light) * s.specColor;
+	
 	UNITY_APPLY_FOG_COLOR(i.fogCoord, c.rgb, half4(0,0,0,0)); // fog towards black in additive pass
 	#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
-		float d = i.eyeVec.w;
-		
-		//note: if _softPercent == 0  that is the same as hard slice.
-		float mask = 1;				
-		if (d < _softPercent)
-			mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
-		else if (d > 1 - _softPercent)
-			mask *= 1 - ((d - (1-_softPercent))/_softPercent); //this is the darkening of the slice near 1 (far)
-		
-		c.rgb *= mask;
+		c.rgb *= HypercubeSoftSlicing(i.eyeVec.w);
 	#endif
 	return OutputForward (c, s.alpha);
 }			
