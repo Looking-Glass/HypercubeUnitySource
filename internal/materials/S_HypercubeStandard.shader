@@ -2,15 +2,16 @@ Shader "Hypercube/Standard"
 {
 	Properties
 	{
-	
+		[Toggle(ENABLE_SOFTSLICING)] _softSlicingToggle ("Soft Sliced", Float) = 1.0
+		
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo", 2D) = "white" {}
 		
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-
-		_Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
-		[Gamma] _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
-		_MetallicGlossMap("Metallic", 2D) = "white" {}
+		
+		_SpecColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
+		_SpecMask("Specular Mask", 2D) = "white" {}
+		_Shininess ("Shininess", Range (0.03, 1)) = 0.078125
 
 		_BumpScale("Scale", Float) = 1.0
 		_BumpMap("Normal Map", 2D) = "bump" {}
@@ -31,13 +32,17 @@ Shader "Hypercube/Standard"
 		_DetailNormalMap("Normal Map", 2D) = "bump" {}
 
 		[Enum(UV0,0,UV1,1)] _UVSec ("UV Set for secondary textures", Float) = 0
-		[Enum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 2
+
+		// UI-only data
+		[HideInInspector] _EmissionScaleUI("Scale", Float) = 0.0
+		[HideInInspector] _EmissionColorUI("Color", Color) = (1,1,1)
 
 		// Blending state
 		[HideInInspector] _Mode ("__mode", Float) = 0.0
 		[HideInInspector] _SrcBlend ("__src", Float) = 1.0
 		[HideInInspector] _DstBlend ("__dst", Float) = 0.0
 		[HideInInspector] _ZWrite ("__zw", Float) = 1.0
+		[HideInInspector] _CullMode ("__cull", Float) = 2.0
 	}
 
 	CGINCLUDE
@@ -48,7 +53,7 @@ Shader "Hypercube/Standard"
 	{
 		Tags { "RenderType"="Opaque" "PerformanceChecks"="False" }
 		LOD 300
-		Cull [_Cull]
+	
 
 		// ------------------------------------------------------------------
 		//  Base forward pass (directional light, emission, lightmaps, ...)
@@ -59,6 +64,7 @@ Shader "Hypercube/Standard"
 
 			Blend [_SrcBlend] [_DstBlend]
 			ZWrite [_ZWrite]
+			Cull [_CullMode]
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -73,20 +79,16 @@ Shader "Hypercube/Standard"
 			#pragma shader_feature _METALLICGLOSSMAP 
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
+			#pragma shader_feature ENABLE_SOFTSLICING
 			
+			#pragma multi_compile __ SOFT_SLICING 
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fog
+				
+			#pragma vertex vertForwardBase
+			#pragma fragment fragForwardBase
 
-			#pragma vertex vertBase
-			#pragma fragment fragBase
-			#include "UnityStandardCoreForward.cginc"
-
-
-			///HYPERCUBE CUSTOM
-
-
-			///END HYPERCUBE CUSTOM
-
+			#include "S_HypercubeStandardCore.cginc"
 
 			ENDCG
 		}
@@ -100,6 +102,7 @@ Shader "Hypercube/Standard"
 			Fog { Color (0,0,0,0) } // in additive pass fog should be black
 			ZWrite Off
 			ZTest LEqual
+			Cull [_CullMode]
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -114,13 +117,16 @@ Shader "Hypercube/Standard"
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
+			#pragma shader_feature ENABLE_SOFTSLICING
 			
+			#pragma multi_compile __ SOFT_SLICING 
 			#pragma multi_compile_fwdadd_fullshadows
 			#pragma multi_compile_fog
+			
+			#pragma vertex vertForwardAdd
+			#pragma fragment fragForwardAdd
 
-			#pragma vertex vertAdd
-			#pragma fragment fragAdd
-			#include "UnityStandardCoreForward.cginc"
+			#include "S_HypercubeStandardCore.cginc"
 
 			ENDCG
 		}
@@ -130,9 +136,8 @@ Shader "Hypercube/Standard"
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			Cull [_Cull]
-			ZWrite On 
-			ZTest LEqual
+			Cull [_CullMode]
+			ZWrite On ZTest LEqual
 
 			CGPROGRAM
 			#pragma target 3.0
@@ -152,71 +157,12 @@ Shader "Hypercube/Standard"
 
 			ENDCG
 		}
-		// ------------------------------------------------------------------
-		//  Deferred pass
-		Pass
-		{
-			Name "DEFERRED"
-			Tags { "LightMode" = "Deferred" }
-
-			Cull [_Cull]
-
-			CGPROGRAM
-			#pragma target 3.0
-			// TEMPORARY: GLES2.0 temporarily disabled to prevent errors spam on devices without textureCubeLodEXT
-			#pragma exclude_renderers nomrt gles
-			
-
-			// -------------------------------------
-
-			#pragma shader_feature _NORMALMAP
-			#pragma shader_feature _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
-			#pragma shader_feature _EMISSION
-			#pragma shader_feature _METALLICGLOSSMAP
-			#pragma shader_feature ___ _DETAIL_MULX2
-			#pragma shader_feature _PARALLAXMAP
-
-			#pragma multi_compile ___ UNITY_HDR_ON
-			#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
-			#pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
-			#pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
-			
-			#pragma vertex vertDeferred
-			#pragma fragment fragDeferred
-
-			#include "UnityStandardCore.cginc"
-
-			ENDCG
-		}
-
-		// ------------------------------------------------------------------
-		// Extracts information for lightmapping, GI (emission, albedo, ...)
-		// This pass it not used during regular rendering.
-		Pass
-		{
-			Name "META" 
-			Tags { "LightMode"="Meta" }
-
-			Cull Off
-
-			CGPROGRAM
-			#pragma vertex vert_meta
-			#pragma fragment frag_meta
-
-			#pragma shader_feature _EMISSION
-			#pragma shader_feature _METALLICGLOSSMAP
-			#pragma shader_feature ___ _DETAIL_MULX2
-
-			#include "UnityStandardMeta.cginc"
-			ENDCG
-		}
 	}
 
 	SubShader
 	{
 		Tags { "RenderType"="Opaque" "PerformanceChecks"="False" }
 		LOD 150
-		Cull [_Cull]
 
 		// ------------------------------------------------------------------
 		//  Base forward pass (directional light, emission, lightmaps, ...)
@@ -237,15 +183,18 @@ Shader "Hypercube/Standard"
 			#pragma shader_feature _METALLICGLOSSMAP 
 			#pragma shader_feature ___ _DETAIL_MULX2
 			// SM2.0: NOT SUPPORTED shader_feature _PARALLAXMAP
+			#pragma shader_feature ENABLE_SOFTSLICING
 
 			#pragma skip_variants SHADOWS_SOFT DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
-
+			
+			#pragma multi_compile __ SOFT_SLICING 
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fog
+	
+			#pragma vertex vertForwardBase
+			#pragma fragment fragForwardBase
 
-			#pragma vertex vertBase
-			#pragma fragment fragBase
-			#include "UnityStandardCoreForward.cginc"
+			#include "S_HypercubeStandardCore.cginc"
 
 			ENDCG
 		}
@@ -268,14 +217,18 @@ Shader "Hypercube/Standard"
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature ___ _DETAIL_MULX2
 			// SM2.0: NOT SUPPORTED shader_feature _PARALLAXMAP
+			#pragma shader_feature ENABLE_SOFTSLICING
+			
 			#pragma skip_variants SHADOWS_SOFT
 			
+			#pragma multi_compile __ SOFT_SLICING 
 			#pragma multi_compile_fwdadd_fullshadows
 			#pragma multi_compile_fog
 			
-			#pragma vertex vertAdd
-			#pragma fragment fragAdd
-			#include "UnityStandardCoreForward.cginc"
+			#pragma vertex vertForwardAdd
+			#pragma fragment fragForwardAdd
+
+			#include "S_HypercubeStandardCore.cginc"
 
 			ENDCG
 		}
@@ -285,8 +238,7 @@ Shader "Hypercube/Standard"
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
-			ZWrite On 
-			ZTest LEqual
+			ZWrite On ZTest LEqual
 
 			CGPROGRAM
 			#pragma target 2.0
@@ -302,31 +254,8 @@ Shader "Hypercube/Standard"
 
 			ENDCG
 		}
-
-		// ------------------------------------------------------------------
-		// Extracts information for lightmapping, GI (emission, albedo, ...)
-		// This pass it not used during regular rendering.
-		Pass
-		{
-			Name "META" 
-			Tags { "LightMode"="Meta" }
-
-			Cull Off
-
-			CGPROGRAM
-			#pragma vertex vert_meta
-			#pragma fragment frag_meta
-
-			#pragma shader_feature _EMISSION
-			#pragma shader_feature _METALLICGLOSSMAP
-			#pragma shader_feature ___ _DETAIL_MULX2
-
-			#include "UnityStandardMeta.cginc"
-			ENDCG
-		}
 	}
 
-
 	FallBack "VertexLit"
-//	CustomEditor "StandardShaderGUI"
+	CustomEditor "S_HypercubeStandardShaderGUI"
 }
