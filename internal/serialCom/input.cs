@@ -138,7 +138,7 @@ namespace hypercube
                 frontScreen.update(debug);
         }
 
-        static string[] getPortNames()
+        public static string[] getPortNames()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             return System.IO.Ports.SerialPort.GetPortNames();
