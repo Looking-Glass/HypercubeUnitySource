@@ -56,6 +56,7 @@ namespace hypercube
 
         public float zPos = .01f;
         [Range(1, 20)]
+
         public int tesselation = 8;
         public GameObject sliceMesh;
 
@@ -725,8 +726,6 @@ namespace hypercube
             m.normals = normals;
 
 #if HYPERCUBE_DEV
-            if (!calibrator)
-                calibrator = GetComponent<calibrator>();
 
             if (calibrator && calibrator.gameObject.activeSelf && calibrator.enabled)
                 r.materials = calibrator.getMaterials();
