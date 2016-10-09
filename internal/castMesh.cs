@@ -234,69 +234,15 @@ namespace hypercube
 
             for (int s = 0; s < maxSlices; s++)
             {
-                setCalibrationOffset(s,
-                d.getValueAsFloat("s" + s + "_ULx", 0f),
-                d.getValueAsFloat("s" + s + "_ULy", 0f),
-                d.getValueAsFloat("s" + s + "_URx", 0f),
-                d.getValueAsFloat("s" + s + "_URy", 0f),
-                d.getValueAsFloat("s" + s + "_LLx", 0f),
-                d.getValueAsFloat("s" + s + "_LLy", 0f),
-                d.getValueAsFloat("s" + s + "_LRx", 0f),
-                d.getValueAsFloat("s" + s + "_LRy", 0f),
-                d.getValueAsFloat("s" + s + "_Mx", 0f),
-                d.getValueAsFloat("s" + s + "_My", 0f),
-                d.getValueAsFloat("s" + s + "_Sx", 0f),
-                d.getValueAsFloat("s" + s + "_Sy", 0f),
-                d.getValueAsFloat("s" + s + "_Bt", 0f),
-                d.getValueAsFloat("s" + s + "_Bb", 0f),
-                d.getValueAsFloat("s" + s + "_Bl", 0f),
-                d.getValueAsFloat("s" + s + "_Br", 0f)
-                    );
+              //TODO set what has been discovered.
             }
         } 
-        //this call is separate, so it can be flexible enough to accept different ways of storing the calibration data
-        public void setCalibrationOffset(int slice, float _ULx, float _ULy, float _URx, float _URy, float _LLx, float _LLy, float _LRx, float _LRy, float _Mx, float _My, float _Sx, float _Sy, float _Bt, float _Bb, float _Bl, float _Br)
-        {
-            if (slice < 0 || slice >= bows.Length)
-                return;
 
-            ULOffsets[slice].x = _ULx;
-            ULOffsets[slice].y = _ULy;
-            UROffsets[slice].x = _URx;
-            UROffsets[slice].y = _URy;
-            LLOffsets[slice].x = _LLx;
-            LLOffsets[slice].y = _LLy;
-            LROffsets[slice].x = _LRx;
-            LROffsets[slice].y = _LRy;
-            MOffsets[slice].x = _Mx;
-            MOffsets[slice].y = _My;
-            skews[slice].x = _Sx;
-            skews[slice].y = _Sy;
-            bows[slice].x = _Bt;
-            bows[slice].y = _Bb;
-            bows[slice].z = _Bl;
-            bows[slice].w = _Br;
-        }
         public void saveCalibrationOffsets(dataFileDict d)
         {
             for (int s = 0; s < ULOffsets.Length; s++)
             {
-                d.setValue("s" + s + "_ULx", ULOffsets[s].x);
-                d.setValue("s" + s + "_ULy", ULOffsets[s].y);
-                d.setValue("s" + s + "_URx", UROffsets[s].x);
-                d.setValue("s" + s + "_URy", UROffsets[s].y);
-                d.setValue("s" + s + "_LLx", LLOffsets[s].x);
-                d.setValue("s" + s + "_LLy", LLOffsets[s].y);
-                d.setValue("s" + s + "_LRx", LROffsets[s].x);
-                d.setValue("s" + s + "_LRy", LROffsets[s].y);
-                d.setValue("s" + s + "_Mx", MOffsets[s].x);
-                d.setValue("s" + s + "_My", MOffsets[s].y);
-                d.setValue("s" + s + "_Sx", skews[s].x);
-                d.setValue("s" + s + "_Sy", skews[s].y);
-                d.setValue("s" + s + "_Bt", bows[s].x);
-                d.setValue("s" + s + "_Bb", bows[s].y);
-                d.setValue("s" + s + "_Bl", bows[s].z);
-                d.setValue("s" + s + "_Br", bows[s].w);
+                //TODO save offsets
             }
 
             d.save();
@@ -330,142 +276,6 @@ namespace hypercube
             }
         }
 
-        public enum bowEdge { top, bottom, left, right };
-        public void makeBowAdjustment(int slice, bowEdge e, float amount)
-        {
-            if (_flipY && (e == bowEdge.top || e == bowEdge.bottom))  //keep things intuitive if the view is flipped
-            {
-                if (e == bowEdge.top)
-                    e = bowEdge.bottom;
-                else 
-                    e = bowEdge.top;
-                amount = -amount;
-            }
-            else if (_flipX && (e == bowEdge.left || e == bowEdge.right)) //keep things intuitive if the view is flipped
-            {
-                if (e == bowEdge.left)
-                    e = bowEdge.right;
-                else 
-                    e = bowEdge.left;
-                amount = -amount;
-            }
-
-            if (e == bowEdge.top)
-                bows[slice].x += amount;
-            else if (e == bowEdge.bottom)
-                bows[slice].y += amount;
-            else if (e == bowEdge.left)
-                bows[slice].z += amount;
-            else if (e == bowEdge.right)
-                bows[slice].w += amount;
-        
-            updateMesh();
-        }
-        public void makeSkewAdjustment(int slice, bool x, float amount)
-        {
-
-            if (x)
-                skews[slice].x += amount;
-            else
-                skews[slice].y += amount;
-
-            updateMesh();
-        }
-
-#if HYPERCUBE_DEV
-        public bool makeAdjustment(int slice, canvasEditMode m, bool x, float amount)
-        {
-            if (slice < 0)
-                return false;
-            if (slice >= ULOffsets.Length)
-                return false;
-
-            //flip it to keep things intuitive
-            if (_flipX)
-            {
-                if (x)
-                    amount = -amount;
-                if (m == canvasEditMode.UL)
-                    m = canvasEditMode.UR;
-                else if (m == canvasEditMode.UR)
-                    m = canvasEditMode.UL;
-                else if (m == canvasEditMode.LL)
-                    m = canvasEditMode.LR;
-                else if (m == canvasEditMode.LR)
-                    m = canvasEditMode.LL;
-            }
-            if (_flipY)
-            {
-                if (!x)
-                    amount = -amount;
-                if (m == canvasEditMode.UL)
-                    m = canvasEditMode.LL;
-                else if (m == canvasEditMode.UR)
-                    m = canvasEditMode.LR;
-                else if (m == canvasEditMode.LL)
-                    m = canvasEditMode.UL;
-                else if (m == canvasEditMode.LR)
-                    m = canvasEditMode.UR;
-            }
-
-
-            if (m == canvasEditMode.UL)
-            {
-                if (x)
-                    ULOffsets[slice].x += amount;
-                else
-                    ULOffsets[slice].y += amount;
-            }
-            else if (m == canvasEditMode.UR)
-            {
-                if (x)
-                    UROffsets[slice].x += amount;
-                else
-                    UROffsets[slice].y += amount;
-            }
-            else if (m == canvasEditMode.LL)
-            {
-                if (x)
-                    LLOffsets[slice].x += amount;
-                else
-                    LLOffsets[slice].y += amount;
-            }
-            else if (m == canvasEditMode.LR)
-            {
-                if (x)
-                    LROffsets[slice].x += amount;
-                else
-                    LROffsets[slice].y += amount;
-            }
-            else if (m == canvasEditMode.M)
-            {
-                if (x)
-                    MOffsets[slice].x += amount;
-                else
-                    MOffsets[slice].y += amount;
-            }
-
-            updateMesh();
-
-            return true;
-        }
-#endif
-
-        public void toggleFlipX()
-        {
-            _flipX = !_flipX;
-            updateMesh();
-        }
-        public void toggleFlipY()
-        {
-            _flipY = !_flipY;
-            updateMesh();
-        }
-        public void toggleFlipZ()
-        {
-            _flipZ = !_flipZ;
-            updateMesh();
-        }
 
 
         public float getScreenAspectRatio()
