@@ -2,27 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace hypercube
-{
-    [System.Serializable]
-    public class drawingPass
-    {
-        public enum blendOp
-        {
-            Opaque = 0,
-            Add,
-            Multiply,
-            AlphaBlend
-        }
-
-        public string passName;  //purely convenience
-        public blendOp blend;     
-        public LayerMask drawMask;
-        public bool occlusion; //should opaque objects occlude what is being rendered?  ie should we draw opaque objects as black in this pass
-        public bool allowSoftSlicing;
-    }
-
-}
   
     [ExecuteInEditMode]
     public class hypercubeCamera : MonoBehaviour
@@ -38,13 +17,24 @@ namespace hypercube
             SOFT,
             SOFT_CUSTOM
         }
-        [Tooltip("HARD = no slice blending (also no blackPoint modification)\nSOFT = autocalculate softness based on the overlap\nSOFT_CUSTOM = manage your own overlap and softness")]
+        [Tooltip("HARD = no slice blending \nSOFT = autocalculate softness based on the overlap \nSOFT_CUSTOM = manage your own overlap and softness")]
         public softSliceMode slicing;
+
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
         public float overlap = 2f;
+
         [Tooltip("Softness is calculated for you to blend only overlapping areas. It can be set manually if Slicing is set to SOFT_CUSTOM.")]
         [Range(0.001f, .5f)]
         public float softness = .5f;
+
+        public enum renderMode
+        {
+            PER_MATERIAL = 0,
+            POST_PROCESS,
+            OCCLUDING
+        }
+        [Tooltip("This option chooses the rendering method of Hypercube:\n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. \n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. \n\n OCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF).")]
+        public renderMode softSliceMethod;
 
         public enum scaleConstraintType
         {
@@ -63,9 +53,9 @@ namespace hypercube
         [Tooltip("This can be used to differentiate between what is empty space, and what is 'black' in Volume.  This Color is ADDED to everything that has geometry.\n\nNOTE: The brighter the value here, the more color depth is effectively lost.")]
         public Color blackPoint;
         public bool autoHideMouse = true;
-        [Tooltip("Because many types of effects do not draw to the depth buffer, they can not be used together with soft slicing. Use fxPasses to draw additional effects passes over the Volumetric scene.")]
-        public hypercube.drawingPass[] fxPasses;
-        public Shader softSliceShader;
+        
+
+        public hypercube.softOverlap softSlicePostProcess;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
         public hypercube.castMesh castMeshPrefab;
@@ -161,7 +151,6 @@ namespace hypercube
                 localCastMesh.updateMesh();
             }
 
-
             Shader.SetGlobalColor("_blackPoint", blackPoint);
 
             updateOverlap();
@@ -169,15 +158,22 @@ namespace hypercube
 
         public void updateOverlap()
         {
-            if (overlap < 0)
-                overlap = 0;
+
+            softness = Mathf.Clamp(softness, 0f, .5f);
+            Shader.SetGlobalFloat("_softPercent", softness);
+
             if (slicing != softSliceMode.HARD)
             {
                 if (slicing == softSliceMode.SOFT)
-                    softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area
+                    softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area. Interestingly, imo it usually does not produce what the eye thinks are best results.             
 
-                Shader.SetGlobalFloat("_softPercent", softness);
+                if (softSliceMethod == renderMode.POST_PROCESS)
+                {
+                    softSlicePostProcess.enabled = true;
+                    return;
+                }
             }
+            softSlicePostProcess.enabled = false;
         }
 
 
@@ -185,8 +181,10 @@ namespace hypercube
         {
             if (overlap > 0f && slicing != softSliceMode.HARD)
             {
-               // renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect
-                Shader.EnableKeyword("SOFT_SLICING");
+                if (softSliceMethod == renderMode.PER_MATERIAL)
+                    Shader.EnableKeyword("SOFT_SLICING");
+                else
+                    renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect               
             }
 
             float baseViewAngle = renderCam.fieldOfView;
@@ -208,10 +206,11 @@ namespace hypercube
 
             if (overlap > 0f && slicing != softSliceMode.HARD)
             {
-              //  renderCam.gameObject.SetActive(false);
-                Shader.DisableKeyword("SOFT_SLICING");
+                if (softSliceMethod == renderMode.PER_MATERIAL)
+                    Shader.DisableKeyword("SOFT_SLICING");  //toggling this on/off allows the preview in the editor to continue to appear normal.            
             }
-        }
+            renderCam.gameObject.SetActive(false);
+    }
 
 
         //NOTE that if a parent of the cube is scaled, and the cube is arbitrarily rotated inside of it, it will return wrong lossy scale.

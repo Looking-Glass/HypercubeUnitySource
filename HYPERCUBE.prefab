@@ -11,6 +11,9 @@ GameObject:
   - 114: {fileID: 11483894}
   - 33: {fileID: 3327710}
   - 23: {fileID: 2348930}
+  - 114: {fileID: 114000013426607314}
+  - 114: {fileID: 114000014114846622}
+  - 81: {fileID: 81000013400116338}
   m_Layer: 5
   m_Name: HYPERCUBE
   m_TagString: Untagged
@@ -28,8 +31,7 @@ GameObject:
   - 4: {fileID: 431666}
   - 20: {fileID: 2083526}
   - 92: {fileID: 9282850}
-  - 124: {fileID: 12486252}
-  - 81: {fileID: 8171266}
+  - 114: {fileID: 114000012088741506}
   m_Layer: 0
   m_Name: hypercube_RTT
   m_TagString: Untagged
@@ -80,11 +82,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 5.6
-  far clip plane: 7.7
-  field of view: 60
+  near clip plane: 4.3977027
+  far clip plane: 6.046841
+  field of view: 65
   orthographic: 1
-  orthographic size: 2.5
+  orthographic size: 1.7178521
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -134,13 +136,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
   m_Mesh: {fileID: 4300000, guid: 80201bf2d6068274486d8d1dc846d1dd, type: 3}
---- !u!81 &8171266
-AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195280}
-  m_Enabled: 0
 --- !u!92 &9282850
 Behaviour:
   m_ObjectHideFlags: 1
@@ -159,16 +154,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slicing: 1
+  slicing: 2
   overlap: 1
-  softness: 0.33333334
-  scaleConstraint: 0
+  softness: 0.5
+  softSliceMethod: 0
+  scaleConstraint: 1
   forcedPerspective: 0
-  brightness: 1
-  blackPoint: {r: 0, g: 0, b: 0, a: 0}
+  brightness: 1.3
+  blackPoint: {r: 0.037705887, g: 0.027573526, b: 0.125, a: 1}
   autoHideMouse: 1
-  fxPasses: []
-  softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
+  softSlicePostProcess: {fileID: 114000012088741506}
   renderCam: {fileID: 2083526}
   sliceTextures:
   - {fileID: 8400000, guid: 11f7079eaa2609d40bc393ff0a3e2478, type: 2}
@@ -203,13 +198,6 @@ MonoBehaviour:
   - {fileID: 8400000, guid: 7addaa8ee32d5314691f3efb487f8c8b, type: 2}
   castMeshPrefab: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
   localCastMesh: {fileID: 0}
---- !u!124 &12486252
-Behaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 195280}
-  m_Enabled: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -221,3 +209,61 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 129362}
   m_IsPrefabParent: 1
+--- !u!81 &81000013400116338
+AudioListener:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129362}
+  m_Enabled: 1
+--- !u!114 &114000012088741506
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 195280}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee03170962f28b841b9ce187c63c7bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 11483894}
+  softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
+--- !u!114 &114000013426607314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129362}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invertMouse: 0
+  moveSpeed: 2
+  scaleSpeed: 1
+  rollSpeed: 20
+  keyboardLookSpeed: 30
+  sensitivityX: 80
+  sensitivityY: 80
+  minimumX: -360
+  maximumX: 360
+  minimumY: -60
+  maximumY: 60
+  moveNode: {fileID: 0}
+  pauseKey: 0
+  paused: 0
+--- !u!114 &114000014114846622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0819ee0806e59d44d92d26c66750a466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensitivity: 1
+  allowTwist: 1

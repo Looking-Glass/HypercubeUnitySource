@@ -82,7 +82,7 @@ Material:
       second: 1
     - first:
         name: _Cull
-      second: 0
+      second: 2
     - first:
         name: _Cutoff
       second: 0.148
@@ -95,6 +95,9 @@ Material:
     - first:
         name: _Glossiness
       second: 0
+    - first:
+        name: _InvFade
+      second: 1.54
     - first:
         name: _Metallic
       second: 0.323
