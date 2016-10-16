@@ -45,9 +45,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 5, z: 7}
+  m_LocalRotation: {x: 0.014431348, y: 0.873843, z: -0.20993105, w: 0.43831405}
+  m_LocalPosition: {x: 9.48, y: 1.36, z: 5.34}
+  m_LocalScale: {x: 10, y: 5, z: 8}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 431666}
@@ -82,11 +82,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 4.3977027
-  far clip plane: 6.046841
+  near clip plane: 6.4000025
+  far clip plane: 8.800003
   field of view: 65
   orthographic: 1
-  orthographic size: 1.7178521
+  orthographic size: 2.5000002
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -229,6 +229,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 11483894}
   softSliceShader: {fileID: 4800000, guid: 89c8b918629a7d747a850198d29763a9, type: 3}
+  softSliceOccludeShader: {fileID: 4800000, guid: f4bf5a4271f60df41913433a170881a9,
+    type: 3}
 --- !u!114 &114000013426607314
 MonoBehaviour:
   m_ObjectHideFlags: 1

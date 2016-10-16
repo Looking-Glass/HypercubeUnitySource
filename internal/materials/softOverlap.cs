@@ -16,6 +16,7 @@ namespace hypercube
         /// and a material instantiated from the shader
         public hypercubeCamera cam;
         public Shader softSliceShader;
+        public Shader softSliceOccludeShader;
 
         private Material m_Material;
 
@@ -31,8 +32,11 @@ namespace hypercube
 
             // Disable the image effect if the shader can't
             // run on the users graphics card
-            if (!softSliceShader || !softSliceShader.isSupported)
-                Destroy(this);                     
+            if (softSliceShader && !softSliceShader.isSupported)
+                softSliceShader = null;
+
+            if (softSliceOccludeShader && !softSliceOccludeShader.isSupported)
+                softSliceOccludeShader = null;
         }
 
 
@@ -42,9 +46,29 @@ namespace hypercube
             {
                 if (m_Material == null)
                 {
-                    m_Material = new Material(softSliceShader);
+                    if (cam.softSliceMethod == hypercubeCamera.renderMode.OCCLUDING && softSliceOccludeShader)
+                        m_Material = new Material(softSliceOccludeShader);
+                    else if (softSliceShader)
+                        m_Material = new Material(softSliceShader);
+                    else
+                    {
+                        Destroy(this);
+                        return null;
+                    }
+
                     m_Material.hideFlags = HideFlags.HideAndDontSave;
                 }
+                else
+                {
+                    if (cam.softSliceMethod == hypercubeCamera.renderMode.OCCLUDING && softSliceOccludeShader)
+                        m_Material.shader = softSliceOccludeShader;
+                    else if (softSliceShader)
+                        m_Material.shader = softSliceShader;
+                    else
+                        return null;
+                }
+
+
                 return m_Material;
             }
         }

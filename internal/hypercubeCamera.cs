@@ -33,7 +33,7 @@ using System.Collections.Generic;
             POST_PROCESS,
             OCCLUDING
         }
-        [Tooltip("This option chooses the rendering method of Hypercube:\n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. \n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. \n\n OCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF).")]
+        [Tooltip("This option chooses the rendering method of Hypercube:\n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. \n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. \n\nOCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF).")]
         public renderMode softSliceMethod;
 
         public enum scaleConstraintType
@@ -167,7 +167,7 @@ using System.Collections.Generic;
                 if (slicing == softSliceMode.SOFT)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area. Interestingly, imo it usually does not produce what the eye thinks are best results.             
 
-                if (softSliceMethod == renderMode.POST_PROCESS)
+                if (softSliceMethod != renderMode.PER_MATERIAL) //we use post process on both occluding and in post process SS
                 {
                     softSlicePostProcess.enabled = true;
                     return;
@@ -184,25 +184,41 @@ using System.Collections.Generic;
                 if (softSliceMethod == renderMode.PER_MATERIAL)
                     Shader.EnableKeyword("SOFT_SLICING");
                 else
-                    renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect               
+                    renderCam.gameObject.SetActive(true); //setting it active/inactive is only needed so that OnRenderImage() will be called on softOverlap.cs for the post process effect. It is normally hidden so that the Unity camera icon won't interfere with viewing what is inside hypercube in the editor.            
             }
 
             float baseViewAngle = renderCam.fieldOfView;
 
-            if (localCastMesh.slices > sliceTextures.Length)
-                localCastMesh.slices = sliceTextures.Length;
+            
+            if (softSliceMethod == renderMode.OCCLUDING) //this section is only relevant to occluding render style which renders the slices as a post process
+            {                
+                renderCam.targetTexture = sliceTextures[0];
 
-            for (int i = 0; i < localCastMesh.slices; i++)
-            {
-                renderCam.fieldOfView = baseViewAngle + (i * forcedPerspective); //allow forced perspective or perspective correction
+                //x: near clip, y: far clip, z: overlap, w: depth curve
+                renderCam.nearClipPlane = nearValues[0];
+                renderCam.farClipPlane = farValues[localCastMesh.slices - 1];
+                Shader.SetGlobalVector("_NFOD", new Vector4(renderCam.nearClipPlane, renderCam.farClipPlane, overlap, forcedPerspective));               
 
-                renderCam.nearClipPlane = nearValues[i];
-                renderCam.farClipPlane = farValues[i];
-                renderCam.targetTexture = sliceTextures[i];
                 renderCam.Render();
             }
+            else //normal rendering path with multiple slices
+            {
 
-            renderCam.fieldOfView = baseViewAngle;
+                if (localCastMesh.slices > sliceTextures.Length)
+                    localCastMesh.slices = sliceTextures.Length;
+
+                for (int i = 0; i < localCastMesh.slices; i++)
+                {
+                    renderCam.fieldOfView = baseViewAngle + (i * forcedPerspective); //allow forced perspective or perspective correction
+
+                    renderCam.nearClipPlane = nearValues[i];
+                    renderCam.farClipPlane = farValues[i];
+                    renderCam.targetTexture = sliceTextures[i];
+                    renderCam.Render();
+                }
+
+                renderCam.fieldOfView = baseViewAngle;
+            }
 
             if (overlap > 0f && slicing != softSliceMode.HARD)
             {
@@ -210,7 +226,7 @@ using System.Collections.Generic;
                     Shader.DisableKeyword("SOFT_SLICING");  //toggling this on/off allows the preview in the editor to continue to appear normal.            
             }
             renderCam.gameObject.SetActive(false);
-    }
+        }
 
 
         //NOTE that if a parent of the cube is scaled, and the cube is arbitrarily rotated inside of it, it will return wrong lossy scale.

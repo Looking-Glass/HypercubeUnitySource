@@ -186,6 +186,7 @@ namespace hypercube
             volumeHardwareVer = d.getValueAsFloat("volumeHardwareVersion", -9999f);
 
             slices = d.getValueAsInt("sliceCount", slices);
+            Shader.SetGlobalInt("_sliceCount", slices); //let any shaders that need slice count, know what it is currently.
             sliceOffsetX = d.getValueAsFloat("offsetX", sliceOffsetX);
             sliceOffsetY = d.getValueAsFloat("offsetY", sliceOffsetY);
             sliceWidth = d.getValueAsFloat("sliceWidth", sliceWidth);
