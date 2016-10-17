@@ -58,6 +58,7 @@ using System.Collections.Generic;
         public hypercube.softOverlap softSlicePostProcess;
         public Camera renderCam;
         public RenderTexture[] sliceTextures;
+        public RenderTexture occlusionRTT;
         public hypercube.castMesh castMeshPrefab;
         public hypercube.castMesh localCastMesh = null;
        
@@ -148,8 +149,11 @@ using System.Collections.Generic;
             if (localCastMesh)
             {
                 localCastMesh.setTone(brightness);
-                localCastMesh.updateMesh();
-            }
+                if (softSliceMethod == renderMode.OCCLUDING)
+                    localCastMesh.drawOccludedMode = true; //this calls updateMesh
+                else
+                    localCastMesh.drawOccludedMode = false; //this calls updateMesh
+        }
 
             Shader.SetGlobalColor("_blackPoint", blackPoint);
 
@@ -159,13 +163,13 @@ using System.Collections.Generic;
         public void updateOverlap()
         {
 
-            softness = Mathf.Clamp(softness, 0f, .5f);
-            Shader.SetGlobalFloat("_softPercent", softness);
-
             if (slicing != softSliceMode.HARD)
             {
                 if (slicing == softSliceMode.SOFT)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area. Interestingly, imo it usually does not produce what the eye thinks are best results.             
+
+                softness = Mathf.Clamp(softness, 0f, .5f);
+                Shader.SetGlobalFloat("_softPercent", softness);
 
                 if (softSliceMethod != renderMode.PER_MATERIAL) //we use post process on both occluding and in post process SS
                 {
@@ -192,12 +196,12 @@ using System.Collections.Generic;
             
             if (softSliceMethod == renderMode.OCCLUDING) //this section is only relevant to occluding render style which renders the slices as a post process
             {                
-                renderCam.targetTexture = sliceTextures[0];
+                renderCam.targetTexture = occlusionRTT;
 
                 //x: near clip, y: far clip, z: overlap, w: depth curve
                 renderCam.nearClipPlane = nearValues[0];
                 renderCam.farClipPlane = farValues[localCastMesh.slices - 1];
-                Shader.SetGlobalVector("_NFOD", new Vector4(renderCam.nearClipPlane, renderCam.farClipPlane, overlap, forcedPerspective));               
+                Shader.SetGlobalVector("_NFOD", new Vector4(renderCam.nearClipPlane, renderCam.farClipPlane, overlap, 0f));               
 
                 renderCam.Render();
             }
@@ -226,6 +230,8 @@ using System.Collections.Generic;
                     Shader.DisableKeyword("SOFT_SLICING");  //toggling this on/off allows the preview in the editor to continue to appear normal.            
             }
             renderCam.gameObject.SetActive(false);
+
+            
         }
 
 

@@ -46,7 +46,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
   m_LocalRotation: {x: 0.014431348, y: 0.873843, z: -0.20993105, w: 0.43831405}
-  m_LocalPosition: {x: 9.48, y: 1.36, z: 5.34}
+  m_LocalPosition: {x: 9.43, y: 1.38, z: 5.37}
   m_LocalScale: {x: 10, y: 5, z: 8}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -82,8 +82,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 6.4000025
-  far clip plane: 8.800003
+  near clip plane: -1.2080004
+  far clip plane: 9.208004
   field of view: 65
   orthographic: 1
   orthographic size: 2.5000002
@@ -92,7 +92,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967263
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 8400000, guid: 23bf5d0442c3b48438e4040064a2bfec, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 536659be58a82c24ab1ec5dd92529656, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -155,9 +155,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slicing: 2
-  overlap: 1
-  softness: 0.5
-  softSliceMethod: 0
+  overlap: 1.51
+  softness: 0.296
+  softSliceMethod: 2
   scaleConstraint: 1
   forcedPerspective: 0
   brightness: 1.3
@@ -196,6 +196,7 @@ MonoBehaviour:
   - {fileID: 8400000, guid: ab6de71e183d87b4d9e232655a3f0472, type: 2}
   - {fileID: 8400000, guid: d6c6568746562c64eb4fa480704a27b7, type: 2}
   - {fileID: 8400000, guid: 7addaa8ee32d5314691f3efb487f8c8b, type: 2}
+  occlusionRTT: {fileID: 8400000, guid: 536659be58a82c24ab1ec5dd92529656, type: 2}
   castMeshPrefab: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
   localCastMesh: {fileID: 0}
 --- !u!1001 &100100000
@@ -222,7 +223,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee03170962f28b841b9ce187c63c7bf5, type: 3}
   m_Name: 

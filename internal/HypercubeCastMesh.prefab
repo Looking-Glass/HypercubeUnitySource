@@ -42,8 +42,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19203125, y: -0.9456667, z: 0.24}
-  m_LocalScale: {x: 2.8875, y: 4.4, z: 1}
+  m_LocalPosition: {x: -0.58479536, y: -0.9730061, z: 0.24}
+  m_LocalScale: {x: 1.8809816, y: 2.2355828, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 466588}
@@ -109,16 +109,16 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: ffc2c9266484f0141a16b1c50cd0fa0f, type: 2}
-  - {fileID: 2100000, guid: 7b77f33d1f886b646b3b6cc5c26c147b, type: 2}
-  - {fileID: 2100000, guid: 08388189a3333b64b80163b8850741da, type: 2}
-  - {fileID: 2100000, guid: 1960e6569568e50488a12a107c3c5ff1, type: 2}
-  - {fileID: 2100000, guid: 6ff18b9fca9e34f40a099af3c3515bd6, type: 2}
-  - {fileID: 2100000, guid: f88fb8e405f1f9249a4c02bad9160f5a, type: 2}
-  - {fileID: 2100000, guid: d5d29152651731d45ad119b680c40f93, type: 2}
-  - {fileID: 2100000, guid: b5b1218e00f417f4ca951217a56588ae, type: 2}
-  - {fileID: 2100000, guid: db8b473a9c2788f4b8b8f58aa84262fd, type: 2}
-  - {fileID: 2100000, guid: 224a15b0108b5094db887c1ea8ccbe6c, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
+  - {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -156,11 +156,11 @@ MonoBehaviour:
   flipX: 0
   flipY: 0
   flipZ: 0
-  sliceOffsetX: 122.9
-  sliceOffsetY: 13.04
-  sliceWidth: 1386
-  sliceHeight: 105.6
-  sliceGap: 2
+  sliceOffsetX: -200
+  sliceOffsetY: 11
+  sliceWidth: 1533
+  sliceHeight: 91.1
+  sliceGap: 3
   zPos: 0.24
   tesselation: 11
   sliceMesh: {fileID: 150924}
@@ -195,6 +195,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: d068ab99d67dc1147bb64bb172f2b890, type: 2}
   - {fileID: 2100000, guid: 0183823436f9bfc4c879c835b8d71fcd, type: 2}
   - {fileID: 2100000, guid: 08e8a0f202f360743ac0b73bbed6c7b2, type: 2}
+  occlusionMaterial: {fileID: 2100000, guid: d3fa5f1e41a51694e8885cb13c6cb876, type: 2}
   usingCustomDimensions: 1
   preview: {fileID: 0}
   casterMaterial: {fileID: 2100000, guid: d2738e73aef46e241bb2699119a0a39f, type: 2}
