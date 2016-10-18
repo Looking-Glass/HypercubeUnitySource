@@ -319,19 +319,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0.014431348
+      value: 0.010265247
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.y
-      value: 0.873843
+      value: 0.8761506
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.z
-      value: -0.20993105
+      value: -0.19843702
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.43831405
+      value: 0.4391783
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_RootOrder
@@ -339,15 +339,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: overlap
-      value: 0.15
+      value: 0.79
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: near clip plane
-      value: -0.12000005
+      value: -0.63200015
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: far clip plane
-      value: 8.120003
+      value: 8.632002
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: softSliceMethod
@@ -361,6 +361,38 @@ Prefab:
         type: 2}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: scaleConstraint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: softness
+      value: 0.068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: orthographic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 20.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 124.97401
+      objectReference: {fileID: 0}
+    - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -9.632001
+      objectReference: {fileID: 0}
+    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: orthographic size
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: slicing
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}

@@ -21,6 +21,7 @@ using System.Collections.Generic;
         public softSliceMode slicing;
 
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
+        [Range(0f, 5f)]
         public float overlap = 2f;
 
         [Tooltip("Softness is calculated for you to blend only overlapping areas. It can be set manually if Slicing is set to SOFT_CUSTOM.")]
