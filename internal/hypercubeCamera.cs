@@ -60,6 +60,8 @@ using System.Collections.Generic;
         public RenderTexture occlusionRTT;
         public hypercube.castMesh castMeshPrefab;
         public hypercube.castMesh localCastMesh = null;
+
+        hypercube.hypercubePreview preview = null;
        
         //store our camera values here.
         float[] nearValues;
@@ -93,7 +95,10 @@ using System.Collections.Generic;
                 }
             }
 
-            resetSettings();
+            if (!preview)
+                preview = GameObject.FindObjectOfType<hypercube.hypercubePreview>();
+
+        resetSettings();
         }
 
 
@@ -152,12 +157,22 @@ using System.Collections.Generic;
                     localCastMesh.drawOccludedMode = true; //this calls updateMesh
                 else
                     localCastMesh.drawOccludedMode = false; //this calls updateMesh
-        }
+            }
 
             Shader.SetGlobalColor("_blackPoint", blackPoint);
 
             updateOverlap();
+
+        if (!preview)
+            preview = GameObject.FindObjectOfType<hypercube.hypercubePreview>();
+        if (preview)
+        {
+            if (softSliceMethod == renderMode.OCCLUDING)
+                preview.setOccludedMode(true);
+            else
+                preview.setOccludedMode(false);
         }
+    }
 
         public void updateOverlap()
         {
@@ -177,6 +192,7 @@ using System.Collections.Generic;
                 }
             }
             softSlicePostProcess.enabled = false;
+
         }
 
 

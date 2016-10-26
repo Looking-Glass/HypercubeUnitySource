@@ -16,7 +16,14 @@ namespace hypercube
         public float sliceDistance = .1f;
 
         public Material[] previewMaterials;
+        public Material previewOccludedMaterial;
 
+        bool occludedMode = false;
+        public void setOccludedMode(bool onOff)
+        {
+            occludedMode = onOff;
+            updateMesh();
+        }
 
         void Start()
         {
@@ -82,10 +89,21 @@ namespace hypercube
                 normals[v + 2] = new Vector3(0, 0, 1);
                 normals[v + 3] = new Vector3(0, 0, 1);
 
-                uvs[v + 0] = new Vector2(0, 1);
-                uvs[v + 1] = new Vector2(1, 1);
-                uvs[v + 2] = new Vector2(1, 0);
-                uvs[v + 3] = new Vector2(0, 0);
+                if (!occludedMode)
+                {
+                    uvs[v + 0] = new Vector2(0, 1);
+                    uvs[v + 1] = new Vector2(1, 1);
+                    uvs[v + 2] = new Vector2(1, 0);
+                    uvs[v + 3] = new Vector2(0, 0);
+                }
+                else
+                {
+                    float sliceMod = 1f / (float)sliceCount;
+                    uvs[v + 0] = new Vector2(0, sliceMod * (float)(z + 1));
+                    uvs[v + 1] = new Vector2(1, sliceMod * (float)(z + 1));
+                    uvs[v + 2] = new Vector2(1, sliceMod * (float)z);
+                    uvs[v + 3] = new Vector2(0, sliceMod * (float)z);
+                }
 
 
                 int[] tris = new int[6];
@@ -97,8 +115,11 @@ namespace hypercube
                 tris[5] = v + 0; //ends at bottom right       
                 submeshes.Add(tris);
 
-                //every face has a separate material/texture     
-                faceMaterials[z] = previewMaterials[z];
+                //every face has a separate material/texture  
+                if (!occludedMode)   
+                    faceMaterials[z] = previewMaterials[z];
+                else
+                    faceMaterials[z] = previewOccludedMaterial;
             }
 
 
