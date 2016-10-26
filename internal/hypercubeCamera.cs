@@ -26,7 +26,7 @@ using System.Collections.Generic;
         [Range(0f, 5f)]
         public float overlap = 2f;
 
-        [Tooltip("Softness is calculated for you to blend only overlapping areas. It can be set manually if Slicing is set to SOFT_CUSTOM.")]
+        [Tooltip("Sets how far into the slice blending will occur. Adjust to your preference, or use 'autoSoftness' to have it calculated for you based on the overlap setting.")]
         [Range(0.001f, .5f)]
         public float softness = .5f;
 
