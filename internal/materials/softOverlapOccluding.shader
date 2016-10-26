@@ -65,8 +65,8 @@
 				}
 
 				//depth curve
-			//	float ld = -(sign(_NFOD.x) - 1) * d + sign(_NFOD.x) * linearDepth(d); //conditional: use d if ortho, linear(d) if persp. sign of 0, -1, *-1 = 1, so if cam=ortho & near=0, just use d. otherwise, use linear(d)
-			//	d = lerp(ld, d, _NFOD.w); //now lerp between linear depth and not.
+				float ld = -(sign(_NFOD.x) - 1) * d + sign(_NFOD.x) * linearDepth(d); //conditional: use d if ortho, linear(d) if persp. sign of 0, -1, *-1 = 1, so if cam=ortho & near=0, just use d. otherwise, use linear(d)
+				d = lerp(ld, d, _NFOD.w); //now lerp between linear depth and not.
 
 				//depth distance / soft slicing / the whole point of this thing
 				//abs(g-d) is "dist" of d from g(midpoint in slice). *10 so if it's <1/10th screen away, it = 1, depending on overlap (could be 1/5th screen away with overlap = 1) 1- that because we want it 1 at the closest and 0 if its too far. 
