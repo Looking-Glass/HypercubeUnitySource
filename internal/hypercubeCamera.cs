@@ -11,14 +11,16 @@ using System.Collections.Generic;
          //a static pointer to the last activated hypercubeCameraZ
          public static hypercubeCamera mainCam = null;  
 
-        public enum softSliceMode
+
+        public enum renderMode
         {
             HARD = 0,
-            SOFT,
-            SOFT_CUSTOM
+            PER_MATERIAL,
+            POST_PROCESS,
+            OCCLUDING
         }
-        [Tooltip("HARD = no slice blending \nSOFT = autocalculate softness based on the overlap \nSOFT_CUSTOM = manage your own overlap and softness")]
-        public softSliceMode slicing;
+        [Tooltip("This option chooses the rendering method of Hypercube:\n\nHARD - No slice blending. Blending will be OFF. \n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. \n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. \n\nOCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF).")]
+        public renderMode softSliceMethod;
 
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
         [Range(0f, 5f)]
@@ -28,16 +30,12 @@ using System.Collections.Generic;
         [Range(0.001f, .5f)]
         public float softness = .5f;
 
-        public enum renderMode
-        {
-            PER_MATERIAL = 0,
-            POST_PROCESS,
-            OCCLUDING
-        }
-        [Tooltip("This option chooses the rendering method of Hypercube:\n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. \n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. \n\nOCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF).")]
-        public renderMode softSliceMethod;
+        [Tooltip("Auto-calculate softness based on the overlap.")]
+        public bool autoSoftness = false;
 
-        public enum scaleConstraintType
+
+
+    public enum scaleConstraintType
         {
             NONE = 0,
             X_RELATIVE,
@@ -141,7 +139,7 @@ using System.Collections.Generic;
                 Debug.LogError("The Hypercube has no slice textures to render to.  Please assign them or reset the prefab.");
 
 
-            if (slicing == softSliceMode.HARD)
+            if (softSliceMethod == renderMode.HARD)
                 softness = 0f;
 
             if (!localCastMesh)
@@ -164,9 +162,9 @@ using System.Collections.Generic;
         public void updateOverlap()
         {
 
-            if (slicing != softSliceMode.HARD)
+            if (softSliceMethod != renderMode.HARD)
             {
-                if (slicing == softSliceMode.SOFT)
+                if (autoSoftness)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area. Interestingly, imo it usually does not produce what the eye thinks are best results.             
 
                 softness = Mathf.Clamp(softness, 0f, .5f);
@@ -184,7 +182,7 @@ using System.Collections.Generic;
 
         public void render()
         {
-            if (overlap > 0f && slicing != softSliceMode.HARD)
+            if (overlap > 0f && softSliceMethod != renderMode.HARD)
             {
                 if (softSliceMethod == renderMode.PER_MATERIAL)
                     Shader.EnableKeyword("SOFT_SLICING");
@@ -225,7 +223,7 @@ using System.Collections.Generic;
                 renderCam.fieldOfView = baseViewAngle;
             }
 
-            if (overlap > 0f && slicing != softSliceMode.HARD)
+            if (overlap > 0f && softSliceMethod != renderMode.HARD)
             {
                 if (softSliceMethod == renderMode.PER_MATERIAL)
                     Shader.DisableKeyword("SOFT_SLICING");  //toggling this on/off allows the preview in the editor to continue to appear normal.            

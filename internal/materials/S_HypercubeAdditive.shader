@@ -54,7 +54,7 @@
 			fixed4 _Color;
 			
 			float _softPercent;
-			half4 _blackPoint;
+			//half4 _blackPoint;
          
             v2f vert (appdata v)
             {
@@ -86,7 +86,7 @@
 				fixed4 col = 2.0f * i.color * _Color * tex2D(_MainTex, i.uv);
 				UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0)); // fog towards black due to our blend mode
 				
-				col += _blackPoint;
+				//col += _blackPoint;
 				
 				#if defined(SOFT_SLICING) && defined(ENABLE_SOFTSLICING)
 					float d = i.projPosZ;
