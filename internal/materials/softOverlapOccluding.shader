@@ -68,40 +68,40 @@
 					d = (d * .5) + .5;  //map  -1 to 1   into  0 to 1
 				}
 
+				//this part lets us select how opaque a pixel shoudld be when it is overlapped by multiple slices
+				float overlapNum = floor(_NFOD.z);
+				float baseOverlap = _NFOD.z - overlapNum; //the remainder of slices overlapping us.
+		
+				//here we map 0-1 perslice
+				float doubleOverlap = baseOverlap + baseOverlap;
 
-				//return 1-d;
+				d = (g-d) + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap
+	
+				float overlapMod = _sliceCount ; //expand the slice to take up the screen
+				overlapMod -= (_sliceCount/2) * (_NFOD.z); //expand to account for the overlap
+	
+				//overlapMod -= _sliceCount * overlapNum;
 
-				//depth curve
-				//float ld = -(sign(_NFOD.x) - 1) * d + sign(_NFOD.x) * linearDepth(d); //conditional: use d if ortho, linear(d) if persp. sign of 0, -1, *-1 = 1, so if cam=ortho & near=0, just use d. otherwise, use linear(d)
-				//d = lerp(ld, d, _NFOD.w); //now lerp between linear depth and not.
+				//overlapMod -=  overlapNum  * sliceDepth; //add overlapping slices back.
 
-				//depth distance / soft slicing / the whole point of this thing
-				//abs(g-d) is "dist" of d from g(midpoint in slice). *10 so if it's <1/10th screen away, it = 1, dependi ng on overlap (could be 1/5th screen away with overlap = 1) 1- that because we want it 1 at the closest and 0 if its too far. 
-				//Then ^0.5 because for some god awful reason it wasn't linear and now it is?
-				//float n = pow(saturate(1 - abs(g - d) * (_sliceCount - _NFOD.z * _sliceCount / 2)), 0.5);
+				d += d * overlapMod;
+				//d += overlapNum;
+
+
 				
-				d = (g - d) + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice by the overlap
-				//d *= _sliceCount - (_NFOD.z * _sliceCount / 2);  //expand the thickness... the slice itself
-				d *= _sliceCount - (_NFOD.z * _sliceCount/2);
+			//d *= _sliceCount - (doubleOverlap * _sliceCount / 2);
+			//	d *= _sliceCount - (_NFOD.z * 2) - ((_NFOD.z * 2) * (_sliceCount / 2)); //slicecount expands the thickness back to the height of the whole image, 
 
+				if (d > 1)
+					d = 0;
 
-
-				//nearValues[i] = (i * sliceDepth) - (sliceDepth * overlap);
-				//farValues[i] = ((i + 1) * sliceDepth) + (sliceDepth * overlap);
-			
-				//gdist = gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2));
-
-				//normalizedG = 1 - normalizedG;
-			//	if (d > 1)
-			//		d = 0;
 
 				//float n = saturate(gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2))); //kyle's original
+				//return d;
 
 				//soft slicing--------------------------------------
 				//if(_softPercent <= 0)   //this should not be used because we can count on our component being off if this is not needed
 				//	return col;
-
-				//return d;
 
 				float mask = 1;
 
@@ -109,14 +109,11 @@
 					mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
 				else if (d > 1 - _softPercent)
 					mask *= 1 - ((d - (1 - _softPercent)) / _softPercent); //this is the darkening of the slice near 1 (far)
-																		   //end soft slicing----------------------------------------
+				//return mask;
+				//end soft slicing----------------------------------------
 
-
-				return c * mask;
-
-			//	float4 r = c * n; //for some reason it's (slightly) faster to combine them before returning them.
-
-				//return r;
+				float4 r = c * mask;//for some reason it's (slightly) faster to combine them before returning them.
+				return r;
 			}
 
 			ENDCG
