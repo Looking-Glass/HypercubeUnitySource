@@ -53,7 +53,7 @@
 				float sliceDepth = (1 / _sliceCount);
 
 				//g is for softslicing later. It is the midpoint of the slice.
-				float g = (fs / _sliceCount) + (sliceDepth); //our slice + half a slice
+				float g = (fs / _sliceCount) + (sliceDepth); //our slice + a full slice, this aligns it with the other rendering methods
 
 				//this is what squeezes the render down so it's taking the slcth pixel
 				IN.uv.y = frac(IN.uv.y * _sliceCount);
@@ -80,9 +80,10 @@
 				//Then ^0.5 because for some god awful reason it wasn't linear and now it is?
 				//float n = pow(saturate(1 - abs(g - d) * (_sliceCount - _NFOD.z * _sliceCount / 2)), 0.5);
 				
-				float normalizedG = (g - d) + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice by the overlap
-				normalizedG *= _sliceCount + ( _NFOD.z + _NFOD.z);  //set the thickness... the slice itself + its double overlap
-				//normalizedG *= ((_NFOD.z * sliceDepth) * 2) + sliceDepth;
+				d = (g - d) - (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice by the overlap
+				d *= _sliceCount;  //set the thickness... the slice itself + its double overlap
+				d += 2 * _NFOD.z;  //add the overlap
+								   //normalizedG *= ((_NFOD.z * sliceDepth) * 2) + sliceDepth;
 				//normalizedG *= (1/(_NFOD.z + _NFOD.z) * sliceDepth) ; //stays in place? 
 				//normalizedG *= (_NFOD.z * 2) + (1 / _NFOD.z); 
 
@@ -92,13 +93,27 @@
 				//gdist = gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2));
 
 				//normalizedG = 1 - normalizedG;
-				if (normalizedG > 1)
-					normalizedG = 0;
+				//if (d > 1)
+				//	d = 0;
 
 				//float n = saturate(gdist * (_sliceCount - _NFOD.z * _sliceCount / 2));
 
+				//soft slicing--------------------------------------
+				//if(_softPercent <= 0)   //this should not be used because we can count on our component being off if this is not needed
+				//	return col;
 
-				return normalizedG;
+				//return d;
+
+				float mask = 1;
+
+				if (d < _softPercent)
+					mask *= d / _softPercent; //this is the darkening of the slice near 0 (near)
+				else if (d > 1 - _softPercent)
+					mask *= 1 - ((d - (1 - _softPercent)) / _softPercent); //this is the darkening of the slice near 1 (far)
+																		   //end soft slicing----------------------------------------
+
+
+				return c * mask;
 
 			//	float4 r = c * n; //for some reason it's (slightly) faster to combine them before returning them.
 

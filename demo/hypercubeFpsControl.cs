@@ -157,6 +157,9 @@ public class hypercubeFpsControl : MonoBehaviour {
 
     public void reset()
     {
+        if (!moveNode)
+            moveNode = transform;
+
         originalRotation = moveNode.localRotation;
         rotationX = 0f;
         rotationY = 0f;
@@ -165,6 +168,9 @@ public class hypercubeFpsControl : MonoBehaviour {
 
     public void resetToOriginalLocation()
     {
+        if (!moveNode)
+            moveNode = transform;
+
         moveNode.rotation = originRotation;
         moveNode.position = originPosition;
         moveNode.localScale = originScale;

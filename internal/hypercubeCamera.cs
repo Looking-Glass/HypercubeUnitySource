@@ -23,8 +23,8 @@ using System.Collections.Generic;
         public renderMode softSliceMethod;
 
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
-        [Range(0f, 5f)]
-        public float overlap = 2f;
+        [Range(.001f, 5f)]
+        public float overlap = 1f;
 
         [Tooltip("Sets how far into the slice blending will occur. Adjust to your preference, or use 'autoSoftness' to have it calculated for you based on the overlap setting.")]
         [Range(0.001f, .5f)]
