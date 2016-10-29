@@ -52,7 +52,7 @@
 
 				float sliceDepth = (1 / _sliceCount);
 
-				//g is for softslicing later. It is the midpoint of the slice.
+				//g is for softslicing later. It is the edge of the slice.
 				float g = (fs / _sliceCount) + (sliceDepth); //our slice + a full slice, this aligns it with the other rendering methods
 
 				//this is what squeezes the render down so it's taking the slcth pixel
@@ -80,12 +80,11 @@
 				//Then ^0.5 because for some god awful reason it wasn't linear and now it is?
 				//float n = pow(saturate(1 - abs(g - d) * (_sliceCount - _NFOD.z * _sliceCount / 2)), 0.5);
 				
-				d = (g - d) - (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice by the overlap
-				d *= _sliceCount;  //set the thickness... the slice itself + its double overlap
-				d += 2 * _NFOD.z;  //add the overlap
-								   //normalizedG *= ((_NFOD.z * sliceDepth) * 2) + sliceDepth;
-				//normalizedG *= (1/(_NFOD.z + _NFOD.z) * sliceDepth) ; //stays in place? 
-				//normalizedG *= (_NFOD.z * 2) + (1 / _NFOD.z); 
+				d = (g - d) + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice by the overlap
+				//d *= _sliceCount - (_NFOD.z * _sliceCount / 2);  //expand the thickness... the slice itself
+				d *= _sliceCount - (_NFOD.z * _sliceCount/2);
+
+
 
 				//nearValues[i] = (i * sliceDepth) - (sliceDepth * overlap);
 				//farValues[i] = ((i + 1) * sliceDepth) + (sliceDepth * overlap);
@@ -93,10 +92,10 @@
 				//gdist = gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2));
 
 				//normalizedG = 1 - normalizedG;
-				//if (d > 1)
-				//	d = 0;
+			//	if (d > 1)
+			//		d = 0;
 
-				//float n = saturate(gdist * (_sliceCount - _NFOD.z * _sliceCount / 2));
+				//float n = saturate(gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2))); //kyle's original
 
 				//soft slicing--------------------------------------
 				//if(_softPercent <= 0)   //this should not be used because we can count on our component being off if this is not needed

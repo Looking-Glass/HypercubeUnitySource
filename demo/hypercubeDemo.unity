@@ -307,15 +307,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 9.45
+      value: 9.7
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.29
+      value: 1.17
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.3
+      value: 5.14
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalRotation.x
@@ -343,11 +343,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: near clip plane
-      value: -1.1193537
+      value: -0.7835476
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: far clip plane
-      value: 12.31289
+      value: 8.619023
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: softSliceMethod
@@ -388,7 +388,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: orthographic size
-      value: 3.3580606
+      value: 2.7983837
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: slicing
@@ -396,7 +396,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.z
-      value: 11.193534
+      value: 7.8354735
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: localCastMesh
@@ -424,7 +424,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.y
-      value: 6.7161207
+      value: 5.596767
       objectReference: {fileID: 0}
     - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: autoHideMouse
@@ -1115,19 +1115,19 @@ Prefab:
       objectReference: {fileID: 2074426296}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.037135422
+      value: -0.036733646
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.85816664
+      value: -0.8755393
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 2.9013753
+      value: 2.5459962
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 4.4416666
+      value: 3.8976235
       objectReference: {fileID: 0}
     - target: {fileID: 2395910, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_Materials.Array.data[0]
