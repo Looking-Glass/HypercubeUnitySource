@@ -53,7 +53,7 @@
 				float sliceDepth = (1 / _sliceCount);
 
 				//g is for softslicing later. It is the edge of the slice.
-				float g = (fs / _sliceCount) + (sliceDepth); //our slice + a full slice, this aligns it with the other rendering methods
+				float g = (fs / _sliceCount) + (sliceDepth/2); //our slice + a half slice, this aligns it with the center of the slice
 
 				//this is what squeezes the render down so it's taking the slcth pixel
 				IN.uv.y = frac(IN.uv.y * _sliceCount);
@@ -68,32 +68,10 @@
 					d = (d * .5) + .5;  //map  -1 to 1   into  0 to 1
 				}
 
-				//this part lets us select how opaque a pixel shoudld be when it is overlapped by multiple slices
-				float overlapNum = floor(_NFOD.z);
-				float baseOverlap = _NFOD.z - overlapNum; //the remainder of slices overlapping us.
-		
 				//here we map 0-1 perslice
-				float doubleOverlap = baseOverlap + baseOverlap;
+				d = (g-d)  + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap				
+				d *=  _sliceCount  / (1 + _NFOD.z + _NFOD.z) ; //expand to account for the overlap
 
-				d = (g-d) + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap
-	
-				float overlapMod = _sliceCount ; //expand the slice to take up the screen
-				overlapMod -= (_sliceCount/2) * (_NFOD.z); //expand to account for the overlap
-	
-				//overlapMod -= _sliceCount * overlapNum;
-
-				//overlapMod -=  overlapNum  * sliceDepth; //add overlapping slices back.
-
-				d += d * overlapMod;
-				//d += overlapNum;
-
-
-				
-			//d *= _sliceCount - (doubleOverlap * _sliceCount / 2);
-			//	d *= _sliceCount - (_NFOD.z * 2) - ((_NFOD.z * 2) * (_sliceCount / 2)); //slicecount expands the thickness back to the height of the whole image, 
-
-				if (d > 1)
-					d = 0;
 
 
 				//float n = saturate(gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2))); //kyle's original
