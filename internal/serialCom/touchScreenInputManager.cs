@@ -88,6 +88,8 @@ public class touchScreenInputManager  : streamedInputManager
         deviceName = _deviceName;
         isFront = _isFrontTouchScreen;
 
+        _serial.readDataAsString = true; //start with data
+
         for (int i = 0; i < touchPool.Length; i++ )
         {
             touchPool[i] = new touch(isFront);
@@ -164,6 +166,7 @@ public class touchScreenInputManager  : streamedInputManager
 
                 return; //still initializing
             }
+            
 
             addData(System.Text.Encoding.Unicode.GetBytes(data));
      

@@ -53,7 +53,7 @@
 				float sliceDepth = (1 / _sliceCount);
 
 				//g is for softslicing later. It is the edge of the slice.
-				float g = (fs / _sliceCount) + (sliceDepth/2); //our slice + a half slice, this aligns it with the center of the slice
+				float g = (fs / _sliceCount) + (sliceDepth); //our slice + a full slice, this aligns it with the way the other methods function
 
 				//this is what squeezes the render down so it's taking the slcth pixel
 				IN.uv.y = frac(IN.uv.y * _sliceCount);
@@ -69,9 +69,9 @@
 				}
 
 				//here we map 0-1 perslice
-				d = (g-d)  + (sliceDepth * _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap				
-				d *=  _sliceCount  / (1 + _NFOD.z + _NFOD.z) ; //expand to account for the overlap
-
+				d = (g-d)  + (sliceDepth *  _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap				
+				d *=  _sliceCount   / (1 + _NFOD.z + _NFOD.z) ; //expand to account for the overlap
+				
 
 
 				//float n = saturate(gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2))); //kyle's original
