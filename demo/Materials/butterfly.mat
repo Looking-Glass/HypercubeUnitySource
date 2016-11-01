@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: butterfly
-  m_Shader: {fileID: 4800000, guid: 49548e20fb40740fa8141da7d056b078, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON
+  m_Shader: {fileID: 4800000, guid: a0f1b97d038133740a5e321229dc6fd6, type: 3}
+  m_ShaderKeywords: ENABLE_SOFTSLICING _ALPHATEST_ON
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -87,7 +87,7 @@ Material:
       second: 2
     - first:
         name: _Cutoff
-      second: 0.43
+      second: 0.565
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -135,7 +135,7 @@ Material:
       second: 1
     - first:
         name: _softSlicingToggle
-      second: 0
+      second: 1
     m_Colors:
     - first:
         name: _Color
