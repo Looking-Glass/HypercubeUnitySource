@@ -32,17 +32,10 @@
 
 			sampler2D _MainTex;
 			sampler2D _CameraDepthTexture;
-			float4 _NFOD; //x: near clip, y: far clip, z: overlap, w: depth curve
 			float _sliceCount; //slice count
 
-			float linearDepth(float depthSample)
-			{
-				float zLinear = DECODE_EYEDEPTH(depthSample); //nice that there's a built in macro for it, after i did so much math learning -.-
-				zLinear = (zLinear - _NFOD.x) / (_NFOD.y - _NFOD.x); //normalize it between the near-far planes
-				return zLinear;
-			}
-
 			float _softPercent;
+			float _overlap;
 
 			float4 frag(v2f IN) : COLOR
 			{
@@ -69,11 +62,9 @@
 				}
 
 				//here we map 0-1 perslice
-				d = (g-d)  + (sliceDepth *  _NFOD.z);  //offset the 'start' depth of the slice, plus offset by the overlap				
-				d *=  _sliceCount   / (1 + _NFOD.z + _NFOD.z) ; //expand to account for the overlap
+				d = (g-d)  + (sliceDepth *  _overlap);  //offset the 'start' depth of the slice, plus offset by the overlap				
+				d *=  _sliceCount   / (1 + _overlap + _overlap) ; //expand to account for the overlap
 				
-
-
 				//float n = saturate(gdist * (_sliceCount - (_NFOD.z * _sliceCount / 2))); //kyle's original
 				//return d;
 

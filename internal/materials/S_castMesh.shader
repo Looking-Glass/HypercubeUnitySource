@@ -5,11 +5,11 @@ Shader "Hidden/Cast Mesh"
     {
         _MainTex ("Texture", 2D) = "white" {}
 
-		_sliceBrightnessR ("R Offset", Range (-2, 2)) = 1  //TODO remove these lines, they shouldn't be public
-		_sliceBrightnessG ("G Offset", Range (-2, 2)) = 1
-		_sliceBrightnessB ("B Offset", Range (-2, 2)) = 1
-        _hypercubeBrightnessMod ("Contrast Mod", Range (0, 100)) = 1
-		_hardwareContrastMod ("Contrast Mod", Range (0, 100)) = 1
+		//_sliceBrightnessR ("R Offset", Range (-2, 2)) = 1  //TODO remove these lines, they shouldn't be public
+		//_sliceBrightnessG ("G Offset", Range (-2, 2)) = 1
+		//_sliceBrightnessB ("B Offset", Range (-2, 2)) = 1
+  //      _hypercubeBrightnessMod ("Contrast Mod", Range (0, 100)) = 1
+		//_hardwareContrastMod ("Contrast Mod", Range (0, 100)) = 1
     }
     SubShader
     {
@@ -40,13 +40,13 @@ Shader "Hidden/Cast Mesh"
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-
-			float _hypercubeBrightnessMod;
-			//TODO should be set globally from settings
+			//this comes from onValidate on hypercubeCamera
+			float _hypercubeBrightnessMod = 1;
+			//thse come from castMesh.loadSettings
             float _hardwareContrastMod = 1;
-			float _sliceBrightnessR;
-			float _sliceBrightnessG;
-			float _sliceBrightnessB;
+			float _sliceBrightnessR = 1;
+			float _sliceBrightnessG = 1;
+			float _sliceBrightnessB = 1;
          
             v2f vert (appdata v)
             {
@@ -58,11 +58,12 @@ Shader "Hidden/Cast Mesh"
          
             fixed4 frag (v2f i) : SV_Target
             {
-				float4 output = tex2D(_MainTex, i.uv) * _hardwareContrastMod;
+				float4 output = tex2D(_MainTex, i.uv) * _hypercubeBrightnessMod;
+	
 				output.r *= _sliceBrightnessR;
 				output.g *= _sliceBrightnessG;
 				output.b *= _sliceBrightnessB;
-                return output * _hypercubeBrightnessMod;
+                return output * _hardwareContrastMod;
             }
             ENDCG
         }

@@ -45,9 +45,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_LocalRotation: {x: 0.014431348, y: 0.873843, z: -0.20993105, w: 0.43831405}
-  m_LocalPosition: {x: 9.43, y: 1.38, z: 5.37}
-  m_LocalScale: {x: 10, y: 5, z: 8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 5, z: 7}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 431666}
@@ -60,7 +60,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalPosition: {x: -0, y: -0, z: -0.466}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -82,17 +82,17 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: -1.2080004
-  far clip plane: 9.208004
+  near clip plane: 6.2683806
+  far clip plane: 8.619023
   field of view: 65
   orthographic: 1
-  orthographic size: 2.5000002
+  orthographic size: 2.7983837
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967263
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 8400000, guid: 536659be58a82c24ab1ec5dd92529656, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 23bf5d0442c3b48438e4040064a2bfec, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -154,15 +154,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666547ba4507b674a8b845719de10220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slicing: 2
-  overlap: 1.51
-  softness: 0.296
-  softSliceMethod: 2
+  softSliceMethod: 1
+  overlap: 1
+  softness: 0.5
+  autoSoftness: 0
   scaleConstraint: 1
   forcedPerspective: 0
-  brightness: 1.3
+  brightness: 1
   blackPoint: {r: 0.037705887, g: 0.027573526, b: 0.125, a: 1}
-  autoHideMouse: 1
+  autoHideMouse: 0
   softSlicePostProcess: {fileID: 114000012088741506}
   renderCam: {fileID: 2083526}
   sliceTextures:
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 195280}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee03170962f28b841b9ce187c63c7bf5, type: 3}
   m_Name: 
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129362}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e036cb58c11266498b260f240de7b18, type: 3}
   m_Name: 

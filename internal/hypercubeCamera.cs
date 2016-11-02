@@ -19,7 +19,6 @@ using System.Collections.Generic;
             POST_PROCESS,
             OCCLUDING
         }
-        [Tooltip("This option chooses the rendering method of Hypercube:\n\nHARD - No slice blending. Blending will be OFF. \n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. Use this method and use Hypercube shaders if you want to have effects show well in Volume.\n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. Use this if you want soft slicing, but don't want to use Hypercube shaders. \n\nOCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF). Framing whole models (like a human head or whole opaque object) tend to show well with this method.")]
         public renderMode softSliceMethod;
 
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
@@ -67,7 +66,7 @@ using System.Collections.Generic;
         float[] nearValues;
         float[] farValues;
 
-        void OnEnable()
+    void OnEnable()
         {
             hypercubeCamera.mainCam = this;
         }
@@ -159,7 +158,8 @@ using System.Collections.Generic;
                     localCastMesh.drawOccludedMode = false; //this calls updateMesh
             }
 
-            Shader.SetGlobalColor("_blackPoint", blackPoint);
+        Shader.SetGlobalFloat("_hypercubeBrightnessMod", brightness);
+        Shader.SetGlobalColor("_blackPoint", blackPoint);
 
             updateOverlap();
 
@@ -177,13 +177,16 @@ using System.Collections.Generic;
         public void updateOverlap()
         {
 
-            if (softSliceMethod != renderMode.HARD)
+        
+
+        if (softSliceMethod != renderMode.HARD)
             {
                 if (autoSoftness)
                     softness = overlap / ((overlap * 2f) + 1f); //this calculates exact interpolation between the end of a slice and the end of it's overlap area. Interestingly, imo it usually does not produce what the eye thinks are best results.             
 
                 softness = Mathf.Clamp(softness, 0f, .5f);
                 Shader.SetGlobalFloat("_softPercent", softness);
+                Shader.SetGlobalFloat("_overlap", overlap);
 
                 if (softSliceMethod != renderMode.PER_MATERIAL) //we use post process on both occluding and in post process SS
                 {
@@ -198,6 +201,7 @@ using System.Collections.Generic;
 
         public void render()
         {
+
             if (overlap > 0f && softSliceMethod != renderMode.HARD)
             {
                 if (softSliceMethod == renderMode.PER_MATERIAL)
@@ -276,4 +280,28 @@ using System.Collections.Generic;
             updateOverlap();
         }
 
-    }
+
+    //CUSTOM INSPECTOR STUFF ... this hides/shows the gui as needed
+    /*  [UnityEditor.CustomEditor(typeof(hypercubeCamera))]
+      public class MyScriptEditor : UnityEditor.Editor
+      {
+          public override void OnInspectorGUI()
+          {
+              hypercubeCamera c = target as hypercubeCamera;
+
+              c.softSliceMethod = (hypercubeCamera.renderMode)UnityEditor.EditorGUILayout.EnumPopup("softSliceMethod", c.softSliceMethod);
+              c.overlap = UnityEditor.EditorGUILayout.Slider("Overlap", c.overlap, .001f, 5f);
+
+              if (c.softSliceMethod != renderMode.HARD)
+              {
+                  c.softness = UnityEditor.EditorGUILayout.Slider("Softness", c.softness, .001f, .5f);
+                  c.autoSoftness = UnityEditor.EditorGUILayout.Toggle("Auto Softness", c.autoSoftness);
+              }
+
+  
+
+
+          }
+      }
+      */
+}

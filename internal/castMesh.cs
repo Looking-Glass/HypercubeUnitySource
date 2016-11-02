@@ -224,6 +224,13 @@ namespace hypercube
 				d.getValueAsFloat ("projectionCentimeterHeight", 5f),
 				d.getValueAsFloat ("projectionCentimeterDepth", 7f));
 
+
+            //TODO these can come from the hardware
+            Shader.SetGlobalFloat("_hardwareContrastMod", 1f);
+            Shader.SetGlobalFloat("_sliceBrightnessR", 1f);
+            Shader.SetGlobalFloat("_sliceBrightnessG", 1f);
+            Shader.SetGlobalFloat("_sliceBrightnessB", 1f);
+
             return foundConfigFile;
         }
 
