@@ -56,10 +56,6 @@
 
 				//get the depth
 				float d = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, IN.uv.xy);
-				if (UNITY_NEAR_CLIP_VALUE == -1) //OGL will use this.
-				{
-					d = (d * .5) + .5;  //map  -1 to 1   into  0 to 1
-				}
 
 				//here we map 0-1 perslice
 				d = (g-d)  + (sliceDepth *  _overlap);  //offset the 'start' depth of the slice, plus offset by the overlap				

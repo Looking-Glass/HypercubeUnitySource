@@ -144,9 +144,6 @@ using System.Collections.Generic;
                 Debug.LogError("The Hypercube has no slice textures to render to.  Please assign them or reset the prefab.");
 
 
-            if (softSliceMethod == renderMode.HARD)
-                softness = 0f;
-
             if (!localCastMesh)
                 localCastMesh = GameObject.FindObjectOfType<hypercube.castMesh>();
 
