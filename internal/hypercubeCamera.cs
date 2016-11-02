@@ -19,6 +19,7 @@ using System.Collections.Generic;
             POST_PROCESS,
             OCCLUDING
         }
+        [Tooltip("This option chooses the rendering method of Hypercube:\n\nHARD - No slice blending. Blending will be OFF. \n\nPER_MATERIAL - Meshes will only be soft sliced if they use Hypercube/ shaders, but all objects will draw. Use this method and use Hypercube shaders if you want to have effects show well in Volume.\n\nPOST_PROCESS - Uses the depth buffer in a post process to calculate soft slicing. This means Shaders that do not ZWrite will be treated as empty space and draw black (effects, or transparent things). However, ANY opaque shader will be soft sliced. Use this if you want soft slicing, but don't want to use Hypercube shaders. \n\nOCCLUDING - Draws the scene one time, and then uses a post process to determine what slices a pixel draws to. The result is that pixels drawn to 'front' slices occlude pixels drawn behind them. Effects and transparent shaders will most likely draw to wrong slices with this method (because they typically use ZWrite OFF). Framing whole models (like a human head or whole opaque object) tend to show well with this method.\n")]
         public renderMode softSliceMethod;
 
         [Tooltip("The percentage of overdraw a slice will include of its neighbor slices.\n\nEXAMPLE: an overlap of 1 will include its front and back neighbor slices (not including their own overlaps)  into itself.\nAn overlap of .5 will include half of its front neighbor and half of its back neighbor slice.")]
