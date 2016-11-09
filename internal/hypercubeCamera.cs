@@ -98,7 +98,10 @@ using System.Collections.Generic;
             if (!preview)
                 preview = GameObject.FindObjectOfType<hypercube.hypercubePreview>();
 
-        resetSettings();
+	        resetSettings();
+
+			Shader.SetGlobalFloat("_hypercubeBrightnessMod", brightness); //ensure we start with correct settings
+			Shader.SetGlobalColor("_blackPoint", blackPoint);
         }
 
 
