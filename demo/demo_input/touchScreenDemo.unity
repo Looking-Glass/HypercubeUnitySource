@@ -208,41 +208,29 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: localCastMesh
-      value: 
-      objectReference: {fileID: 1322974451}
     - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: near clip plane
-      value: 0.6821503
+      propertyPath: orthographic size
+      value: 0.4488126
       objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: far clip plane
-      value: 1.0482711
-      objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 8400000, guid: 23bf5d0442c3b48438e4040064a2bfec, type: 2}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.x
-      value: 1.1384351
+      value: 1.7952504
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.y
-      value: 0.56921756
-      objectReference: {fileID: 0}
-    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: orthographic size
-      value: 0.28460878
+      value: 0.8976252
       objectReference: {fileID: 0}
     - target: {fileID: 412356, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
       propertyPath: m_LocalScale.z
-      value: 0.9107481
+      value: 1.2566752
       objectReference: {fileID: 0}
-    - target: {fileID: 11483894, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
-      propertyPath: scaleConstraint
-      value: 1
+    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: near clip plane
+      value: 1.0053402
+      objectReference: {fileID: 0}
+    - target: {fileID: 2083526, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
+      propertyPath: far clip plane
+      value: 1.3823428
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 107af7956bf1c794da67aa8f5f634311, type: 2}
@@ -869,12 +857,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
---- !u!114 &1322974451 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa,
-    type: 2}
-  m_PrefabInternal: {fileID: 1588059000}
-  m_Script: {fileID: 11500000, guid: 7346ab28221aa05448d03de0a1a3d36f, type: 3}
 --- !u!1 &1508083816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1074,19 +1056,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.3125
+      value: -1.8395603
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.95416665
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.x
-      value: 3.1937501
+      value: 3.6791208
       objectReference: {fileID: 0}
     - target: {fileID: 465140, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: m_LocalScale.y
-      value: 3.7958333
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11467166, guid: 8cfe63b4fed84fb40bf9a845cee02caa, type: 2}
       propertyPath: flipY

@@ -42,8 +42,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3125, y: -0.95416665, z: 0.24}
-  m_LocalScale: {x: 3.1937501, y: 3.7958333, z: 1}
+  m_LocalPosition: {x: -1.3333334, y: 1, z: 0.24}
+  m_LocalScale: {x: 2.6666667, y: 2, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 466588}
@@ -156,11 +156,6 @@ MonoBehaviour:
   flipX: 0
   flipY: 0
   flipZ: 0
-  sliceOffsetX: -200
-  sliceOffsetY: 11
-  sliceWidth: 1533
-  sliceHeight: 91.1
-  sliceGap: 3
   zPos: 0.24
   tesselation: 11
   sliceMesh: {fileID: 150924}

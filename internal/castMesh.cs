@@ -345,18 +345,18 @@ namespace hypercube
 
                 if (outFlipX && outFlipY)
                 {
-                    UV_ul.Set(1f, 0f);
-                    UV_br.Set(0f, 1f);
+                    UV_ul.Set(1f, 1f);
+                    UV_br.Set(0f, 0f);
                 }
-                else if (!outFlipX && !outFlipY)
+                else if (!outFlipX && outFlipY)
                 {
                     UV_ul.Set(0f, 1f);
                     UV_br.Set(1f, 0f);
                 }
                 else if (outFlipX && !outFlipY)
                 {
-                    UV_ul.Set(1f, 1f);
-                    UV_br.Set(0f, 0f);
+                    UV_ul.Set(1f, 0f);
+                    UV_br.Set(0f, 1f);
                 }
 
                 //if we are drawing occluded mode, modify the UV's so that they make sense.
@@ -374,7 +374,7 @@ namespace hypercube
                 //we generate each slice mesh out of 4 interpolated parts.
                 List<int> tris = new List<int>();
 
-                vertCount += generateSliceShard(UV_ul, UV_br, vertCount, ref verts, ref tris, ref uvs); 
+                vertCount += generateSlice(vertCount, calibrationData, xArticulation, yArticulation, UV_ul, UV_br, ref verts, ref tris, ref uvs); 
 
                 submeshes.Add(tris.ToArray());
 
@@ -431,29 +431,27 @@ namespace hypercube
         //this is used to generate each of 4 sections of every slice.
         //therefore 1 central column and 1 central row of verts are overlapping per slice, but that is OK.  Keeping the interpolation isolated to this function helps readability a lot
         //returns amount of verts created
-        int generateSliceShard(Vector2 topLeftUV, Vector2 bottomRightUV, int startingVert, ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
+        int generateSlice(int startingVert, float[] allVertData, int _xArticulation, int _yArticulation, Vector2 topLeftUV, Vector2 bottomRightUV,  ref  List<Vector3> verts, ref List<int> triangles, ref List<Vector2> uvs)
         {
-            int vertCount = 0;
-            for (var i = 0; i <= tesselation; i++)
+ /*           int vertCount = 0;
+            for (var y = 0; y <= _yArticulation; y++)
             {
                 //for every "i", or row, we are going to make a start and end point.
                 //lerp between the top left and bottom left, then lerp between the top right and bottom right, and save the vectors
 
-                float rowLerpValue = (float)i / (float)tesselation;
+                float rowLerpValue = (float)y / (float)tesselation;
 
                 Vector2 newLeftEndpoint = Vector2.Lerp(topLeft, bottomLeft, rowLerpValue);
                 Vector2 newRightEndpoint = Vector2.Lerp(topRight, bottomRight, rowLerpValue);
 
-                for (var j = 0; j <= tesselation; j++)
+                for (var x = 0; x <= _xArticulation; x++)
                 {
                     //Now that we have our start and end coordinates for the row, iteratively lerp between them to get the "columns"
-                    float columnLerpValue = (float)j / (float)tesselation;
+                    float columnLerpValue = (float)x / (float)tesselation;
 
                     //now get the final lerped vector
                     Vector2 lerpedVector = Vector2.Lerp(newLeftEndpoint, newRightEndpoint, columnLerpValue);
-
-
-                  
+             
 
                     //add it
                     verts.Add(new Vector3(lerpedVector.x, lerpedVector.y, 0f));
@@ -464,27 +462,27 @@ namespace hypercube
             //triangles
             //we only want < tesselation because the very last verts in both directions don't need triangles drawn for them.
             int currentTriangle = 0;
-            for (var i = 0; i < tesselation; i++)
+            for (var y = 0; y < tesselation; y++)
             {
                 for (int j = 0; j < tesselation; j++)
                 {
                     currentTriangle = startingVert + j;
-                    triangles.Add(currentTriangle + i * (tesselation + 1)); //width in verts
-                    triangles.Add((currentTriangle + 1) + i * (tesselation + 1));
-                    triangles.Add(currentTriangle + (i + 1) * (tesselation + 1));
+                    triangles.Add(currentTriangle + y * (tesselation + 1)); //width in verts
+                    triangles.Add((currentTriangle + 1) + y * (tesselation + 1));
+                    triangles.Add(currentTriangle + (y + 1) * (tesselation + 1));
 
-                    triangles.Add((currentTriangle + 1) + i * (tesselation + 1));
-                    triangles.Add((currentTriangle + 1) + (i + 1) * (tesselation + 1));
-                    triangles.Add(currentTriangle + (i + 1) * (tesselation + 1));
+                    triangles.Add((currentTriangle + 1) + y * (tesselation + 1));
+                    triangles.Add((currentTriangle + 1) + (y + 1) * (tesselation + 1));
+                    triangles.Add(currentTriangle + (y + 1) * (tesselation + 1));
                 }
             }
 
             //uvs
-            for (var i = 0; i <= tesselation; i++)
+            for (var y = 0; y <= tesselation; y++)
             {
                 for (var j = 0; j <= tesselation; j++)
                 {
-                    Vector2 targetUV = new Vector2((float)j / (float)tesselation, (float)i / (float)tesselation);  //0-1 UV target
+                    Vector2 targetUV = new Vector2((float)j / (float)tesselation, (float)y / (float)tesselation);  //0-1 UV target
 
                     //add lerped uv
                     uvs.Add(new Vector2(
@@ -494,7 +492,8 @@ namespace hypercube
                 }
             }
 
-            return vertCount;
+            return vertCount;*/
+            return 1;
         }
 
 
