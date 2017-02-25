@@ -4,6 +4,7 @@ using System.Collections;
 //this code is designed to be used to connect to a given serial port, and if it can connect, handshake and 
 //return with information about that serial port.
 
+#if HYPERCUBE_INPUT
 namespace hypercube
 {
 
@@ -100,4 +101,4 @@ namespace hypercube
     }
 }
 
-
+#endif

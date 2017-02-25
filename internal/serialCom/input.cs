@@ -40,7 +40,6 @@ namespace hypercube
 #if HYPERCUBE_DEV
         public
 #endif
-        static bool forceStringRead = true; //can be used to force the string input manager to update instead of the regular streamed pcb input (used for calibration handshaking when writing to pcb)
 
         public int baudRate = 57600;
         public int reconnectionDelay = 500;
@@ -59,11 +58,13 @@ namespace hypercube
 
         public float touchPanelFirmwareVersion { get; private set; }
         public static touchScreenInputManager touchPanel { get; private set;}   
+#if HYPERCUBE_INPUT
         serialPortFinder[] portSearches; //we wait for a handshake to know which serial port is which.
-
         List<string> badSerialPorts = new List<string>();  //ports we already know are not what we are looking for.
-
         protected stringInputManager touchPanelStringManager; //used to get data and settings from the touch panel pcb
+		static bool forceStringRead = true; //can be used to force the string input manager to update instead of the regular streamed pcb input (used for calibration handshaking when writing to pcb)
+
+#endif
 
         //these keep track of all touchScreen targets, and hence the in input system can send them user input data as it is received.
         static HashSet<touchScreenTarget> eventTargets = new HashSet<touchScreenTarget>();
@@ -492,19 +493,12 @@ namespace hypercube
 
 #else //We use HYPERCUBE_INPUT because I have to choose between this odd warning below, or immediately throwing a compile error for new users who happen to have the wrong settings (IO.Ports is not included in .Net 2.0 Subset).  This solution is odd, but much better than immediately failing to compile.
     
-        void searchForSerialComs()
+        bool searchForSerialComs()
         {
             printWarning();
+			return false;
         }
-
-        public static bool isHardwareReady() //can the touchscreen hardware get/send commands?
-        {
-            return false;
-        }
-        public static void sendCommandToHardware(string cmd)
-        {
-
-        }
+		
     
         void Start () 
         {
@@ -514,8 +508,12 @@ namespace hypercube
 
         static void printWarning()
         {
-            Debug.LogWarning("TO USE HYPERCUBE INPUT: \n1) Go To - Edit > Project Settings > Player    2) Set Api Compatability Level to '.Net 2.0'    3) Add HYPERCUBE_INPUT to Scripting Define Symbols (separate by semicolon, if there are others)");
+            Debug.LogWarning("TO USE HYPERCUBE INPUT: \nHypercube > Load Volume friendly Unity prefs\n    - OR -\n1) Go To - Edit > Project Settings > Player    2) Set Api Compatability Level to '.Net 2.0'    3) Add HYPERCUBE_INPUT to Scripting Define Symbols (separate by semicolon, if there are others)");
         }
+
+		public static void _processTouchScreenEvent(touch t)
+		{
+		}
 #endif
 
     }

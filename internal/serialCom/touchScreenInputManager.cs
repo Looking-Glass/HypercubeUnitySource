@@ -35,9 +35,6 @@ namespace hypercube
 
 public class touchScreenInputManager  : streamedInputManager
 {
-    float projectionWidth = 20f; //the physical size of the projection, in centimeters
-    float projectionHeight = 12f;
-    float projectionDepth = 20f;
 
     touchScreen[] touchScreens = null;
     public touchScreen getPanel(touchScreenOrientation p)
@@ -81,6 +78,9 @@ public class touchScreenInputManager  : streamedInputManager
 
 
 #if HYPERCUBE_INPUT
+	float projectionWidth = 20f; //the physical size of the projection, in centimeters
+	float projectionHeight = 12f;
+	float projectionDepth = 20f;
 
     static readonly byte[] emptyByte = new byte[] { 0 };
 

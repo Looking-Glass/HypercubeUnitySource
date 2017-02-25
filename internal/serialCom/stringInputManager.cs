@@ -4,6 +4,7 @@ using UnityEngine;
 
 //a utility to get (large) string data from the serial port without it puking out mid frame.
 
+#if HYPERCUBE_INPUT
 namespace hypercube
 {
     public class stringInputManager : streamedInputManager
@@ -62,3 +63,4 @@ namespace hypercube
 
     }
 }
+#endif

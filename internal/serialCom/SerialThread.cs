@@ -137,7 +137,7 @@ public class SerialThread
                     while (!IsStopRequested())
                         RunOnce();
                 }
-                catch (Exception ioe)
+                catch //(Exception ioe)
                 {
                     // A disconnection happened, or there was a problem
                     // reading/writing to the device. Log the detailed message
