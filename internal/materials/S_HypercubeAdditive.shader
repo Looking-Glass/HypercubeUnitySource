@@ -117,7 +117,8 @@
 
 				// ------------------------------------------------------------------
 		//  Shadow rendering pass
-		Pass {
+/*		
+Pass {
 			Name "ShadowCaster"
 			Tags { "LightMode" = "ShadowCaster" }
 			
@@ -141,6 +142,7 @@
 
 			ENDCG
 		}
+		*/
 		
     }
 	Fallback "Diffuse"

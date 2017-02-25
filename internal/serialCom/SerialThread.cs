@@ -26,7 +26,7 @@ public class SerialThread
     private int delayBeforeReconnecting;
     private int maxUnreadMessages;
 
-    public bool readDataAsString = true;
+    //public bool readDataAsString = true;
 
     // Object from the .Net framework used to communicate with serial devices.
     private SerialPort serialPort;
@@ -142,7 +142,10 @@ public class SerialThread
                     // A disconnection happened, or there was a problem
                     // reading/writing to the device. Log the detailed message
                     // to the console and notify the listener too.
-                    Debug.LogWarning("Exception: " + ioe.Message + " StackTrace: " + ioe.StackTrace);
+#if HYPERCUBE_DEV
+                    if (hypercube.input._debug)
+                        Debug.LogWarning("Exception: " + ioe.Message + " StackTrace: " + ioe.StackTrace);
+#endif
                     inputQueue.Enqueue(SerialController.SERIAL_DEVICE_DISCONNECTED);
 
                     // As I don't know in which stage the SerialPort threw the
@@ -221,13 +224,13 @@ public class SerialThread
     // ------------------------------------------------------------------------
     private void RunOnce()
     {
-        try
+  /*      try
         {
             // Send a message.
             if (outputQueue.Count != 0)
             {
                 string outputMessage = (string)outputQueue.Dequeue();
-                serialPort.WriteLine(outputMessage);
+                serialPort.Write(outputMessage);
             }
 
             // Read a message.
@@ -235,21 +238,21 @@ public class SerialThread
             // this line so it eventually reaches the Message Listener.
             // Otherwise, discard the line.
 
-            if (readDataAsString)
-            {
-                string inputMessage = serialPort.ReadLine();
-                if (inputMessage != null && inputQueue.Count < maxUnreadMessages)
-                {
-                    inputQueue.Enqueue(inputMessage);
-                }
-                return;
-            }
+            //if (readDataAsString)
+            //{
+            //    string inputMessage = serialPort.ReadLine();
+            //    if (inputMessage != null && inputQueue.Count < maxUnreadMessages)
+            //    {
+            //        inputQueue.Enqueue(inputMessage);
+            //    }
+            //    return;
+            //}
         }
         catch (TimeoutException)
         {
             // This is normal, not everytime we have a report from the serial device
             return;
-        }
+        }*/
 
    //     if (readDataAsString)
   //          return;
@@ -270,18 +273,31 @@ public class SerialThread
              //but on a side note... what kind of nutcase designs an API that depends on itself crashing and for the dev to catch that exception to know that the api is 'done'.... wtf Ports.IO?!?!?
         }
         if (byteCount > 0 && inputQueue.Count < maxUnreadMessages)
-           // inputQueue.Enqueue(bytesToStr(bytes, byteCount));
+            //inputQueue.Enqueue(bytesToStr(bytes, bytes.Length));
             inputQueue.Enqueue(System.Text.Encoding.Unicode.GetString(bytes));
+
+        try
+        {
+            // Send a message.
+            if (outputQueue.Count != 0)
+            {
+                string outputMessage = (string)outputQueue.Dequeue();
+                serialPort.Write(outputMessage);
+            }
+        }
+        catch (TimeoutException)
+        {
+        }
 
     }
 
     //from http://stackoverflow.com/questions/472906/how-to-get-a-consistent-byte-representation-of-strings-in-c-sharp-without-manual
-    //static string bytesToStr(byte[] bytes, int count)
-    //{
-    //    char[] chars = new char[count * sizeof(char)];
-    //    System.Buffer.BlockCopy(bytes, 0, chars, 0, count);
-    //    return new string(chars);
-    //}
+//    static string bytesToStr(byte[] bytes, int count)
+//    {
+//        char[] chars = new char[count * sizeof(char)];
+ //       System.Buffer.BlockCopy(bytes, 0, chars, 0, count);
+ //       return new string(chars);
+ //   }
 
 
 }

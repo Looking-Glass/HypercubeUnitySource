@@ -7,18 +7,18 @@ namespace hypercube
     public class menuOptions : MonoBehaviour
     {
 
-        [MenuItem("Hypercube/Load Settings", false, 52)]
-        public static void loadHardwareCalibrationSettings()
-        {
-            hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
-            if (c)
-            {
-                if (c.loadSettings()) //to prevent spamming, this does not provide feedback when settings are loaded
-                    Debug.Log("Hypercube settings loaded.");
-            }
-            else
-                Debug.LogWarning("No castMesh was found, and therefore no loading occurred.");
-        }
+        //[MenuItem("Hypercube/Load Settings", false, 52)]
+        //public static void loadHardwareCalibrationSettings()
+        //{
+        //    hypercube.castMesh c = GameObject.FindObjectOfType<hypercube.castMesh>();
+        //    if (c)
+        //    {
+        //        if (c.loadSettings()) //to prevent spamming, this does not provide feedback when settings are loaded
+        //            Debug.Log("Hypercube settings loaded.");
+        //    }
+        //    else
+        //        Debug.LogWarning("No castMesh was found, and therefore no loading occurred.");
+        //}
 			
 
         [MenuItem("Hypercube/Load Volume friendly Unity Prefs", false, 600)]

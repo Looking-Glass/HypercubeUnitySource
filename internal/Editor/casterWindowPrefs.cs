@@ -14,10 +14,22 @@ public class casterWindowPrefs : EditorWindow
 
     void Awake()
     {
+        //set the prefs, in case they don't exist.  This may prevent issues for first time user where gui does not match settings.
+        if (!EditorPrefs.HasKey("V_windowOffsetX"))
+            EditorPrefs.SetInt("V_windowOffsetX", posX);
+        if (!EditorPrefs.HasKey("V_windowOffsetY"))
+            EditorPrefs.SetInt("V_windowOffsetY", posY);
+        if (!EditorPrefs.HasKey("V_windowWidth"))
+            EditorPrefs.SetInt("V_windowWidth", width);
+        if (!EditorPrefs.HasKey("V_windowHeight"))
+            EditorPrefs.SetInt("V_windowHeight", height);
+
+
         posX = EditorPrefs.GetInt("V_windowOffsetX", posX);
         posY = EditorPrefs.GetInt("V_windowOffsetY", posY);
         width = EditorPrefs.GetInt("V_windowWidth", width);  //Display.main.renderingWidth
         height = EditorPrefs.GetInt("V_windowHeight", height);
+    
     }
 
     [MenuItem("Hypercube/Caster Window Prefs", false, 1)]  //1 is prio

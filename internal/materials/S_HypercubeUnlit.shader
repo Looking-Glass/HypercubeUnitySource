@@ -5,7 +5,7 @@
 		_Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
 		[Toggle(ENABLE_SOFTSLICING)] _softSlicingToggle ("Soft Sliced", Float) = 1
-        [MaterialEnum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 2
+        [MaterialEnum(Off,0,Front,1,Back,2)] _Cull ("Cull", Int) = 0
     }
     SubShader
     {

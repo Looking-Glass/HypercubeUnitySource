@@ -1,4 +1,27 @@
-﻿using UnityEngine;
+﻿/*  
+Hypercube: Volume Plugin is released under the MIT License:
+
+Copyright 2016 Looking Glass Factory, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to deal 
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+of the Software, and to permit persons to whom the Software is furnished to do 
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE 
+OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,12 +33,16 @@ namespace hypercube
     [RequireComponent(typeof(MeshFilter))]
     public class hypercubePreview : MonoBehaviour
     {
+        public static hypercubePreview preview; //access from anywhere.
 
         [HideInInspector]
         public int sliceCount = 12;
         public float sliceDistance = .1f;
 
-        public Material[] previewMaterials;
+        public GameObject previewCamera;
+
+        public List<Material> previewMaterials;
+        public Shader previewShader;
         public Material previewOccludedMaterial;
 
         bool occludedMode = false;
@@ -25,48 +52,76 @@ namespace hypercube
             updateMesh();
         }
 
+        void OnEnable()
+        {
+            preview = this;
+        }
+
         void Start()
         {
             //try in a lazy way to connect ourselves
-            castMesh c = GameObject.FindObjectOfType<castMesh>();
-            if (c && !c.preview)
-                c.preview = this;
+            if (castMesh.canvas && !castMesh.canvas.preview)
+                castMesh.canvas.preview = this;
+
+            if (hypercubeCamera.mainCam)
+                updateMaterials(hypercubeCamera.mainCam); //try to ensure we get off to a good start.
         }
 
         void OnValidate()
         {
-            if (previewMaterials.Length < 1)
-                Debug.LogError("Preview has no items in it's material list.  It needs to be able to choose from materials to apply to it's slices.");
+            updateMesh();
+        }
 
-            if (sliceCount < 1)
-                sliceCount = 1;
+        void Update()
+        {
+            //automatically update whatever we are doing to match the current hypercube camera.
+            if (!hypercubeCamera.mainCam)
+                return;
 
-            if (sliceCount > previewMaterials.Length)
-                sliceCount = previewMaterials.Length;
+            //check for any bad or changed config, and rebuild accordingly.
+            if (sliceCount != hypercubeCamera.mainCam.sliceTextures.Length || 
+                previewOccludedMaterial.mainTexture == null ||
+                previewMaterials.Count == 0 ||
+                previewMaterials[0].mainTexture == null ||
+                previewMaterials[0].mainTexture.width != castMesh.rttResX ||
+                previewMaterials[0].mainTexture.height != castMesh.rttResY 
 
+            )
+                updateMaterials(hypercubeCamera.mainCam);
+                
+        }
+
+        public void updateMaterials(hypercubeCamera c)
+        {
+            //fill the material array in such a way as to respect any elements that have been overriden by the dev.
+
+
+            int count = c.sliceTextures.Length;
+            while (previewMaterials.Count > count)
+                previewMaterials.RemoveAt(previewMaterials.Count - 1);//rip the end off if its too many.
+            
+            for (int i = 0; i < count; i++)
+            {
+                if (previewMaterials.Count <= i)
+                    previewMaterials.Add(new Material(previewShader));
+                else if (previewMaterials[i] == null)
+                    previewMaterials[i] = new Material(previewShader);
+
+                previewMaterials[i].mainTexture = c.sliceTextures[i];
+            }
+
+            previewOccludedMaterial.mainTexture = c.occlusionRTT; //don't forget also to update our occlusion rtt
             updateMesh();
         }
 
         public void updateMesh()
         {
-            if (previewMaterials.Length == 0)
-            {
-                Debug.LogError("Canvas materials have not been set!  Please define what materials you want to apply to each slice in the hypercubeCanvas component.");
-                return;
-            }
+            sliceCount = previewMaterials.Count;
 
             if (sliceCount < 1)
-            {
-                sliceCount = 1;
                 return;
-            }
-
-            if (sliceCount > previewMaterials.Length)
-            {
-                Debug.LogWarning("Can't add more than " + previewMaterials.Length + " slices, because only " + previewMaterials.Length + " canvas materials are defined.");
-                sliceCount = previewMaterials.Length;
-                return;
-            }
+                
+            sliceDistance = 1f / (float)sliceCount;
 
             Vector3[] verts = new Vector3[4 * sliceCount]; //4 verts in a quad * slices * dimensions  
             Vector2[] uvs = new Vector2[4 * sliceCount];

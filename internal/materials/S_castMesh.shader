@@ -14,7 +14,7 @@ Shader "Hidden/Cast Mesh"
     SubShader
     {
         Tags { "RenderType"="Opaque"  }
-        Cull Back
+        Cull Off
         ZWrite On
  
         Pass

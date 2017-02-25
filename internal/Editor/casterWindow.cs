@@ -107,7 +107,10 @@ namespace hypercube
         {
             if (canvas == null || canvasCam == null)
             {
-                canvas = GameObject.FindObjectOfType<hypercube.castMesh>();
+                canvas = castMesh.canvas;
+                if (!canvas)
+                    canvas = GameObject.FindObjectOfType<castMesh>();
+
                 if (canvas)
                 {
                     canvasCam = canvas.GetComponent<Camera>();
@@ -131,13 +134,14 @@ namespace hypercube
                 ensureTextureIntegrity();//this call is for during Play
 
                 canvasCam.targetTexture = renderTexture;
+                //canvasCam.targetTexture = canvas.testingTexture;
                 canvasCam.Render();
                 canvasCam.targetTexture = null;
 
-
                 GUI.contentColor = Color.white; //ensure this isn't being messed with, or our caster will appear dark.
                 GUI.color = Color.white;
-                EditorGUI.DrawPreviewTexture(new Rect(0.0f, 0.0f, position.width, position.height), renderTexture, canvas.casterMaterial, ScaleMode.StretchToFill);
+                //EditorGUI.DrawPreviewTexture(new Rect(0.0f, 0.0f, position.width, position.height), renderTexture, canvas.casterMaterial, ScaleMode.StretchToFill); //this broke in unity 5.something don't ask me why.
+                EditorGUI.DrawPreviewTexture(new Rect(0.0f, 0.0f, position.width, position.height), renderTexture);
             }
         }
 
@@ -146,7 +150,10 @@ namespace hypercube
         {
 
             if (!renderTexture || renderTexture.width != position.width || renderTexture.height != position.height)
+            {
                 renderTexture = new RenderTexture((int)position.width, (int)position.height, 0, RenderTextureFormat.ARGB32);
+            }
+                
 
             //let the hypercube know that it is not using the gameWindow for rendering, and to rely only on the given settings.
             if (canvas)
