@@ -377,7 +377,11 @@ namespace hypercube
         SerialController createInputSerialPort(string comName)
         {
             SerialController sc = gameObject.AddComponent<SerialController>();
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             sc.portName = "\\\\.\\" + comName; //the crazy slashes are so the code can handle > com9 https://support.microsoft.com/en-us/help/115831/howto-specify-serial-ports-larger-than-com9
+#else
+            sc.portName = comName; 
+#endif
             sc.baudRate = baudRate;
             sc.reconnectionDelay = reconnectionDelay;
             sc.maxUnreadMessages = maxUnreadMessage;
@@ -389,7 +393,7 @@ namespace hypercube
 
 
         //code related to i/o of config and calibration data on the pcb
-        #region IO to PCB
+            #region IO to PCB
 
 
 #if HYPERCUBE_DEV
@@ -487,7 +491,7 @@ namespace hypercube
         }
 #endif
 
-        #endregion
+            #endregion
 
 
 
@@ -516,7 +520,7 @@ namespace hypercube
 		}
 #endif
 
-    }
+        }
 
 
 }
