@@ -219,7 +219,7 @@ namespace hypercube
                 return;
             }
 
-            if (onOff) //use preview cam
+            if (onOff && preview.allowIntroView) //use preview cam
             {
                 GetComponent<Camera>().enabled = false;
                 preview.previewCamera.SetActive(true);

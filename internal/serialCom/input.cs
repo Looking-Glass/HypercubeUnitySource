@@ -377,7 +377,7 @@ namespace hypercube
         SerialController createInputSerialPort(string comName)
         {
             SerialController sc = gameObject.AddComponent<SerialController>();
-            sc.portName = comName;
+            sc.portName = "\\\\.\\" + comName; //the crazy slashes are so the code can handle > com9 https://support.microsoft.com/en-us/help/115831/howto-specify-serial-ports-larger-than-com9
             sc.baudRate = baudRate;
             sc.reconnectionDelay = reconnectionDelay;
             sc.maxUnreadMessages = maxUnreadMessage;
