@@ -3,18 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 
-//this utilizes a text file to save/load data arranged as a dictionary
-//the file should be arranged like so:
-/*
- 
-myKey=itsValue
-speed=10
- 
- */
-
-//use this component if you don't care about editing settings or defaults via the inspector, or want a more efficient algorithm
-//Definitely use this instead of dataFileAssoc if you plan to have thousands of entries from the data file.
-
+/**this utilizes a text file to save/load data arranged as a dictionary
+*the file should be arranged like so:
+*
+* 
+*myKey=itsValue
+*speed=10
+* 
+*
+*use this component if you don't care about editing settings or defaults via the inspector, or want a more efficient algorithm
+*Definitely use this instead of dataFileAssoc if you plan to have thousands of entries from the data file.
+*/
 
 public class dataFileDict : MonoBehaviour {
 
@@ -109,24 +108,41 @@ public class dataFileDict : MonoBehaviour {
         return true;
     }
 
-
-    public string getValue(string _key)  //returns an empty string if it can't match the key
+    /// <summary>
+    /// returns an empty string if it can't match the key
+    /// </summary>
+    /// <param name="_key"></param>
+    /// <returns>Found value, or "" </returns>
+    public string getValue(string _key) 
     {
         return getValue(_key, "");
     }
 
-    public string getValue(string _key, string defaultValue)  //will return defaultValue if it can't match the _key
+    /// <summary>
+    /// will return defaultValue if it can't match the _key
+    /// If the key doesn't exist it will return defaultValue without adding the element.
+    /// </summary>
+    /// <param name="_key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns>The key value if found, defaultValue if not found.</returns>
+    public string getValue(string _key, string defaultValue)  
     {
-        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+        if (!keyPairs.ContainsKey(_key)) 
             return defaultValue;
 
         return keyPairs[_key];
     }
 
-    public int getValueAsInt(string _key, int defaultValue)  //will return defaultValue if it can't match the _key, or if the data can't be converted to an int
+    /// <summary>
+    /// Will return defaultValue if it can't match the _key, or if the data can't be converted to an int
+    /// </summary>
+    /// <param name="_key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public int getValueAsInt(string _key, int defaultValue) 
     {
 
-        if (!keyPairs.ContainsKey(_key))  //if it fails we do not add an element, simply ignore and return false
+        if (!keyPairs.ContainsKey(_key)) 
             return defaultValue;
 
         return stringToInt(keyPairs[_key], defaultValue);

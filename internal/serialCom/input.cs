@@ -37,10 +37,6 @@ namespace hypercube
                 Debug.LogWarning("Can't get input from Volume because no ports were detected! Confirm that Volume is connected via USB.");
         }
 
-#if HYPERCUBE_DEV
-        public
-#endif
-
         public int baudRate = 57600;
         public int reconnectionDelay = 500;
         public int maxUnreadMessage = 5;
@@ -62,8 +58,10 @@ namespace hypercube
         serialPortFinder[] portSearches; //we wait for a handshake to know which serial port is which.
         List<string> badSerialPorts = new List<string>();  //ports we already know are not what we are looking for.
         protected stringInputManager touchPanelStringManager; //used to get data and settings from the touch panel pcb
-		static bool forceStringRead = true; //can be used to force the string input manager to update instead of the regular streamed pcb input (used for calibration handshaking when writing to pcb)
-
+#if HYPERCUBE_DEV
+        public
+#endif
+        static bool forceStringRead = true; //can be used to force the string input manager to update instead of the regular streamed pcb input (used for calibration handshaking when writing to pcb)
 #endif
 
         //these keep track of all touchScreen targets, and hence the in input system can send them user input data as it is received.

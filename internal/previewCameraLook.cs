@@ -18,8 +18,8 @@ public class previewCameraLook : MonoBehaviour {
         float xLook = 0f;
         float yLook = 0f;
 
-        xLook = Input.GetAxis("Mouse X");
-        yLook = Input.GetAxis("Mouse Y");
+        xLook = Input.mousePosition.x;
+        yLook = Input.mousePosition.y;
 
         if (xLook != 0 || yLook != 0 )
         {
