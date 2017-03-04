@@ -19,6 +19,7 @@ namespace hypercube
         //singleton pattern
         private static input instance = null;
         public static input _get() { return instance; }
+        public static void _debugLog(string logText) { if (!instance) return;  if (instance.debug) Debug.Log(logText); if (instance.debugText) instance.debugText.text += logText + "\n"; }
         void Awake()
         {
             if (instance != null && instance != this)
@@ -42,6 +43,7 @@ namespace hypercube
         public int maxUnreadMessage = 5;
         public int maxAllowedFailure = 3;
         public bool debug = false;
+        public UnityEngine.UI.Text debugText = null;
         public static bool _debug
         {
             get
@@ -162,7 +164,6 @@ namespace hypercube
             {
  
                 portSearches[i] = new serialPortFinder();
-                portSearches[i].debug = debug;
                 portSearches[i].identifyPort(createInputSerialPort(names[i])); //add a component that manages every port, and set off to identify what it is.
             }
                 
@@ -195,7 +196,7 @@ namespace hypercube
             }
             else if (touchPanel != null && touchPanel.serial.enabled) //normal path
             {
-                touchPanel.update(debug);
+                touchPanel.update();
             }
             else //still searching for serial ports.
             {                   
@@ -215,7 +216,7 @@ namespace hypercube
         float repingForDataTime = 1f;
         void updateGetSettingsFromPCB()
         {
-            touchPanelStringManager.update(debug);
+            touchPanelStringManager.update();
 
             string data = touchPanelStringManager.readMessage();
 

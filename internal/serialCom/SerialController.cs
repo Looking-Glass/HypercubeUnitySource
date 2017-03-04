@@ -134,10 +134,7 @@ public class SerialController : MonoBehaviour
 
         if (ReferenceEquals(data, SerialController.SERIAL_DEVICE_CONNECTED))
         {
-#if HYPERCUBE_DEV
-            if (hypercube.input._debug)
-                Debug.Log("Connection established to " + portName);
-#endif
+            hypercube.input._debugLog("<color=#00ff00>Connection established to " + portName + "</color>");
             failures = 0;
             isConnected = true;
             return null; 
@@ -148,10 +145,8 @@ public class SerialController : MonoBehaviour
             failures++;
             if (maxFailuresAllowed > 0 && failures >= maxFailuresAllowed) //shut ourselves down
                 enabled = false;
-#if HYPERCUBE_DEV
-            if (hypercube.input._debug)
-                Debug.LogWarning("Connection attempt to Serial failed or disconnection occured on '" + portName + "'.");
-#endif
+
+            hypercube.input._debugLog("<color=orange>Connection attempt to Serial failed or disconnection occurred on '" + portName + "'.</color>");
             return null;
         }
     
@@ -162,7 +157,10 @@ public class SerialController : MonoBehaviour
     public void SendSerialMessage(string message)
     {
         if (serialThread != null)
+        {
+            hypercube.input._debugLog("<color=cyan>OUT: " + message + "</color>");
             serialThread.SendSerialMessage(message);
+        }
     }
 }
 #endif

@@ -120,7 +120,7 @@ public class touchScreenInputManager  : streamedInputManager
         touchScreens[7]._init(7, d, 0f, 0f);
     }
 
-     public override void update(bool debug)
+     public override void update()
     {
         if (!serial)
             return;
@@ -128,8 +128,9 @@ public class touchScreenInputManager  : streamedInputManager
         string data = serial.ReadSerialMessage();
         while (data != null && data != "")
         {
-            if (debug)
-                Debug.Log("touchScreenInputMgr: "+ data);
+
+            if (input._get() && (input._get().debug || input._get().debugText)) //optimize this, we don't want to be running string concatenation on every frame for every app.
+                input._debugLog("touchScreenInputMgr: " + data);
 
 
             addData(System.Text.Encoding.Unicode.GetBytes(data));

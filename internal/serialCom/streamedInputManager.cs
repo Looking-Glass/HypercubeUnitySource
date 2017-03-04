@@ -71,7 +71,7 @@ namespace hypercube
             }
         }
 
-        public virtual void update(bool debug)
+        public virtual void update()
         {
 
         }
