@@ -166,7 +166,7 @@ namespace hypercube
         public static bool bin2Vert(byte[] rawBytes, out Vector2[,,] outData)
         {
             outData = null;
-            if (rawBytes == null)
+            if (rawBytes == null || rawBytes.Length == 0)
                 return false;
 
             try
@@ -216,9 +216,9 @@ namespace hypercube
             }
             catch 
             {
-#if HYPERCUBE_DEV
-                Debug.LogWarning("Exception caught in bin2Vert conversion!");
-#endif
+
+                hypercube.input._debugLog("<color=orange>Exception caught in bin2Vert conversion!</color>");
+
                 return false;
             }
 

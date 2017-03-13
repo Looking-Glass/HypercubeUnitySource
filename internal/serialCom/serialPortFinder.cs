@@ -17,7 +17,7 @@ namespace hypercube
 
     public class serialPortFinder
     {
-        public float timeOut = 4f;
+        public float timeOut = 6f;
         float timer = 0f;
 
         public float firmwareVersion
@@ -26,18 +26,19 @@ namespace hypercube
         }
 //        bool sentForcedInit = false;
 
-        public stringInputManager getSerialInput()
+        public SerialController getSerialInput()
         {
             return testSubject;
         }
-        stringInputManager testSubject = null;
+        SerialController testSubject = null;
 
         serialPortType type = serialPortType.SERIAL_UNKNOWN;
 
         public void identifyPort(SerialController s)
         {
-            testSubject = new stringInputManager(s);
-            //testSubject.readDataAsString = true;
+            hypercube.input._debugLog("Attempting connection to: " + s.portName);
+            testSubject = s;
+            testSubject.readDataAsString = true;
             timer = 0f;
             type = serialPortType.SERIAL_WORKING;
 //            sentForcedInit = false;
@@ -54,7 +55,10 @@ namespace hypercube
                 return type;
 
             if (timer > timeOut)
+            {
+                hypercube.input._debugLog("<color=#ff0000>" + testSubject.portName + " timed out.</color>");
                 return serialPortType.SERIAL_UNKNOWN;
+            }
 
 
             timer += deltaTime;
@@ -64,17 +68,15 @@ namespace hypercube
 //            if (!sentForcedInit && testSubject.serial.isConnected)
 //            {
 //#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-  //              testSubject.serial.SendSerialMessage("reping");  //OSX does not reset the serial port hardware on connect, so we need to get it to tell us again what it is.
+  //              testSubject.SendSerialMessage("reping");  //OSX does not reset the serial port hardware on connect, so we need to get it to tell us again what it is.
 //#endif
 //                sentForcedInit = true;
 //            }
 
-            testSubject.update();
-
-            string data = testSubject.readMessage();
+            string data = testSubject.ReadSerialMessage();
             while (data != null)
             {
-                input._debugLog("serial port finder: " + data);
+                hypercube.input._debugLog("IN: " + data);
 
                 if (data.StartsWith("firmwareVersion::"))
                 {
@@ -90,7 +92,7 @@ namespace hypercube
                     //TODO add any other kinds of serial ports that need ID here.
                 }
 
-                data = testSubject.readMessage();
+                data = testSubject.ReadSerialMessage();
             }
 
             return type;

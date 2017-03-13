@@ -26,7 +26,7 @@ public class SerialThread
     private int delayBeforeReconnecting;
     private int maxUnreadMessages;
 
-    //public bool readDataAsString = true;
+    public bool readDataAsString = true;
 
     // Object from the .Net framework used to communicate with serial devices.
     private SerialPort serialPort;
@@ -63,12 +63,14 @@ public class SerialThread
     public SerialThread(string portName,
                         int baudRate, 
                         int delayBeforeReconnecting,
-                        int maxUnreadMessages)
+                        int maxUnreadMessages,
+                        bool _readDataAsString)
     {
         this.portName = portName;
         this.baudRate = baudRate;
         this.delayBeforeReconnecting = delayBeforeReconnecting;
         this.maxUnreadMessages = maxUnreadMessages;
+        this.readDataAsString = _readDataAsString;
 
         inputQueue = Queue.Synchronized(new Queue());
         outputQueue = Queue.Synchronized(new Queue());
@@ -137,13 +139,18 @@ public class SerialThread
                     while (!IsStopRequested())
                         RunOnce();
                 }
-                catch //(Exception ioe)
+
+#if !HYPERCUBE_DEV
+                catch 
+                {
+#else
+                catch (Exception ioe)
                 {
                     // A disconnection happened, or there was a problem
                     // reading/writing to the device. Log the detailed message
                     // to the console and notify the listener too.
-#if HYPERCUBE_DEV
-                    hypercube.input._debugLog("<color=orange>Exception: " + ioe.Message + "\nStackTrace: " + ioe.StackTrace + "</color>");
+
+                    Debug.LogWarning("Exception: " + ioe.Message + "\nStackTrace: " + ioe.StackTrace);
 #endif
                     inputQueue.Enqueue(SerialController.SERIAL_DEVICE_DISCONNECTED);
 
@@ -223,7 +230,7 @@ public class SerialThread
     // ------------------------------------------------------------------------
     private void RunOnce()
     {
-  /*      try
+        try
         {
             // Send a message.
             if (outputQueue.Count != 0)
@@ -237,24 +244,24 @@ public class SerialThread
             // this line so it eventually reaches the Message Listener.
             // Otherwise, discard the line.
 
-            //if (readDataAsString)
-            //{
-            //    string inputMessage = serialPort.ReadLine();
-            //    if (inputMessage != null && inputQueue.Count < maxUnreadMessages)
-            //    {
-            //        inputQueue.Enqueue(inputMessage);
-            //    }
-            //    return;
-            //}
+            if (readDataAsString)
+            {
+                string inputMessage = serialPort.ReadLine();
+                if (inputMessage != null && inputQueue.Count < maxUnreadMessages)
+                {
+                    inputQueue.Enqueue(inputMessage);
+                }
+                return;
+            }
         }
         catch (TimeoutException)
         {
             // This is normal, not everytime we have a report from the serial device
             return;
-        }*/
+        }
 
-   //     if (readDataAsString)
-  //          return;
+       if (readDataAsString)
+            return;
 
         //READ DATA AS BYTES
         int byteCount = 0;    
@@ -275,18 +282,6 @@ public class SerialThread
             //inputQueue.Enqueue(bytesToStr(bytes, bytes.Length));
             inputQueue.Enqueue(System.Text.Encoding.Unicode.GetString(bytes));
 
-        try
-        {
-            // Send a message.
-            if (outputQueue.Count != 0)
-            {
-                string outputMessage = (string)outputQueue.Dequeue();
-                serialPort.Write(outputMessage);
-            }
-        }
-        catch (TimeoutException)
-        {
-        }
 
     }
 

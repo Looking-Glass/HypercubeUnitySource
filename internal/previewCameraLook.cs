@@ -11,15 +11,18 @@ public class previewCameraLook : MonoBehaviour {
     public float sensitivityY = 30f;
     float rotationX = 0f;
     float rotationY = 0f;
-	
+
+    Vector3 lastPos;
 	// Update is called once per frame
 	void Update () 
     {
         float xLook = 0f;
         float yLook = 0f;
 
-        xLook = Input.mousePosition.x;
-        yLook = Input.mousePosition.y;
+        xLook = Input.mousePosition.x - lastPos.x;
+        yLook = Input.mousePosition.y - lastPos.y;
+
+        lastPos = Input.mousePosition;
 
         if (xLook != 0 || yLook != 0 )
         {

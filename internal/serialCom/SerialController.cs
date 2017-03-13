@@ -42,17 +42,17 @@ public class SerialController : MonoBehaviour
     [Tooltip("Maximum number of failed connections before disabling component. ")]
     public int maxFailuresAllowed = 7;
 
-    //private bool _readDataAsString = true;
-    //public bool readDataAsString
-    //{
-    //    get { return _readDataAsString; }
-    //    set
-    //    {
-    //        _readDataAsString = value;
-    //        if (serialThread != null)
-    //            serialThread.readDataAsString = _readDataAsString;
-    //    }
-    //}
+    private bool _readDataAsString = true;
+    public bool readDataAsString
+    {
+        get { return _readDataAsString; }
+        set
+        {
+            _readDataAsString = value;
+            if (serialThread != null)
+                serialThread.readDataAsString = _readDataAsString;
+        }
+    }
 
     public bool isConnected  {get; private set;}
 
@@ -86,7 +86,7 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void OnEnable()
     {
-        serialThread = new SerialThread(portName, baudRate, reconnectionDelay, maxUnreadMessages);
+        serialThread = new SerialThread(portName, baudRate, reconnectionDelay, maxUnreadMessages, readDataAsString);
 
         thread = new Thread(new ThreadStart(serialThread.RunForever));
         thread.Start();
@@ -146,7 +146,7 @@ public class SerialController : MonoBehaviour
             if (maxFailuresAllowed > 0 && failures >= maxFailuresAllowed) //shut ourselves down
                 enabled = false;
 
-            hypercube.input._debugLog("<color=orange>Connection attempt to Serial failed or disconnection occurred on '" + portName + "'.</color>");
+            hypercube.input._debugLog("<color=orange>Serial connection attempt failed or disconnection occurred on '" + portName + "'.</color>");
             return null;
         }
     
