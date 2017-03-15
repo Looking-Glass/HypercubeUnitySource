@@ -67,7 +67,7 @@ public class hypercubeCamera : MonoBehaviour
     public scaleConstraintType scaleConstraint = scaleConstraintType.NONE;
 
 
-    [Tooltip("Use these to modify a particular slice, for example to add GUI, background, or other change to a slice.")]
+    [Tooltip("Use this to modify slices, for example each modifier can be used to add GUI, a background, or other change to a slice.")]
     public hypercube.sliceModifier[] sliceModifiers;
 
     [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.\n\nNOTE: Slice Modifiers will not work in OCCLUDING render mode.")]
@@ -214,12 +214,8 @@ public class hypercubeCamera : MonoBehaviour
         if (!preview)
             preview = GameObject.FindObjectOfType<hypercube.hypercubePreview>();
         if (preview)
-        {
-            if (softSliceMethod == renderMode.OCCLUDING)
-                preview.setOccludedMode(true);
-            else
-                preview.setOccludedMode(false);
-        }
+            preview.updateMesh();
+
         render();
     }
 
@@ -247,6 +243,9 @@ public class hypercubeCamera : MonoBehaviour
 
     public virtual void render()
     {
+        int slices = sliceTextures.Length;
+        if (slices == 0)
+            return;
 
         if (overlap > 0f && softSliceMethod != renderMode.HARD)
         {
@@ -270,19 +269,16 @@ public class hypercubeCamera : MonoBehaviour
             if (nearValues == null)
                 return;
 
+
             //x: near clip, y: far clip, z: overlap, w: depth curve
             renderCam.nearClipPlane = nearValues[0];
-            renderCam.farClipPlane = farValues[localCastMesh.getSliceCount() - 1];
+            renderCam.farClipPlane = farValues[slices - 1];
             Shader.SetGlobalVector("_NFOD", new Vector4(renderCam.nearClipPlane, renderCam.farClipPlane, overlap, 1f));               
 
             renderCam.Render();
         }
         else //normal rendering path with multiple slices
         {
-
-            int slices = sliceTextures.Length;
-            if (slices == 0)
-                return;
 
             for (int i = 0; i < slices; i++)
             {

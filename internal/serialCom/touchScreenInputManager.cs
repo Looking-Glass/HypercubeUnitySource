@@ -65,7 +65,7 @@ public class touchScreenInputManager  : streamedInputManager
         }
     }
 
-    //easy accessors to the data of screen 0, which will be what is used 95% of the time.
+    //easy accessors to the data of screen 0, which will be what is used 99% of the time.
     public touch[] touches { get {return touchScreens[0].touches;}}
     public uint touchCount { get {return touchScreens[0].touchCount;}}
     public Vector2 averagePos { get {return touchScreens[0].averagePos;}} //The 0-1 normalized average position of all touches on touch screen 0

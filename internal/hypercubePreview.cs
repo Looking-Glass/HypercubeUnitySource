@@ -47,13 +47,6 @@ namespace hypercube
         public Shader previewShader;
         public Material previewOccludedMaterial;
 
-        bool occludedMode = false;
-        public void setOccludedMode(bool onOff)
-        {
-            occludedMode = onOff;
-            updateMesh();
-        }
-
         void OnEnable()
         {
             preview = this;
@@ -121,7 +114,7 @@ namespace hypercube
         {
             sliceCount = previewMaterials.Count;
 
-            if (sliceCount < 1)
+            if (sliceCount < 1 || !hypercubeCamera.mainCam)
                 return;
                 
             sliceDistance = 1f / (float)sliceCount;
@@ -147,6 +140,8 @@ namespace hypercube
                 normals[v + 2] = new Vector3(0, 0, 1);
                 normals[v + 3] = new Vector3(0, 0, 1);
 
+
+                bool occludedMode = hypercubeCamera.mainCam.softSliceMethod == hypercubeCamera.renderMode.OCCLUDING ? true : false;
                 if (!occludedMode)
                 {
                     uvs[v + 0] = new Vector2(0, 1);
@@ -157,10 +152,11 @@ namespace hypercube
                 else
                 {
                     float sliceMod = 1f / (float)sliceCount;
-                    uvs[v + 0] = new Vector2(0, sliceMod * (float)(z + 1));
-                    uvs[v + 1] = new Vector2(1, sliceMod * (float)(z + 1));
-                    uvs[v + 2] = new Vector2(1, sliceMod * (float)z);
-                    uvs[v + 3] = new Vector2(0, sliceMod * (float)z);
+                    int inv = sliceCount - z - 1;
+                    uvs[v + 0] = new Vector2(0, sliceMod * (float)(inv + 1));
+                    uvs[v + 1] = new Vector2(1, sliceMod * (float)(inv + 1));
+                    uvs[v + 2] = new Vector2(1, sliceMod * (float)inv);
+                    uvs[v + 3] = new Vector2(0, sliceMod * (float)inv);
                 }
 
 

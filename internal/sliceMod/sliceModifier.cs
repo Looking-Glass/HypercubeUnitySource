@@ -25,7 +25,7 @@ namespace hypercube
 
         /// <summary>
         /// Use this call when dynamically setting depth from code.
-        /// This way, 
+        /// This way, it will can get updated properly.
         /// </summary>
         /// <param name="d">What depth value to set this modifier to. 0 = front, 1 = back</param>
         public void setDepth(float d)
