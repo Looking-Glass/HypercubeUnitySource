@@ -28,7 +28,7 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class hypercubeCamera : MonoBehaviour
 {
-     public const float version = 2.13f;
+     public const float version = 2.15f;
 
      //a static pointer to the last activated hypercubeCameraZ
      public static hypercubeCamera mainCam = null;  
@@ -67,10 +67,10 @@ public class hypercubeCamera : MonoBehaviour
     public scaleConstraintType scaleConstraint = scaleConstraintType.NONE;
 
 
-    [Tooltip("Use this to modify slices, for example each modifier can be used to add GUI, a background, or other change to a slice.")]
+    [Tooltip("Use this to modify slices, for example each modifier can be used to add GUI, a background, or other change to a slice.\n\nNOTE: Slice Modifiers will not work in OCCLUDING render mode.")]
     public hypercube.sliceModifier[] sliceModifiers;
 
-    [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.\n\nNOTE: Slice Modifiers will not work in OCCLUDING render mode.")]
+    [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.")]
     public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
     [Tooltip("Brightness is a final modifier on the output to Volume.\nCalculated value * Brightness = output")]
     public float brightness = 1f; //  a convenience way to set the brightness of the rendered textures. The proper way is to call 'setTone()' on the canvas
@@ -79,13 +79,17 @@ public class hypercubeCamera : MonoBehaviour
     public bool autoHideMouse = true;
     
 
-    public hypercube.softOverlap softSlicePostProcess;
+    
     public Camera renderCam;
     [HideInInspector]
     public RenderTexture[] sliceTextures;
     [HideInInspector]
     public RenderTexture occlusionRTT;
     public hypercube.castMesh castMeshPrefab;
+
+    [HideInInspector]
+    public hypercube.softOverlap softSlicePostProcess;
+    [HideInInspector]
     public hypercube.slicePostProcess slicePost;
     hypercube.castMesh localCastMesh = null;
 
@@ -103,6 +107,9 @@ public class hypercubeCamera : MonoBehaviour
     void Awake()
     {
         renderCam.depthTextureMode = DepthTextureMode.Depth;
+
+        softSlicePostProcess = renderCam.GetComponent<hypercube.softOverlap>();
+        slicePost = renderCam.GetComponent<hypercube.slicePostProcess>();
     }
 
     void Start()
