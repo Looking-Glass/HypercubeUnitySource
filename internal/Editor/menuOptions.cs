@@ -65,5 +65,7 @@ namespace hypercube
         {
             Debug.Log("Hypercube: Volume Plugin  -  Version: " + hypercubeCamera.version + "  -  by Looking Glass Factory, Inc.  Visit lookingglassfactory.com to learn more!");
         }
+
+
     }
 }

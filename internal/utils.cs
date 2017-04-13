@@ -26,6 +26,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
+using System.Text;
+
 namespace hypercube
 {
     public class utils
@@ -230,6 +232,66 @@ namespace hypercube
         {
             return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
                 (value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
+        }
+
+
+        public static void writeDebugStats()
+        {
+            writeDebugStats("DEBUG_INFO.txt");
+        }
+        public static void writeDebugStats(string path)
+        {
+            System.IO.File.WriteAllText(path, getDebugStats());
+            Debug.Log("Wrote out file to: " + path);
+        }
+        public static string getDebugStats()
+        {
+            StringBuilder s = new StringBuilder();
+
+            s.Append("HYPERCUBE DEBUG REPORT: " +Application.productName + "  -  " + System.DateTime.Today.ToString("F") + "\n");
+
+            s.Append("\n///////////////////////////////////////////////////////////////////// - SOFTWARE:\n");
+            s.Append("Unity version: " + Application.unityVersion.ToString() + "\n");
+            s.Append("Hypercube  version: " + hypercubeCamera.version  + "\n");
+            s.Append("App  version: " + Application.version.ToString() + "\n");
+            s.Append("Platform: " + Application.platform.ToString() + "\n");
+            s.Append("Running in Editor?: " + Application.isEditor.ToString() + "\n");
+            s.Append("Run Directory: " + System.Environment.CurrentDirectory + "\n");
+            s.Append("App asset path: " + Application.dataPath + "\n");
+#if !UNITY_EDITOR
+            //TODO build date
+#else
+            s.Append("Build Date: " + System.DateTime.Today.ToString("F") + "\n"); //now.
+#endif
+            s.Append("\n///////////////////////////////////////////////////////////////////// - CPU HARDWARE:\n");
+            s.Append(SystemInfo.operatingSystem + "\n");
+            s.Append("Screen Resolution: " + Screen.currentResolution.width + " x " + Screen.currentResolution.height + "\n");
+            s.Append(SystemInfo.graphicsDeviceVendor + "  -  " + SystemInfo.graphicsDeviceName + " - version: "+ SystemInfo.graphicsDeviceVersion +"\n");
+            s.Append("Graphics memory: " + SystemInfo.graphicsMemorySize + " Mbytes\n");
+            s.Append("Supports compute shaders: " + SystemInfo.supportsComputeShaders.ToString() + "\n");
+            s.Append("Multi Threaded GPU: " + SystemInfo.graphicsMultiThreaded.ToString() + "\n");
+            s.Append("Reversed Z Buffer: " + SystemInfo.usesReversedZBuffer.ToString() + "\n");
+
+            s.Append("\n");
+            s.Append("CPU Processor: " + SystemInfo.processorType.ToString() + "\n");
+            s.Append("CPU Frequency: " + SystemInfo.processorFrequency.ToString() + "\n");
+            s.Append("CPU Cores: " + SystemInfo.processorCount.ToString() + "\n");
+            s.Append("RAM: " + SystemInfo.systemMemorySize.ToString() + " MBytes\n");
+
+#if UNITY_5_6_OR_NEWER
+            s.Append("\n");
+            s.Append("Battery Status: " + SystemInfo.BatteryStatus.ToString() + "\n");
+            s.Append("Battery Status: " + SystemInfo.batteryLevel * 100 + "%\n");
+#endif
+
+            s.Append("\n///////////////////////////////////////////////////////////////////// - LKG HARDWARE:\n");
+            s.Append("Touch Panel Firmware version: " + (hypercube.input._get() != null ? hypercube.input._get().touchPanelFirmwareVersion.ToString() : "---") + "\n");
+           // s.Append("Calibrated with calibrator version: " + (hypercube.castMesh.canvas == null ? "---" : hypercube.castMesh.canvas.GetComponent<dataFileDict>().getValue("calibratorVersion", "2.21 or older")) + "\n");
+
+            s.Append("////////  CALIBRATION SETTINGS:\n");
+            s.Append(hypercube.castMesh.canvas == null ? "---" : hypercube.castMesh.canvas.GetComponent<dataFileDict>().getDataAsString());
+
+            return s.ToString();
         }
 
     }
