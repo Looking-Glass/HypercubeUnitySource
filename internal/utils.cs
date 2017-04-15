@@ -248,12 +248,12 @@ namespace hypercube
         {
             StringBuilder s = new StringBuilder();
 
-            s.Append("HYPERCUBE DEBUG REPORT: " +Application.productName + "  -  " + System.DateTime.Today.ToString("F") + "\n");
+            s.Append("HYPERCUBE DEBUG REPORT: " +Application.productName + "  -  " + System.DateTime.Now.ToString("F") + "\n");
 
             s.Append("\n///////////////////////////////////////////////////////////////////// - SOFTWARE:\n");
             s.Append("Unity version: " + Application.unityVersion.ToString() + "\n");
-            s.Append("Hypercube  version: " + hypercubeCamera.version  + "\n");
-            s.Append("App  version: " + Application.version.ToString() + "\n");
+            s.Append("Hypercube version: " + hypercubeCamera.version  + "\n");
+            s.Append("App version: " + Application.version.ToString() + "\n");
             s.Append("Platform: " + Application.platform.ToString() + "\n");
             s.Append("Running in Editor?: " + Application.isEditor.ToString() + "\n");
             s.Append("Run Directory: " + System.Environment.CurrentDirectory + "\n");
@@ -264,7 +264,7 @@ namespace hypercube
             else
                 s.Append("Build Date: ???\n"); 
 #else
-            s.Append("Build Date: " + System.DateTime.Today.ToString("F") + "\n"); //now.
+            s.Append("Build Date: " + System.DateTime.Now.ToString("F") + "\n"); //now.
 #endif
             s.Append("\n///////////////////////////////////////////////////////////////////// - CPU HARDWARE:\n");
             s.Append(SystemInfo.operatingSystem + "\n");

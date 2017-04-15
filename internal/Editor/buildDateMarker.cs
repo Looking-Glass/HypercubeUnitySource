@@ -15,7 +15,7 @@ class buildDateMarker : IPreprocessBuild
     public int CallbackOrder { get { return 0; } }
     public void OnPreprocessBuild(BuildTarget target, string path)
     {
-        File.WriteAllText(Application.dataPath + "/Hypercube/internal/hypercubeBuildRecord.txt", System.DateTime.Today.ToString("F")));
+        File.WriteAllText(Application.dataPath + "/Hypercube/internal/hypercubeBuildRecord.txt", System.DateTime.Now.ToString("F")));
         AssetDatabase.Refresh();
     }
 }
