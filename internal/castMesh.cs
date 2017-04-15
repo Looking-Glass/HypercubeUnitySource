@@ -50,12 +50,21 @@ namespace hypercube
 
         public string volumeModelName { get; private set; }
         public float volumeHardwareVer { get; private set; }
-        public static castMesh canvas { get; private set; } //access the existing canvas from anywhere
 
-        public static int rttResX { get; private set; } //these are the render texture resolutions per slice.
+        /// <summary>
+        /// Access the existing canvas from anywhere
+        /// </summary>
+        public static castMesh canvas { get; private set; } 
+
+        /// <summary>
+        /// These are the render texture resolutions per slice.
+        /// </summary>
+        public static int rttResX { get; private set; }
         public static int rttResY { get; private set; }
 
-        //stored aspect ratio multipliers, each with the corresponding axis set to 1
+        /// <summary>
+        /// Stored aspect ratio multipliers, each with the corresponding axis set to 1
+        /// </summary>
         public Vector3 aspectX { get; private set; }
         public Vector3 aspectY { get; private set; }
         public Vector3 aspectZ { get; private set; }
@@ -82,10 +91,10 @@ namespace hypercube
             if (calibrationData == null)
             {
                 if (!loadSettingsFromUSB()) //try to force it? probably we are in an odd state in the editor.
-                    return 1;
+                    return defaultSliceCount;
 
                 if (calibrationData == null)
-                    return 1;
+                    return defaultSliceCount;
             }
             return calibrationData.GetLength(0);
         } //a safe accessor, since its accessed constantly.
@@ -115,6 +124,14 @@ namespace hypercube
         
 
         public hypercubePreview preview = null;
+
+        /// <summary>
+        /// This allows the debugging tools to tell you when your app was built.
+        /// If using Unity > 5.6  this text file will be updated with the current time just before building and shipped as an asset with the build
+        /// See: utils.getDebugStats()  and utils.writeDebugStats()
+        /// </summary>
+        [HideInInspector]
+        public TextAsset buildTracker = null;
 
 #if HYPERCUBE_DEV
         public calibrator currentCalibrator = null;

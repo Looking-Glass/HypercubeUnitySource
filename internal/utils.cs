@@ -259,7 +259,10 @@ namespace hypercube
             s.Append("Run Directory: " + System.Environment.CurrentDirectory + "\n");
             s.Append("App asset path: " + Application.dataPath + "\n");
 #if !UNITY_EDITOR
-            //TODO build date
+            if (hypercube.castMesh.canvas && hypercube.castMesh.canvas.buildTracker)
+                s.Append("Build Date: " + hypercube.castMesh.canvas.buildTracker.text + "\n"); 
+            else
+                s.Append("Build Date: ???\n"); 
 #else
             s.Append("Build Date: " + System.DateTime.Today.ToString("F") + "\n"); //now.
 #endif
@@ -286,9 +289,9 @@ namespace hypercube
 
             s.Append("\n///////////////////////////////////////////////////////////////////// - LKG HARDWARE:\n");
             s.Append("Touch Panel Firmware version: " + (hypercube.input._get() != null ? hypercube.input._get().touchPanelFirmwareVersion.ToString() : "---") + "\n");
-           // s.Append("Calibrated with calibrator version: " + (hypercube.castMesh.canvas == null ? "---" : hypercube.castMesh.canvas.GetComponent<dataFileDict>().getValue("calibratorVersion", "2.21 or older")) + "\n");
+            s.Append("Calibrated with calibrator version: " + (hypercube.castMesh.canvas == null ? "---" : hypercube.castMesh.canvas.GetComponent<dataFileDict>().getValue("calibratorVersion", "2.21 or older")) + "\n");
 
-            s.Append("////////  CALIBRATION SETTINGS:\n");
+            s.Append("\n////////  CALIBRATION SETTINGS:\n");
             s.Append(hypercube.castMesh.canvas == null ? "---" : hypercube.castMesh.canvas.GetComponent<dataFileDict>().getDataAsString());
 
             return s.ToString();

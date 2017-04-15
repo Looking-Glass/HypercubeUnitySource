@@ -28,7 +28,7 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class hypercubeCamera : MonoBehaviour
 {
-     public const float version = 2.16f;
+     public const float version = 2.18f;
 
      //a static pointer to the last activated hypercubeCameraZ
      public static hypercubeCamera mainCam = null;  
@@ -67,8 +67,8 @@ public class hypercubeCamera : MonoBehaviour
     public scaleConstraintType scaleConstraint = scaleConstraintType.NONE;
 
 
-    [Tooltip("Use this to modify slices, for example each modifier can be used to add GUI, a background, or other change to a slice.\n\nNOTE: Slice Modifiers will not work in OCCLUDING render mode.")]
-    public hypercube.sliceModifier[] sliceModifiers;
+    [Tooltip("Use this to modify slices, for example each modifier can be used to add GUI, a background, or other change to a slice.\n\nNOTE:Use sliceModifier.updateSliceModifiers() to force them to update.\n\nNOTE: Slice Modifiers will not work in OCCLUDING render mode.")]
+    public List<hypercube.sliceModifier> sliceModifiers;
 
     [Tooltip("If the hypercube_RTT camera is set to perspective, this will modify the FOV of each successive slice to create forced perspective effects.")]
     public float forcedPerspective = 0f; //0 is no forced perspective, other values force a perspective either towards or away from the front of the Volume.
@@ -166,12 +166,21 @@ public class hypercubeCamera : MonoBehaviour
             if (!localCastMesh && sliceTextures.Length < hypercube.castMesh.defaultSliceCount)
                 populateRTTs(hypercube.castMesh.defaultSliceCount, 512, 512); //the default RTT settings if no canvas found.
         }
-        else if (localCastMesh.getSliceCount() != sliceTextures.Length || 
-            !occlusionRTT || sliceTextures.Length == 0 || 
-            sliceTextures[0].width != hypercube.castMesh.rttResX || sliceTextures[0].height != hypercube.castMesh.rttResY
-        ) //dynamically fill the render textures
+        else
         {
-            populateRTTs(localCastMesh.getSliceCount(), hypercube.castMesh.rttResX, hypercube.castMesh.rttResY);
+            if (hypercube.sliceModifier.areModifiersNull() && sliceModifiers.Count > 0)
+                hypercube.sliceModifier.updateSliceModifiers(localCastMesh.getSliceCount(), sliceModifiers);
+
+            if (localCastMesh.getSliceCount() != sliceTextures.Length ||
+              !occlusionRTT ||
+              sliceTextures.Length == 0 ||
+              sliceTextures[0] == null ||
+              sliceTextures[0].width != hypercube.castMesh.rttResX ||
+              sliceTextures[0].height != hypercube.castMesh.rttResY
+          ) //dynamically fill the render textures
+            {
+                populateRTTs(localCastMesh.getSliceCount(), hypercube.castMesh.rttResX, hypercube.castMesh.rttResY);
+            }
         }
             
 

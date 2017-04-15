@@ -11,6 +11,7 @@ using UnityEngine;
 
 namespace hypercube
 {
+    [ExecuteInEditMode]
     [System.Serializable]
     public class sliceModifier
     {
@@ -40,6 +41,8 @@ namespace hypercube
 
         //keep track of all modifiers.
         static sliceModifier[] allModifiers = null;
+        static public bool areModifiersNull() { if (allModifiers == null) return true; if (allModifiers[0] == null) return true; return false; }
+
         public static sliceModifier getSliceModifier(int sliceNum)
         {
             if (allModifiers == null)
@@ -50,23 +53,23 @@ namespace hypercube
 
             return allModifiers[sliceNum];
         }
-        public static void updateSliceModifiers(sliceModifier[] mods)
+
+        public static void updateSliceModifiers()
+        {
+            if (hypercubeCamera.mainCam)
+                updateSliceModifiers(hypercubeCamera.mainCam.sliceModifiers);
+        }
+        public static void updateSliceModifiers(List<sliceModifier> mods)
         {
             if (castMesh.canvas)
                 updateSliceModifiers(castMesh.canvas.getSliceCount(), mods);
         }
-        public static void updateSliceModifiers(int sliceCount, sliceModifier[] mods)
+        public static void updateSliceModifiers(int sliceCount, List<sliceModifier> mods)
         {
-            if (allModifiers == null || allModifiers.Length != sliceCount)
-                allModifiers = new sliceModifier[sliceCount];
-
-            for (int n = 0; n < sliceCount; n++) //double make sure its clear.
-            {
-                allModifiers[n] = null;
-            }
-
-            if (mods == null || mods.Length == 0 || sliceCount < 2)
+            if (sliceCount < 2) //probably still starting up, this is bogus.
                 return;
+
+            allModifiers = new sliceModifier[sliceCount];
 
             foreach (sliceModifier m in mods)
             {

@@ -48,14 +48,22 @@ namespace hypercube
         }
        public activationState state { get; private set; }
 
-        private float _posX; public float posX { get { if (activeCheck()) return _posX; return 0f; } } //0-1 normalized position of this touch
-        private float _posY; public float posY { get { if (activeCheck()) return _posY; return 0f; } } //0-1 normalized position of this touch
+        /// <summary>
+        /// 0-1 normalized position of this touch
+        /// </summary>
+        public float posX { get { if (activeCheck()) return _posX; return 0f; } } private float _posX;
+        public float posY { get { if (activeCheck()) return _posY; return 0f; } } private float _posY;
+        /// <summary>
+        /// normalized relative movement this frame inside 0-1 
+        /// </summary>
+        public float diffX { get { if (activeCheck()) return _diffX; return 0f; } } private float _diffX; 
+        public float diffY { get { if (activeCheck()) return _diffY; return 0f; } } private float _diffY;
 
-        private float _diffX; public float diffX { get { if (activeCheck()) return _diffX; return 0f; } } //normalized relative movement this frame inside 0-1 
-        private float _diffY; public float diffY { get { if (activeCheck()) return _diffY; return 0f; } } //normalized relative movement this frame inside 0-1
-
-        private float _distX; public float distX { get { if (activeCheck()) return _distX; return 0f; } } //the physical distance that the touch traveled in Centimeters
-        private float _distY; public float distY { get { if (activeCheck()) return _distY; return 0f; } } //the physical distance that the touch traveled in Centimeters
+        /// <summary>
+        /// The physical distance that the touch traveled in Centimeters
+        /// </summary>
+        public float distX { get { if (activeCheck()) return _distX; return 0f; } } private float _distX; 
+        public float distY { get { if (activeCheck()) return _distY; return 0f; } } private float _distY;
 
         public touch()
         {
@@ -64,11 +72,23 @@ namespace hypercube
             touchScreenX = touchScreenY = 0;
             state = activationState.DESTROYED;
         }
+        /// <summary>
+        /// Returns the world position of this touch on the surface of the hypercubeCamera relative to the world.
+        /// Use it to place something at the position of the touch that is NOT parented to the hypercubeCamera.
+        /// </summary>
+        /// <param name="c">The hypercubeCamera that you want the touch position to be relative to.</param>
+        /// <returns></returns>
         public Vector3 getWorldPos(hypercubeCamera c)
         {
             return c.transform.TransformPoint(getLocalPos());
         }
-        public Vector3 getLocalPos() //get the local coordinate relative to the hypercubeCamera
+        /// <summary>
+        /// Returns the local positional coordinate of this touch relative to the position of the hypercubeCamera pivot.
+        /// It will therefore be 0-1 in all 3 axis, because the hypercube camera is 1x1x1.
+        /// Use it to position something that is parented to the hypercubeCamera, at the position of the touch.
+        /// NOTE: it may return outside of 0-1 if the touch panel is larger than the projection area and the touch is made outside of the projection area.
+        /// </summary>
+        public Vector3 getLocalPos() 
         {
             if (!activeCheck())
                 return Vector3.zero;
@@ -84,16 +104,28 @@ namespace hypercube
             }
         }
 
-        //how much time since touchDown
+        /// <summary>
+        /// What was the Time.timeSinceLevelLoad when this touch began
+        /// </summary>
         public float touchDownTime { get; private set; }
+        /// <summary>
+        /// How many seconds has this touch existed.
+        /// </summary>
         public float age { get { if (state == activationState.DESTROYED) return 0f; return Time.timeSinceLevelLoad - touchDownTime; } }
 
         private Vector2 physicalPos;
 
-        private int touchScreenX; //these are the raw coordinates from the touchscreen.  They are not used in this class but stored here for convenience use with calibration tools.
+        /// <summary>
+        /// These are the raw coordinates from the touchscreen.  They are not used in this class but stored here for convenience use with calibration tools.
+        /// </summary>
+        private int touchScreenX;
         private int touchScreenY;
 
-
+        /// <summary>
+        /// Use this to calculate the physical distance between touches in Centimeters
+        /// </summary>
+        /// <param name="t">The touch you want to calculate the distance to</param>
+        /// <returns></returns>
         public float getPhysicalDistanceTo(touch t) 
         { 
             touchInterface i = null;
