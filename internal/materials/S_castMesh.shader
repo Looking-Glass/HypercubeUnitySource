@@ -1,4 +1,6 @@
-﻿//Shader "Hypercube/Internal/Cast Mesh"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+//Shader "Hypercube/Internal/Cast Mesh"
 Shader "Hidden/Cast Mesh"
 {
     Properties
@@ -51,7 +53,7 @@ Shader "Hidden/Cast Mesh"
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }

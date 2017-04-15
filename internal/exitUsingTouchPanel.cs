@@ -28,7 +28,7 @@ namespace hypercube
 
         public override void onTouchDown(hypercube.touch touch)
         {
-            if (touch.posX < activeCornerArea && touch.posY < activeCornerArea)  //upper left
+            if (touch.posX < activeCornerArea && touch.posY > 1f - activeCornerArea)  //upper left
             {
                 activeTouch = (int)touch.id;
                 start();
@@ -37,13 +37,16 @@ namespace hypercube
 
         public override void onTouchMoved(hypercube.touch touch)
         {
-            if ((int)touch.id != activeTouch)
+
+            if ((int)touch.id != activeTouch) //allow any touch to deactivate it
                 return;
 
-            if (touch.posX > activeCornerArea || touch.posY > activeCornerArea) //upper left
+            if (touch.posX > activeCornerArea || touch.posY < 1f - activeCornerArea) //upper left
             {
                 stop();
             }
+
+            //Debug.Log(touch.posX + "   " + touch.posY);
         }
 
         public override void onTouchUp(hypercube.touch touch)
@@ -73,10 +76,10 @@ namespace hypercube
             {
                 //check for the finger on the upper right
                 if (allowDebugReport)
-                { 
+                {
                     foreach (touch i in hypercube.input.touchPanel.front.touches)
                     {
-                        if (i.posX > 1f - activeCornerArea || i.posY > activeCornerArea) //upper right
+                        if (i.posX > 1f - activeCornerArea && i.posY > 1f - activeCornerArea) //upper right
                         {
                             utils.writeDebugStats();
                             stop();
@@ -112,7 +115,7 @@ namespace hypercube
             timer = 0;
 
             if (hypercubeCamera.mainCam)
-            { 
+            {
                 hypercubeCamera.mainCam.sliceModifiers.Remove(overlay);
                 sliceModifier.updateSliceModifiers();
             }

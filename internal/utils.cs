@@ -283,7 +283,7 @@ namespace hypercube
 
 #if UNITY_5_6_OR_NEWER
             s.Append("\n");
-            s.Append("Battery Status: " + SystemInfo.BatteryStatus.ToString() + "\n");
+            s.Append("Battery Status: " + SystemInfo.batteryStatus.ToString() + "\n");
             s.Append("Battery Status: " + SystemInfo.batteryLevel * 100 + "%\n");
 #endif
 

@@ -21,20 +21,24 @@ namespace hypercube
         public blending blend;
         public Texture tex;
 
-        Material over;
-        Material under;
-        Material adding;
-        Material multiplying;
+        public Material over;
+        public Material under;
+        public Material adding;
+        public Material multiplying;
 
         int texID = -1;
 
         private void Awake()
         {
             texID = Shader.PropertyToID("_blend");
-            over = new Material(Shader.Find("Hidden/s_over"));
-            under = new Material(Shader.Find("Hidden/s_under"));
-            adding = new Material(Shader.Find("Hidden/s_adding"));
-            multiplying = new Material(Shader.Find("Hidden/s_multiplying"));
+            if (over == null)
+                over = new Material(Shader.Find("Hidden/s_over"));
+            if (under == null)
+                under = new Material(Shader.Find("Hidden/s_under"));
+            if (adding == null)
+                adding = new Material(Shader.Find("Hidden/s_adding"));
+            if (multiplying == null)
+                multiplying = new Material(Shader.Find("Hidden/s_multiplying"));
         }
 
         //postprocess the image
