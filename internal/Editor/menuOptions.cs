@@ -79,7 +79,7 @@ namespace hypercube
         [MenuItem("Hypercube/About Hypercube", false, 602)]
         public static void aboutHypercube()
         {
-            Debug.Log("Hypercube: Volume Plugin  -  Version: " + hypercubeCamera.version + "  -  by Looking Glass Factory, Inc.  Visit lookingglassfactory.com to learn more!");
+            Debug.Log("Hypercube: Volume Plugin  -  Version: " + hypercubeCamera.version + "  -  by Looking Glass  -  Visit lookingglassfactory.com to learn more!");
         }
 
     }
