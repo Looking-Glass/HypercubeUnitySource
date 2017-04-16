@@ -284,7 +284,7 @@ namespace hypercube
 #if UNITY_5_6_OR_NEWER
             s.Append("\n");
             s.Append("Battery Status: " + SystemInfo.batteryStatus.ToString() + "\n");
-            s.Append("Battery Status: " + SystemInfo.batteryLevel * 100 + "%\n");
+            s.Append("Battery Charge: " + SystemInfo.batteryLevel * 100 + "%\n");
 #endif
 
             s.Append("\n///////////////////////////////////////////////////////////////////// - LKG HARDWARE:\n");

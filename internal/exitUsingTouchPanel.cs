@@ -38,7 +38,7 @@ namespace hypercube
         public override void onTouchMoved(hypercube.touch touch)
         {
 
-            if ((int)touch.id != activeTouch) //allow any touch to deactivate it
+            if ((int)touch.id != activeTouch) 
                 return;
 
             if (touch.posX > activeCornerArea || touch.posY < 1f - activeCornerArea) //upper left
@@ -67,9 +67,15 @@ namespace hypercube
                 stop();
                 return;
             }
+         
 
             if (activeTouch == -1)
                 return;
+            else if (hypercube.input.touchPanel != null && hypercube.input.touchPanel.touchCount == 0) //we have an active touch... but no touches?
+            {
+                stop();
+                return;
+            }
 
             timer += Time.deltaTime;
             if (timer > exitHoldTime)
